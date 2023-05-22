@@ -1,0 +1,23 @@
+name: SwiftLint
+
+on:
+  push:
+    branches: [ '**' ]
+  workflow_dispatch:
+
+jobs:
+  SwiftLint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install SwiftLint
+      run: |
+        curl -OL "https://github.com/realm/SwiftLint/releases/download/0.43.1/portable_swiftlint.zip"
+        unzip portable_swiftlint.zip
+        chmod +x swiftlint
+        echo "$PWD" >> $GITHUB_PATH
+
+    - name: Run SwiftLint
+      run: swiftlint

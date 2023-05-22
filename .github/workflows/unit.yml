@@ -1,0 +1,19 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ '**' ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Build and Test
+      run: |
+        swift build
+        swift test
