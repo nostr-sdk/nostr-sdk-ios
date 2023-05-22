@@ -22,8 +22,10 @@ let package = Package(
         .target(
             name: "NostrSDK",
             dependencies: []
+        ),
         .testTarget(
             name: "NostrSDKTests",
             dependencies: ["NostrSDK"]
+        ),
     ]
 )
