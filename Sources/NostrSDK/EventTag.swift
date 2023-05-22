@@ -12,7 +12,7 @@ public enum TagIdentifier: String, Codable {
     case pubkey = "p"
 }
 
-public struct EventTag: Codable {
+public struct EventTag: Codable, Equatable {
     public let identifier: TagIdentifier
     public let contentIdentifier: String
     public let recommendedRelayURL: String?
@@ -26,5 +26,11 @@ public struct EventTag: Codable {
         contentIdentifier = try container.decode(String.self)
         
         recommendedRelayURL = try container.decodeIfPresent(String.self)
+    }
+    
+    init(identifier: TagIdentifier, contentIdentifier: String, recommendedRelayURL: String? = nil) {
+        self.identifier = identifier
+        self.contentIdentifier = contentIdentifier
+        self.recommendedRelayURL = recommendedRelayURL
     }
 }
