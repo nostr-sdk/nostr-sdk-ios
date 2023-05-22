@@ -9,15 +9,6 @@ jobs:
   SwiftLint:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Install SwiftLint
-      run: |
-        curl -OL "https://github.com/realm/SwiftLint/releases/download/0.43.1/portable_swiftlint.zip"
-        unzip portable_swiftlint.zip
-        chmod +x swiftlint
-        echo "$PWD" >> $GITHUB_PATH
-
-    - name: Run SwiftLint
-      run: swiftlint
+    - uses: actions/checkout@v2
+    - name: GitHub Action for SwiftLint
+      uses: norio-nomura/action-swiftlint@3.2.1
