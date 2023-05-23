@@ -15,7 +15,7 @@ public struct NostrEvent: Codable {
     public let tags: [EventTag]
     public let content: String
     public let signature: String
-    
+
     private enum CodingKeys: String, CodingKey {
         case id
         case pubkey
@@ -25,7 +25,7 @@ public struct NostrEvent: Codable {
         case content
         case signature = "sig"
     }
-    
+
     public var createdDate: Date {
         Date(timeIntervalSince1970: createdAt)
     }
