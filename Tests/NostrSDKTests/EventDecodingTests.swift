@@ -75,4 +75,44 @@ final class EventDecodingTests: XCTestCase {
         XCTAssertEqual(event.content, "I think it stays persistent on your profile, but interface setting doesn’t persist. Bug.  ")
         XCTAssertEqual(event.signature, "96e6667348b2b1fc5f6e73e68fb1605f571ad044077dda62a35c15eb8290f2c4559935db461f8466df3dcf39bc2e11984c5344f65aabee4520dd6653d74cdc09")
     }
+    
+    func testDecodeRepost() throws {
+        let json = """
+            {
+              "id": "9353c66d99d600f51b9b1f309b804d2156facd227d643eb513eb8c508498da21",
+              "pubkey": "91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832",
+              "created_at": 1684817569,
+              "kind": 6,
+              "tags": [
+                [
+                  "e",
+                  "6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34"
+                ],
+                [
+                  "p",
+                  "33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689"
+                ]
+              ],
+              "content": "{\\"pubkey\\":\\"33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689\\",\\"content\\":\\"Thanks to #[0]​ #[1]​ & #[2]​ for organizing and hosting the beach party - awesome to meet so many nostriches 🤙\\",\\"id\\":\\"6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34\\",\\"created_at\\":1684482315,\\"sig\\":\\"85efc3c48e374c424cf6af39b0ccad410e3539db7bdcb34ff76fc43cb6c1879de7530f12c19d7fd42a0dcc226f103481342fc564f22e60c0151782e870dbe14f\\",\\"kind\\":1,\\"tags\\":[[\\"p\\",\\"1577e4599dd10c863498fe3c20bd82aafaf829a595ce83c5cf8ac3463531b09b\\"],[\\"p\\",\\"c43bbb58e2e6bc2f9455758257f6ba5329107bd4e8274068c2936c69d9980b7d\\"],[\\"p\\",\\"91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832\\"]]}",
+              "sig": "8c81d6c5b44f134bdded8f6d20c9d299fcbe3bc9687df14d7516e4781b60a00fa7bb71eb73e29c3ca3bc6da2198710c82f64859f79ea33434cffa4d80c29b1c2"
+            }
+        """
+        
+        let data = try XCTUnwrap(json.data(using: .utf8))
+        
+        let event = try JSONDecoder().decode(NostrEvent.self, from: data)
+        
+        XCTAssertEqual(event.id, "9353c66d99d600f51b9b1f309b804d2156facd227d643eb513eb8c508498da21")
+        XCTAssertEqual(event.pubkey, "91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832")
+        XCTAssertEqual(event.createdAt, 1684817569)
+        XCTAssertEqual(event.kind, .repost)
+        
+        let expectedTags = [
+            EventTag(identifier: .event, contentIdentifier: "6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34"),
+            EventTag(identifier: .pubkey, contentIdentifier: "33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689")
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+        XCTAssertTrue(event.content.hasPrefix("{\"pubkey\":\"33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689\""))
+        XCTAssertEqual(event.signature, "8c81d6c5b44f134bdded8f6d20c9d299fcbe3bc9687df14d7516e4781b60a00fa7bb71eb73e29c3ca3bc6da2198710c82f64859f79ea33434cffa4d80c29b1c2")
+    }
 }
