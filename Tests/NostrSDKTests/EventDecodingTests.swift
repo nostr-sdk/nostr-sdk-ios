@@ -13,7 +13,10 @@ final class EventDecodingTests: XCTestCase {
     let fixtureLoader = FixtureLoader()
 
     func testDecodeSetMetadata() throws {
-        let data = fixtureLoader.loadFixture("set_metadata")
+        guard let data = fixtureLoader.loadFixture("set_metadata") else {
+            XCTFail("failed to load fixture")
+            return
+        }
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
@@ -27,7 +30,10 @@ final class EventDecodingTests: XCTestCase {
     }
 
     func testDecodeTextNote() throws {
-        let data = fixtureLoader.loadFixture("text_note")
+        guard let data = fixtureLoader.loadFixture("text_note") else {
+            XCTFail("failed to load fixture")
+            return
+        }
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
@@ -46,7 +52,10 @@ final class EventDecodingTests: XCTestCase {
     }
 
     func testDecodeRepost() throws {
-        let data = fixtureLoader.loadFixture("repost")
+        guard let data = fixtureLoader.loadFixture("repost") else {
+            XCTFail("failed to load fixture")
+            return
+        }
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
