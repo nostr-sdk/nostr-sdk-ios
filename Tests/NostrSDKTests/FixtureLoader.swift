@@ -12,10 +12,10 @@ class FixtureLoader {
         // Construct the URL for the fixtures directory.
         let bundle = Bundle.module
         let url = bundle.url(forResource: filename, withExtension: "json", subdirectory: "Fixtures")!
-        
+
         // Load the data from the file.
         let data = try! Data(contentsOf: url)
-        
+
         return data
     }
 }

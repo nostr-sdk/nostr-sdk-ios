@@ -9,7 +9,7 @@
 import XCTest
 
 final class EventDecodingTests: XCTestCase {
-    
+
     let fixtureLoader = FixtureLoader()
 
     func testDecodeSetMetadata() throws {
@@ -47,7 +47,7 @@ final class EventDecodingTests: XCTestCase {
 
     func testDecodeRepost() throws {
         let data = fixtureLoader.loadFixture("repost")
-        
+
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
         XCTAssertEqual(event.id, "9353c66d99d600f51b9b1f309b804d2156facd227d643eb513eb8c508498da21")
