@@ -1,4 +1,4 @@
-[![Unit Tests](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml) [![SwiftLint](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml)
+[![Unit Tests](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml) [![SwiftLint](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml) [![Docs](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml)
 
 # Nostr SDK iOS
 
