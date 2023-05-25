@@ -19,7 +19,6 @@ enum RelayResponse: Decodable {
     case eose(subscriptionId: String)
     case event(subscriptionId: String, event: NostrEvent)
 
-
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         let responseType = try container.decode(MessageType.self)
