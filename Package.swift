@@ -26,7 +26,8 @@ let package = Package(
         ),
         .testTarget(
             name: "NostrSDKTests",
-            dependencies: ["NostrSDK"]
+            dependencies: ["NostrSDK"],
+            resources: [.copy("Fixtures")]
         )
     ]
 )
