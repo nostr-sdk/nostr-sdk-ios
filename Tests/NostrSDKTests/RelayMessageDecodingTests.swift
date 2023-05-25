@@ -64,4 +64,61 @@ final class RelayMessageDecodingTests: XCTestCase {
             XCTFail("failed to decode")
         }
     }
+
+    func testDecodeOkMessage() {
+        guard let data = fixtureLoader.loadFixture("ok_success") else {
+            XCTFail("failed to load fixture")
+            return
+        }
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .ok(let eventId, let success, let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
+            XCTAssertEqual(success, true)
+            XCTAssertEqual(message, "")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeOkMessageWithReason() {
+        guard let data = fixtureLoader.loadFixture("ok_success_reason") else {
+            XCTFail("failed to load fixture")
+            return
+        }
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .ok(let eventId, let success, let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
+            XCTAssertEqual(success, true)
+            XCTAssertEqual(message, "pow: difficulty 25>=24")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeOkFailWithReason() {
+        guard let data = fixtureLoader.loadFixture("ok_fail_reason") else {
+            XCTFail("failed to load fixture")
+            return
+        }
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .ok(let eventId, let success, let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
+            XCTAssertEqual(success, false)
+            XCTAssertEqual(message, "blocked: tor exit nodes not allowed")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
 }

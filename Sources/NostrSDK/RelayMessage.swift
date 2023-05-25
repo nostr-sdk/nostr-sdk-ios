@@ -13,11 +13,13 @@ enum RelayResponse: Decodable {
         case event = "EVENT"
         case notice = "NOTICE"
         case eose = "EOSE"
+        case ok = "OK"
     }
 
     case notice(message: String)
     case eose(subscriptionId: String)
     case event(subscriptionId: String, event: NostrEvent)
+    case ok(eventId: String, success: Bool, message: String)
 
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
@@ -33,6 +35,11 @@ enum RelayResponse: Decodable {
         case .eose:
             let subscriptionId = try container.decode(String.self)
             self = .eose(subscriptionId: subscriptionId)
+        case .ok:
+            let eventId = try container.decode(String.self)
+            let success = try container.decode(Bool.self)
+            let message = try container.decode(String.self)
+            self = .ok(eventId: eventId, success: success, message: message)
         }
     }
 
