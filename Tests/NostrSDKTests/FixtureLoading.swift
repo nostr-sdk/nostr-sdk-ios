@@ -13,7 +13,7 @@ enum FixtureLoadingError: Error {
 
 protocol FixtureLoading {}
 extension FixtureLoading {
-    
+
     func loadFixture(_ filename: String) throws -> Data {
         // Construct the URL for the fixtures directory.
         let bundle = Bundle.module
