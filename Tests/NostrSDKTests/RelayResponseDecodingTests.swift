@@ -1,5 +1,5 @@
 //
-//  RelayMessageDecodingTests.swift
+//  RelayResponseDecodingTests.swift
 //  
 //
 //  Created by Joel Klabo on 5/25/23.
@@ -11,7 +11,7 @@ import XCTest
 final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
 
     func testDecodeNoticeMessage() throws {
-        let data = try loadFixture("notice")
+        let data = try loadFixtureData("notice")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .notice(let message) = relayResponse else {
@@ -25,7 +25,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeEOSEMessage() throws {
-        let data = try loadFixture("eose")
+        let data = try loadFixtureData("eose")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .eose(let subscriptionId) = relayResponse else {
@@ -39,7 +39,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeEventMessage() throws {
-        let data = try loadFixture("event")
+        let data = try loadFixtureData("event")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .event(let subscriptionId, let event) = relayResponse else {
@@ -55,7 +55,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeOkMessage() throws {
-        let data = try loadFixture("ok_success")
+        let data = try loadFixtureData("ok_success")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .ok(let eventId, let success, let message) = relayResponse else {
@@ -71,7 +71,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeOkMessageWithReason() throws {
-        let data = try loadFixture("ok_success_reason")
+        let data = try loadFixtureData("ok_success_reason")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .ok(let eventId, let success, let message) = relayResponse else {
@@ -87,7 +87,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeOkFailWithReason() throws {
-        let data = try loadFixture("ok_fail_reason")
+        let data = try loadFixtureData("ok_fail_reason")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .ok(let eventId, let success, let message) = relayResponse else {
@@ -103,7 +103,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeCount() throws {
-        let data = try loadFixture("count_response")
+        let data = try loadFixtureData("count_response")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .count(let subscriptionId, let count) = relayResponse else {
@@ -118,7 +118,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeAuthChallenge() throws {
-        let data = try loadFixture("auth_challenge")
+        let data = try loadFixtureData("auth_challenge")
 
         if let relayResponse = RelayResponse.decode(data: data) {
             guard case .auth(let challenge) = relayResponse else {

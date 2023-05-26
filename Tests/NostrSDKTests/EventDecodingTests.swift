@@ -11,7 +11,7 @@ import XCTest
 final class EventDecodingTests: XCTestCase, FixtureLoading {
 
     func testDecodeSetMetadata() throws {
-        let data = try loadFixture("set_metadata")
+        let data = try loadFixtureData("set_metadata")
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
@@ -25,7 +25,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeTextNote() throws {
-        let data = try loadFixture("text_note")
+        let data = try loadFixtureData("text_note")
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
@@ -44,7 +44,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeRepost() throws {
-        let data = try loadFixture("repost")
+        let data = try loadFixtureData("repost")
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
