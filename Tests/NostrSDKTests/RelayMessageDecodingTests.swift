@@ -8,7 +8,7 @@
 @testable import NostrSDK
 import XCTest
 
-final class RelayMessageDecodingTests: XCTestCase {
+final class RelayResponseDecodingTests: XCTestCase {
 
     let fixtureLoader = FixtureLoader()
 

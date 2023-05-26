@@ -1,5 +1,5 @@
 //
-//  RelayMessage.swift
+//  RelayResponse.swift
 //  
 //
 //  Created by Joel Klabo on 5/25/23.
