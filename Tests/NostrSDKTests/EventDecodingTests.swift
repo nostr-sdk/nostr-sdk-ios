@@ -8,15 +8,10 @@
 @testable import NostrSDK
 import XCTest
 
-final class EventDecodingTests: XCTestCase {
-
-    let fixtureLoader = FixtureLoader()
+final class EventDecodingTests: XCTestCase, FixtureLoading {
 
     func testDecodeSetMetadata() throws {
-        guard let data = fixtureLoader.loadFixture("set_metadata") else {
-            XCTFail("failed to load fixture")
-            return
-        }
+        let data = try loadFixture("set_metadata")
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
@@ -30,10 +25,7 @@ final class EventDecodingTests: XCTestCase {
     }
 
     func testDecodeTextNote() throws {
-        guard let data = fixtureLoader.loadFixture("text_note") else {
-            XCTFail("failed to load fixture")
-            return
-        }
+        let data = try loadFixture("text_note")
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
@@ -52,10 +44,7 @@ final class EventDecodingTests: XCTestCase {
     }
 
     func testDecodeRepost() throws {
-        guard let data = fixtureLoader.loadFixture("repost") else {
-            XCTFail("failed to load fixture")
-            return
-        }
+        let data = try loadFixture("repost")
 
         let event = try JSONDecoder().decode(NostrEvent.self, from: data)
 
