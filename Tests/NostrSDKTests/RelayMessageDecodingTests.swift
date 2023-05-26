@@ -139,4 +139,21 @@ final class RelayResponseDecodingTests: XCTestCase {
             XCTFail("failed to decode")
         }
     }
+
+    func testDecodeAuthChallenge() {
+        guard let data = fixtureLoader.loadFixture("auth_challenge") else {
+            XCTFail("failed to load fixture")
+            return
+        }
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .auth(let challenge) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(challenge, "some-challenge-string")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
 }

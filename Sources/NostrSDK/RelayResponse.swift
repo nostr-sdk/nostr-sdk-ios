@@ -19,6 +19,7 @@ enum RelayResponse: Decodable {
         case eose = "EOSE"
         case ok = "OK"
         case count = "COUNT"
+        case auth = "AUTH"
     }
 
     case notice(message: String)
@@ -26,6 +27,7 @@ enum RelayResponse: Decodable {
     case event(subscriptionId: String, event: NostrEvent)
     case ok(eventId: String, success: Bool, message: String)
     case count(subscriptionId: String, count: Int)
+    case auth(challenge: String)
 
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
@@ -50,6 +52,9 @@ enum RelayResponse: Decodable {
             let subscriptionId = try container.decode(String.self)
             let countResponse = try container.decode(CountResponse.self)
             self = .count(subscriptionId: subscriptionId, count: countResponse.count)
+        case .auth:
+            let challenge = try container.decode(String.self)
+            self = .auth(challenge: challenge)
         }
     }
 
