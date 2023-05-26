@@ -9,17 +9,23 @@ import Foundation
 
 enum RelayResponse: Decodable {
 
+    struct CountResponse: Codable {
+        let count: Int
+    }
+
     enum MessageType: String, Codable {
         case event = "EVENT"
         case notice = "NOTICE"
         case eose = "EOSE"
         case ok = "OK"
+        case count = "COUNT"
     }
 
     case notice(message: String)
     case eose(subscriptionId: String)
     case event(subscriptionId: String, event: NostrEvent)
     case ok(eventId: String, success: Bool, message: String)
+    case count(subscriptionId: String, count: Int)
 
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
@@ -40,6 +46,10 @@ enum RelayResponse: Decodable {
             let success = try container.decode(Bool.self)
             let message = try container.decode(String.self)
             self = .ok(eventId: eventId, success: success, message: message)
+        case .count:
+            let subscriptionId = try container.decode(String.self)
+            let countResponse = try container.decode(CountResponse.self)
+            self = .count(subscriptionId: subscriptionId, count: countResponse.count)
         }
     }
 

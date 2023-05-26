@@ -121,4 +121,22 @@ final class RelayMessageDecodingTests: XCTestCase {
             XCTFail("failed to decode")
         }
     }
+
+    func testDecodeCount() {
+        guard let data = fixtureLoader.loadFixture("count_response") else {
+            XCTFail("failed to load fixture")
+            return
+        }
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .count(let subscriptionId, let count) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(subscriptionId, "subscription-id")
+            XCTAssertEqual(count, 238)
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
 }
