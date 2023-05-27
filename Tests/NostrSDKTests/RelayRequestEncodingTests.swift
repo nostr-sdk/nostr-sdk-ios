@@ -71,7 +71,7 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading {
                             until: nil,
                             limit: nil)
 
-        guard let request = RelayRequest.req(subscriptionId: "some-subscription-id", filter: filter) else {
+        guard let request = RelayRequest.request(subscriptionId: "some-subscription-id", filter: filter) else {
             XCTFail("failed to encode request")
             return
         }

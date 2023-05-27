@@ -26,7 +26,7 @@ struct RelayRequest {
         return encode(payload: payload)
     }
 
-    static func req(subscriptionId: String, filter: Filter) -> String? {
+    static func request(subscriptionId: String, filter: Filter) -> String? {
         let payload = [AnyEncodable("REQ"), AnyEncodable(subscriptionId), AnyEncodable(filter)]
         return encode(payload: payload)
     }
