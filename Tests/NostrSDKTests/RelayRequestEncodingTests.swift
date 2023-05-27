@@ -11,11 +11,7 @@ import XCTest
 final class RelayRequestEncodingTests: XCTestCase, FixtureLoading {
 
     func testEncodeClose() throws {
-        guard let request = RelayRequest.close(subscriptionId: "some-subscription-id") else {
-            XCTFail("failed to encode request")
-            return
-        }
-
+        let request = try XCTUnwrap(RelayRequest.close(subscriptionId: "some-subscription-id"), "failed to encode request")
         let expected = try loadFixtureString("close_request")
 
         XCTAssertEqual(request, expected)
@@ -31,11 +27,8 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading {
                                tags: [eventTag, pubkeyTag],
                                content: "I think it stays persistent on your profile, but interface setting doesn’t persist. Bug.  ",
                                signature: "96e6667348b2b1fc5f6e73e68fb1605f571ad044077dda62a35c15eb8290f2c4559935db461f8466df3dcf39bc2e11984c5344f65aabee4520dd6653d74cdc09")
-        guard let request = RelayRequest.event(event) else {
-            XCTFail("failed to encode request")
-            return
-        }
 
+        let request = try XCTUnwrap(RelayRequest.event(event), "failed to encode request")
         let expected = try loadFixtureString("event_request")
 
         XCTAssertTrue(areEqualJSONArrayStrings(request, expected))
@@ -51,11 +44,7 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading {
                             until: nil,
                             limit: nil)
 
-        guard let request = RelayRequest.count(subscriptionId: "some-subscription-id", filter: filter) else {
-            XCTFail("failed to encode request")
-            return
-        }
-
+        let request = try XCTUnwrap(RelayRequest.count(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("count_request")
 
         XCTAssertTrue(areEqualJSONArrayStrings(request, expected))
@@ -71,11 +60,7 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading {
                             until: nil,
                             limit: nil)
 
-        guard let request = RelayRequest.request(subscriptionId: "some-subscription-id", filter: filter) else {
-            XCTFail("failed to encode request")
-            return
-        }
-
+        let request = try XCTUnwrap(RelayRequest.request(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("req")
 
         XCTAssertTrue(areEqualJSONArrayStrings(request, expected))
