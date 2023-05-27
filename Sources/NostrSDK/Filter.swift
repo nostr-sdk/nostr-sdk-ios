@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Filter {
+struct Filter: Codable {
     let ids: [String]?
     let authors: [String]?
     let kinds: [Int]?
@@ -26,31 +26,5 @@ struct Filter {
         case since = "since"
         case until = "until"
         case limit = "limit"
-    }
-}
-
-extension Filter: Codable {
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        ids = try container.decodeIfPresent([String].self, forKey: .ids)
-        authors = try container.decodeIfPresent([String].self, forKey: .authors)
-        kinds = try container.decodeIfPresent([Int].self, forKey: .kinds)
-        events = try container.decodeIfPresent([String].self, forKey: .events)
-        pubkeys = try container.decodeIfPresent([String].self, forKey: .pubkeys)
-        since = try container.decodeIfPresent(Int.self, forKey: .since)
-        until = try container.decodeIfPresent(Int.self, forKey: .until)
-        limit = try container.decodeIfPresent(Int.self, forKey: .limit)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(ids, forKey: .ids)
-        try container.encodeIfPresent(authors, forKey: .authors)
-        try container.encodeIfPresent(kinds, forKey: .kinds)
-        try container.encodeIfPresent(events, forKey: .events)
-        try container.encodeIfPresent(pubkeys, forKey: .pubkeys)
-        try container.encodeIfPresent(since, forKey: .since)
-        try container.encodeIfPresent(until, forKey: .until)
-        try container.encodeIfPresent(limit, forKey: .limit)
     }
 }
