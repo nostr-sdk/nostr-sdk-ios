@@ -42,10 +42,10 @@ public struct EventTag: Codable, Equatable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
-        try container.encode(self.identifier.rawValue)
-        try container.encode(self.contentIdentifier)
-        if let url = self.recommendedRelayURL {
-            try container.encode(url)
+        try container.encode(identifier.rawValue)
+        try container.encode(contentIdentifier)
+        if let recommendedRelayURL {
+            try container.encode(recommendedRelayURL)
         }
     }
 }
