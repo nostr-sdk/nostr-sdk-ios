@@ -8,7 +8,7 @@
 @testable import NostrSDK
 import XCTest
 
-final class FilterEncodingTests: XCTestCase, FixtureLoading {
+final class FilterEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
 
     func testFilterEncoding() throws {
         let filter = Filter(ids: nil,
@@ -26,7 +26,7 @@ final class FilterEncodingTests: XCTestCase, FixtureLoading {
         let result = try encoder.encode(filter)
         let resultString = String(decoding: result, as: UTF8.self)
 
-        XCTAssertTrue(areEqualJSONObjectStrings(expected, resultString))
+        XCTAssertTrue(areEquivalentJSONObjectStrings(expected, resultString))
     }
 
 }
