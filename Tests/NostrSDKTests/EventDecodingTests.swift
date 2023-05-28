@@ -42,7 +42,25 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.content, "I think it stays persistent on your profile, but interface setting doesn’t persist. Bug.  ")
         XCTAssertEqual(event.signature, "96e6667348b2b1fc5f6e73e68fb1605f571ad044077dda62a35c15eb8290f2c4559935db461f8466df3dcf39bc2e11984c5344f65aabee4520dd6653d74cdc09")
     }
-
+    
+    func testDecodeContactList() throws {
+        let data = try loadFixtureData("contact_list")
+        
+        let event = try JSONDecoder().decode(NostrEvent.self, from: data)
+        
+        XCTAssertEqual(event.id, "test-id")
+        XCTAssertEqual(event.pubkey, "test-pubkey")
+        XCTAssertEqual(event.createdAt, 1684817569)
+        XCTAssertEqual(event.kind, .contactList)
+        
+        let expectedTags: [Tag] = [
+            PubkeyTag(contentIdentifier: "pubkey1", recommendedRelayURL: "wss://relay1.com", petname: "alice"),
+            PubkeyTag(contentIdentifier: "pubkey2", recommendedRelayURL: "wss://relay2.com", petname: "bob")
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+        XCTAssertEqual(event.signature, "hex-signature")
+    }
+    
     func testDecodeRepost() throws {
         let data = try loadFixtureData("repost")
 

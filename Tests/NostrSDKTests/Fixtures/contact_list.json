@@ -1,0 +1,22 @@
+{
+  "id": "test-id",
+  "pubkey": "test-pubkey",
+  "created_at": 1684817569,
+  "kind": 3,
+  "tags": [
+    [
+      "p",
+      "pubkey1",
+      "wss://relay1.com",
+      "alice"
+    ],
+    [
+      "p",
+      "pubkey2",
+      "wss://relay2.com",
+      "bob"
+    ]
+  ],
+  "content": "",
+  "sig": "hex-signature"
+}
