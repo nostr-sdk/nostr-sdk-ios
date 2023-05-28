@@ -12,7 +12,7 @@ public struct NostrEvent: Codable {
     public let pubkey: String
     public let createdAt: TimeInterval
     public let kind: EventKind
-    public let tags: [EventTag]
+    public let tags: [Tag]
     public let content: String
     public let signature: String
 
