@@ -11,9 +11,8 @@ import XCTest
 final class EventDecodingTests: XCTestCase, FixtureLoading {
 
     func testDecodeSetMetadata() throws {
-        let data = try loadFixtureData("set_metadata")
 
-        let event = try JSONDecoder().decode(NostrEvent.self, from: data)
+        let event = try decodeFixture(type: NostrEvent.self, filename: "set_metadata")
 
         XCTAssertEqual(event.id, "d214c914b0ab49ec919fa5f60fabf746f421e432d96f941bd2573e4d22e36b51")
         XCTAssertEqual(event.pubkey, "00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700")
@@ -25,9 +24,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeTextNote() throws {
-        let data = try loadFixtureData("text_note")
 
-        let event = try JSONDecoder().decode(NostrEvent.self, from: data)
+        let event = try decodeFixture(type: NostrEvent.self, filename: "text_note")
 
         XCTAssertEqual(event.id, "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")
         XCTAssertEqual(event.pubkey, "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
@@ -44,9 +42,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
     
     func testDecodeContactList() throws {
-        let data = try loadFixtureData("contact_list")
-        
-        let event = try JSONDecoder().decode(NostrEvent.self, from: data)
+
+        let event = try decodeFixture(type: NostrEvent.self, filename: "contact_list")
         
         XCTAssertEqual(event.id, "test-id")
         XCTAssertEqual(event.pubkey, "test-pubkey")
@@ -62,9 +59,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
     
     func testDecodeRepost() throws {
-        let data = try loadFixtureData("repost")
-
-        let event = try JSONDecoder().decode(NostrEvent.self, from: data)
+        
+        let event = try decodeFixture(type: NostrEvent.self, filename: "repost")
 
         XCTAssertEqual(event.id, "9353c66d99d600f51b9b1f309b804d2156facd227d643eb513eb8c508498da21")
         XCTAssertEqual(event.pubkey, "91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832")
