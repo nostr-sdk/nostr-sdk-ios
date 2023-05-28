@@ -9,6 +9,7 @@ import Foundation
 
 enum FixtureLoadingError: Error {
     case missingFile
+    case decodingError
 }
 
 protocol FixtureLoading {}
@@ -30,4 +31,16 @@ extension FixtureLoading {
         let trimmedString = originalString.filter { !"\n\t\r".contains($0) }
         return trimmedString
     }
+
+    func decodeFixture<T: Decodable>(type: T.Type, filename: String) throws -> T {
+        do {
+            let data = try loadFixtureData(filename)
+            let decoder = JSONDecoder()
+            let instance = try decoder.decode(T.self, from: data)
+            return instance
+        } catch {
+            throw FixtureLoadingError.decodingError
+        }
+    }
+
 }
