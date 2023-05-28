@@ -2,7 +2,7 @@
 //  String+Hex.swift
 //
 //
-//  Created by Terry Yiu on 5/28/23.
+//  Copied by Terry Yiu on 5/28/23 from https://github.com/planetary-social/nos/blob/main/Nos/Extensions/String%2BHex.swift
 //
 
 import Foundation
