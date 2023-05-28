@@ -33,4 +33,19 @@ public struct EventTag: Codable, Equatable {
         self.contentIdentifier = contentIdentifier
         self.recommendedRelayURL = recommendedRelayURL
     }
+
+    enum CodingKeys: CodingKey {
+        case identifier
+        case contentIdentifier
+        case recommendedRelayURL
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(identifier.rawValue)
+        try container.encode(contentIdentifier)
+        if let recommendedRelayURL {
+            try container.encode(recommendedRelayURL)
+        }
+    }
 }

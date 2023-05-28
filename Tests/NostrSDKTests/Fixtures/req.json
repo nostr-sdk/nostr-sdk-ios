@@ -1,0 +1,1 @@
+["REQ", "some-subscription-id", {"kinds": [1, 7], "authors": ["some-pubkey"]}]

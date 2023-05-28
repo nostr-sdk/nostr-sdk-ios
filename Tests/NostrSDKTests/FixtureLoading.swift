@@ -14,7 +14,7 @@ enum FixtureLoadingError: Error {
 protocol FixtureLoading {}
 extension FixtureLoading {
 
-    func loadFixture(_ filename: String) throws -> Data {
+    func loadFixtureData(_ filename: String) throws -> Data {
         // Construct the URL for the fixtures directory.
         let bundle = Bundle.module
         guard let url = bundle.url(forResource: filename, withExtension: "json", subdirectory: "Fixtures") else {
@@ -22,5 +22,12 @@ extension FixtureLoading {
         }
         // Load the data from the file.
         return try Data(contentsOf: url)
+    }
+
+    func loadFixtureString(_ filename: String) throws -> String? {
+        let data = try loadFixtureData(filename)
+        let originalString = String(decoding: data, as: UTF8.self)
+        let trimmedString = originalString.filter { !"\n\t\r".contains($0) }
+        return trimmedString
     }
 }
