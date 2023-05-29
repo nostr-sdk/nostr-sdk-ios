@@ -77,7 +77,7 @@ class Bech32 {
     }
 
     /// Encode Bech32 string
-    public static func encode(_ hrp: String, baseFiveData values: Data) -> String {
+    static func encode(_ hrp: String, baseFiveData values: Data) -> String {
         let checksum = createChecksum(hrp: hrp, values: values)
         var combined = values
         combined.append(checksum)
@@ -169,7 +169,7 @@ extension Bech32 {
         case invalidCharacter
         case checksumMismatch
 
-        public var errorDescription: String? {
+        var errorDescription: String? {
             switch self {
             case .checksumMismatch:
                 return "Checksum doesn't match"

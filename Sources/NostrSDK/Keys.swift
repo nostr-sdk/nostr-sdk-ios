@@ -54,12 +54,14 @@ public struct Keypair {
 }
 
 public struct PublicKey {
+    static let humanReadablePrefix = "npub"
+
     public let hex: String
     public let npub: String
     public let dataRepresentation: Data
 
     public init?(dataRepresentation: Data) {
-        self.init(npub: Bech32.encode("npub", baseEightData: dataRepresentation))
+        self.init(npub: Bech32.encode(PublicKey.humanReadablePrefix, baseEightData: dataRepresentation))
     }
 
     public init?(hex: String) {
@@ -77,7 +79,7 @@ public struct PublicKey {
            return nil
         }
 
-        guard humanReadablePart == "npub" else {
+        guard humanReadablePart == PublicKey.humanReadablePrefix else {
             print("Could not create public key because the human readable part, \(humanReadablePart), is not equal to npub.")
             return nil
         }
@@ -94,12 +96,14 @@ public struct PublicKey {
 }
 
 public struct PrivateKey {
+    static let humanReadablePrefix = "nsec"
+
     public let hex: String
     public let nsec: String
     public let dataRepresentation: Data
 
     public init?(dataRepresentation: Data) {
-        self.init(nsec: Bech32.encode("nsec", baseEightData: dataRepresentation))
+        self.init(nsec: Bech32.encode(PrivateKey.humanReadablePrefix, baseEightData: dataRepresentation))
     }
 
     public init?(hex: String) {
@@ -117,7 +121,7 @@ public struct PrivateKey {
            return nil
         }
 
-        guard humanReadablePart == "nsec" else {
+        guard humanReadablePart == PrivateKey.humanReadablePrefix else {
             print("Could not create private key because the human readable part, \(humanReadablePart), is not equal to nsec.")
             return nil
         }
