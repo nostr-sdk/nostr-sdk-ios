@@ -2,3 +2,8 @@ disabled_rules:
   - line_length
   - identifier_name
   - trailing_whitespace
+
+excluded:
+  - .build
+  - Sources/NostrSDK/Bech32.swift # Most of the file was copied from a different source, so we do not want to modify it too much unnecessarily.
+  - Tests/NostrSDKTests/Bech32Tests.swift # Most of the file was copied from a different source, so we do not want to modify it too much unnecessarily.

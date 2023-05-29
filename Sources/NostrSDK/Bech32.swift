@@ -1,7 +1,7 @@
 //
 //  Bech32.swift
 //
-//  Modified by Terry Yiu on 5/24/23.
+//  Copied and modified by Terry Yiu on 5/24/23 from https://github.com/0xDEADP00L/Bech32/blob/master/Sources/Bech32.swift
 //  Created by Evolution Group Ltd on 12.02.2018.
 //  Copyright © 2018 Evolution Group Ltd. All rights reserved.
 //

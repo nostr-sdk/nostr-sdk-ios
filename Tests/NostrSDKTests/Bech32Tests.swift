@@ -1,7 +1,7 @@
 //
 //  Bech32Tests.swift
 //
-//  Modified by Terry Yiu on 5/24/23.
+//  Copied and modified by Terry Yiu on 5/24/23 from https://github.com/0xDEADP00L/Bech32/blob/master/Tests/Bech32Tests/Bech32Tests.swift
 //  Created by Evolution Group Ltd on 12.02.2018.
 //  Copyright © 2018 Evolution Group Ltd. All rights reserved.
 //
@@ -118,36 +118,25 @@ class Bech32Tests: XCTestCase {
             } catch let error as Bech32.DecodingError {
                 XCTAssert(errorsEqual(error, reason), "Decoding error mismatch, got \(error.localizedDescription), expected \(reason.localizedDescription)")
             } catch {
-                XCTFail("Invalid error occured: \(error.localizedDescription)")
+                XCTFail("Invalid error occurred: \(error.localizedDescription)")
             }
         }
     }
 
     private func errorsEqual(_ lhs: Bech32.DecodingError, _ rhs: Bech32.DecodingError) -> Bool {
-        switch lhs {
-        case .checksumMismatch:
-            return rhs == .checksumMismatch
-        case .incorrectChecksumSize:
-            return rhs == .incorrectChecksumSize
-        case .incorrectHrpSize:
-            return rhs == .incorrectHrpSize
-        case .invalidCase:
-            return rhs == .invalidCase
-        case .invalidCharacter:
-            return rhs == .invalidCharacter
-        case .noChecksumMarker:
-            return rhs == .noChecksumMarker
-        case .nonUTF8String:
-            return rhs == .nonUTF8String
-        case .stringLengthExceeded:
-            return rhs == .stringLengthExceeded
-        case .nonPrintableCharacter:
-            return rhs == .nonPrintableCharacter
+        switch (lhs, rhs) {
+        case (.checksumMismatch, .checksumMismatch),
+            (.incorrectChecksumSize, .incorrectChecksumSize),
+            (.incorrectHrpSize, .incorrectHrpSize),
+            (.invalidCase, .invalidCase),
+            (.invalidCharacter, .invalidCharacter),
+            (.noChecksumMarker, .noChecksumMarker),
+            (.nonUTF8String, .nonUTF8String),
+            (.stringLengthExceeded, .stringLengthExceeded),
+            (.nonPrintableCharacter, .nonPrintableCharacter):
+            return true
+        default:
+            return false
         }
     }
-
-    static var allTests = [
-        ("Valid Checksum", testValidChecksum),
-        ("Invalid Checksum", testInvalidChecksum)
-    ]
 }

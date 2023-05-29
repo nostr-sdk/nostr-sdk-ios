@@ -8,11 +8,11 @@
 import Foundation
 import secp256k1
 
-struct Keypair {
+public struct Keypair {
     public let publicKey: PublicKey
     public let privateKey: PrivateKey
 
-    init?() {
+    public init?() {
         guard let key = try? secp256k1.Signing.PrivateKey() else {
             print("Could not generate new secp256k1 private key.")
             return nil
@@ -26,7 +26,7 @@ struct Keypair {
         self.init(privateKey: privateKey)
     }
 
-    init?(nsec: String) {
+    public init?(nsec: String) {
         guard let privateKey = PrivateKey(nsec: nsec) else {
             print("Could not create keypair from private key nsec")
             return nil
@@ -35,7 +35,7 @@ struct Keypair {
         self.init(privateKey: privateKey)
     }
 
-    init?(privateKey: PrivateKey) {
+    public init?(privateKey: PrivateKey) {
         self.privateKey = privateKey
 
         guard let secp256k1PrivateKey = try? secp256k1.Signing.PrivateKey(dataRepresentation: privateKey.dataRepresentation) else {
@@ -58,11 +58,11 @@ public struct PublicKey {
     public let npub: String
     public let dataRepresentation: Data
 
-    init?(dataRepresentation: Data) {
+    public init?(dataRepresentation: Data) {
         self.init(npub: Bech32.encode("npub", baseEightData: dataRepresentation))
     }
 
-    init?(hex: String) {
+    public init?(hex: String) {
         guard let dataRepresentation = hex.hexDecoded else {
             print("Could not decode hex representation of public key.")
             return nil
@@ -71,7 +71,7 @@ public struct PublicKey {
         self.init(dataRepresentation: dataRepresentation)
     }
 
-    init?(npub: String) {
+    public init?(npub: String) {
         guard let (humanReadablePart, checksum) = try? Bech32.decode(npub) else {
            print("Could not create public key because npub could not be bech32 decoded.")
            return nil
@@ -98,11 +98,11 @@ public struct PrivateKey {
     public let nsec: String
     public let dataRepresentation: Data
 
-    init?(dataRepresentation: Data) {
+    public init?(dataRepresentation: Data) {
         self.init(nsec: Bech32.encode("nsec", baseEightData: dataRepresentation))
     }
 
-    init?(hex: String) {
+    public init?(hex: String) {
         guard let dataRepresentation = hex.hexDecoded else {
             print("Could not decode hex representation of private key.")
             return nil
@@ -111,7 +111,7 @@ public struct PrivateKey {
         self.init(dataRepresentation: dataRepresentation)
     }
 
-    init?(nsec: String) {
+    public init?(nsec: String) {
         guard let (humanReadablePart, checksum) = try? Bech32.decode(nsec) else {
            print("Could not create private key because nsec could not be bech32 decoded.")
            return nil
