@@ -1,7 +1,7 @@
 //
 //  Bech32Tests.swift
 //
-//  Copied and modified by Terry Yiu on 5/24/23 from https://github.com/0xDEADP00L/Bech32/blob/master/Tests/Bech32Tests/Bech32Tests.swift
+//  Copied and modified by Terry Yiu on 5/24/23 from https://github.com/0xDEADP00L/Bech32/blob/master/Tests/Bech32Tests/Bech32Tests.swift under MIT license
 //  Created by Evolution Group Ltd on 12.02.2018.
 //  Copyright © 2018 Evolution Group Ltd. All rights reserved.
 //

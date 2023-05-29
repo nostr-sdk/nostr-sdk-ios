@@ -3,6 +3,8 @@
 //
 //
 //  Copied by Terry Yiu on 5/28/23 from https://github.com/planetary-social/nos/blob/main/Nos/Extensions/Data%2BEncoding.swift
+//  Permission to redistribute this code under MIT license granted nostr:note1q39598qkdc093sdq4enudjf0dall76s7n779k07nutgd9r2zt6vq96l8c2
+//  Created by Matthew Lorentz for Nos on 2/3/23.
 //
 
 import Foundation
