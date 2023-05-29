@@ -32,15 +32,9 @@ extension FixtureLoading {
         return trimmedString
     }
 
-    func decodeFixture<T: Decodable>(type: T.Type, filename: String) throws -> T {
-        do {
-            let data = try loadFixtureData(filename)
-            let decoder = JSONDecoder()
-            let instance = try decoder.decode(T.self, from: data)
-            return instance
-        } catch {
-            throw FixtureLoadingError.decodingError
-        }
+    func decodeFixture<T: Decodable>(filename: String) throws -> T {
+        let data = try loadFixtureData(filename)
+        return try JSONDecoder().decode(T.self, from: data)
     }
 
 }
