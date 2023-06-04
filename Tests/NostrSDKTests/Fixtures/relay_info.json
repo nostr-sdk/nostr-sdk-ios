@@ -1,0 +1,46 @@
+{
+    "name": "nostr.test",
+    "description": "Nostr Test",
+    "pubkey": "test-pubkey",
+    "contact": "mailto:somebody@nostr.test",
+    "supported_nips": [
+        1,
+        2,
+        4,
+        9
+    ],
+    "supported_nip_extensions": [
+        "11a"
+    ],
+    "software": "git+https://github.com/Cameri/nostream.git",
+    "version": "1.25.2",
+    "limitation": {
+        "max_message_length": 1048576,
+        "max_subscriptions": 10,
+        "max_filters": 2500,
+        "max_limit": 5000,
+        "max_subid_length": 256,
+        "min_prefix": 4,
+        "max_event_tags": 2500,
+        "max_content_length": 65536,
+        "min_pow_difficulty": 0,
+        "auth_required": false,
+        "payment_required": true
+    },
+    "retention": [
+        { "kinds": [0, 1, [5, 7], [40, 49]], "time": 3600 },
+        { "kinds": [[40000, 49999]], "time": 100 },
+        { "kinds": [[30000, 39999]], "count": 1000 },
+        { "time": 3600, "count": 10000 }
+    ],
+    "language_tags": [ "en", "en-419" ],
+    "tags": [ "sfw-only", "bitcoin-only", "anime" ],
+    "posting_policy": "https://nostr.test/posting-policy.html",
+    "relay_countries": [ "CA", "US" ],
+    "payments_url": "https://nostr.test/invoices",
+    "fees": {
+        "admission": [{ "amount": 1000000, "unit": "msats" }],
+        "subscription": [{ "amount": 5000000, "unit": "msats", "period": 2592000 }],
+        "publication": [{ "kinds": [4], "amount": 100, "unit": "msats" }],
+    }
+}
