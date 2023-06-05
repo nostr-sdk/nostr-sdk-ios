@@ -18,12 +18,11 @@ final class RelayInfoTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(info.contactPubkey, "test-pubkey")
         XCTAssertEqual(info.alternativeContact, "mailto:somebody@nostr.test")
         XCTAssertEqual(info.supportedNIPs, [1, 2, 4, 9])
-        XCTAssertEqual(info.supportedNIPExtensions, ["11a"])
         XCTAssertEqual(info.software, "git+https://github.com/Cameri/nostream.git")
         XCTAssertEqual(info.version, "1.25.2")
         XCTAssertEqual(info.relayCountries, ["CA", "US"])
         XCTAssertEqual(info.paymentsURL, "https://nostr.test/invoices")
-        XCTAssertEqual(info.languageTags, ["en", "en-419"])
+        XCTAssertEqual(info.languageTags, ["en", "es"])
         XCTAssertEqual(info.tags, ["sfw-only", "bitcoin-only", "anime"])
         XCTAssertEqual(info.postingPolicyURL, "https://nostr.test/posting-policy.html")
         

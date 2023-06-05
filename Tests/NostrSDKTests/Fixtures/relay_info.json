@@ -33,7 +33,7 @@
         { "kinds": [[30000, 39999]], "count": 1000 },
         { "time": 3600, "count": 10000 }
     ],
-    "language_tags": [ "en", "en-419" ],
+    "language_tags": [ "en", "es" ],
     "tags": [ "sfw-only", "bitcoin-only", "anime" ],
     "posting_policy": "https://nostr.test/posting-policy.html",
     "relay_countries": [ "CA", "US" ],

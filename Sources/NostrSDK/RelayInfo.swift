@@ -16,7 +16,6 @@ public struct RelayInfo: Codable {
     public let contactPubkey: String?
     public let alternativeContact: String?
     public let supportedNIPs: [Int]?
-    public let supportedNIPExtensions: [String]?
     public let software: String?
     public let version: String?
     public let limitations: Limitations?
@@ -33,7 +32,6 @@ public struct RelayInfo: Codable {
         case contactPubkey = "pubkey"
         case alternativeContact = "contact"
         case supportedNIPs = "supported_nips"
-        case supportedNIPExtensions = "supported_nip_extensions"
         case software, version
         case limitations = "limitation"
         case paymentsURL = "payments_url"
