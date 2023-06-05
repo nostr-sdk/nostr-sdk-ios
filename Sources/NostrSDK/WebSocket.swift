@@ -1,6 +1,6 @@
 //
 //  WebSocket.swift
-//  damus
+//
 //
 //  Created by Bryan Montz on 4/13/23.
 //
@@ -33,7 +33,7 @@ final class WebSocket: NSObject, URLSessionWebSocketDelegate {
     }
 
     func ping(receiveHandler: @escaping (Error?) -> Void) {
-        self.webSocketTask.sendPing(pongReceiveHandler: receiveHandler)
+        webSocketTask.sendPing(pongReceiveHandler: receiveHandler)
     }
 
     func connect() {
@@ -48,13 +48,13 @@ final class WebSocket: NSObject, URLSessionWebSocketDelegate {
         task.delegate = self
         webSocketTask = task
 
-        let reason_str: String?
+        let reasonString: String?
         if let reason {
-            reason_str = String(data: reason, encoding: .utf8)
+            reasonString = String(data: reason, encoding: .utf8)
         } else {
-            reason_str = nil
+            reasonString = nil
         }
-        subject.send(.disconnected(closeCode, reason_str))
+        subject.send(.disconnected(closeCode, reasonString))
     }
 
     func send(_ message: URLSessionWebSocketTask.Message) {
