@@ -1,0 +1,10 @@
+{
+  "ids": ["pubkey1"],
+  "authors": ["author1", "author2"],
+  "kinds": [1, 2, 3],
+  "#e": ["event1", "event2"],
+  "#p": ["referencedPubkey1"],
+  "since": 1234,
+  "until": 12345,
+  "limit": 5
+}
