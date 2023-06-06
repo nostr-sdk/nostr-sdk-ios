@@ -14,7 +14,7 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
         let request = try XCTUnwrap(RelayRequest.close(subscriptionId: "some-subscription-id"), "failed to encode request")
         let expected = try loadFixtureString("close_request")
 
-        XCTAssertEqual(request, expected)
+        XCTAssertEqual(request.encoded, expected)
     }
 
     func testEncodeEvent() throws {
@@ -31,7 +31,7 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
         let request = try XCTUnwrap(RelayRequest.event(event), "failed to encode request")
         let expected = try loadFixtureString("event_request")
 
-        XCTAssertTrue(areEquivalentJSONArrayStrings(request, expected))
+        XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
     }
 
     func testEncodeCount() throws {
@@ -47,7 +47,7 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
         let request = try XCTUnwrap(RelayRequest.count(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("count_request")
 
-        XCTAssertTrue(areEquivalentJSONArrayStrings(request, expected))
+        XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
     }
 
     func testEncodeReq() throws {
@@ -63,6 +63,6 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
         let request = try XCTUnwrap(RelayRequest.request(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("req")
 
-        XCTAssertTrue(areEquivalentJSONArrayStrings(request, expected))
+        XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
     }
 }
