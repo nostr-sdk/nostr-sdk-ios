@@ -15,7 +15,7 @@ final class RelayTests: XCTestCase {
     
     private var cancellables = Set<AnyCancellable>()
 
-    func testConnectAndReceive() async throws {
+    func testConnectAndReceive() throws {
         let relay = try Relay(url: RelayTests.RelayURL)
         
         let exp = expectation(description: "connect")
@@ -28,7 +28,7 @@ final class RelayTests: XCTestCase {
             }
             .store(in: &cancellables)
         
-        await fulfillment(of: [exp], timeout: 10)
+        wait(for: [exp], timeout: 10)
         
         let subscriptionId = try relay.subscribe(with: Filter(kinds: [1], limit: 1))
         
@@ -42,7 +42,7 @@ final class RelayTests: XCTestCase {
             }
             .store(in: &cancellables)
         
-        await fulfillment(of: [exp2], timeout: 10)
+        wait(for: [exp2], timeout: 10)
     }
 
 }
