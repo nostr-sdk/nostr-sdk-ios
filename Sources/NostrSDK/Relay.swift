@@ -117,7 +117,7 @@ public final class Relay: ObservableObject {
                 }
                 
                 if let self {
-                    delegate?.relayStateDidChange(self, state: self.state)
+                    self.delegate?.relayStateDidChange(self, state: self.state)
                 }
             }
         
