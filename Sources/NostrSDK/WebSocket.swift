@@ -8,11 +8,24 @@
 import Combine
 import Foundation
 
-enum WebSocketEvent {
+enum WebSocketEvent: CustomStringConvertible {
     case connected
     case message(URLSessionWebSocketTask.Message)
     case disconnected(URLSessionWebSocketTask.CloseCode, String?)
     case error(Error)
+    
+    var description: String {
+        switch self {
+        case .connected:
+            return "Connected."
+        case .message(let message):
+            return "Received message: \(message)"
+        case .disconnected(let closeCode, let reason):
+            return "Disconnected. close code: \(closeCode), reason: \(String(describing: reason))"
+        case .error(let error):
+            return "Error: \(error)"
+        }
+    }
 }
 
 final class WebSocket: NSObject, URLSessionWebSocketDelegate {
