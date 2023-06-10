@@ -28,6 +28,11 @@ public struct Filter: Codable {
         case limit = "limit"
     }
     
+    /// Creates the filter with the specified parameters
+    ///
+    /// - Parameters:
+    ///   - ids: a list of event ids or prefixes
+    ///   - authors: a list of pubkeys or prefixes, the pubkey of an event must be one of these
     public init(ids: [String]? = nil, authors: [String]? = nil, kinds: [Int]? = nil, events: [String]? = nil, pubkeys: [String]? = nil, since: Int? = nil, until: Int? = nil, limit: Int? = nil) {
         self.ids = ids
         self.authors = authors
