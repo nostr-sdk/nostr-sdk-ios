@@ -36,6 +36,12 @@ public enum RelayRequestError: Error, CustomStringConvertible {
     }
 }
 
+/// An optional interface for receiving state updates and events
+public protocol RelayDelegate: AnyObject {
+    func relayStateDidChange(_ relay: Relay, state: Relay.State)
+    func relay(_ relay: Relay, didReceive event: NostrEvent)
+}
+
 /// An object that communicates with a relay.
 public final class Relay: ObservableObject {
     
@@ -74,6 +80,9 @@ public final class Relay: ObservableObject {
     /// A Publisher that publishes all events the relay receives.
     public private(set) var events = PassthroughSubject<NostrEvent, Never>()
     
+    /// An optional delegate interface for receiving state updates and events
+    public weak var delegate: RelayDelegate?
+    
     private let logger = Logger(subsystem: "NostrSDK", category: "Relay")
     
     /// Creates a new Relay with the provided URL.
@@ -106,6 +115,10 @@ public final class Relay: ObservableObject {
                     self?.state = .error(error)
                     self?.logger.error("\(event.description)")
                 }
+                
+                if let self {
+                    self.delegate?.relayStateDidChange(self, state: self.state)
+                }
             }
         
         state = .connecting
@@ -118,6 +131,7 @@ public final class Relay: ObservableObject {
             switch response {
             case .event(_, let event):
                 events.send(event)
+                delegate?.relay(self, didReceive: event)
             default:
                 break
             }
