@@ -35,7 +35,7 @@ final class RelayTests: XCTestCase {
         let exp2 = expectation(description: "receive")
         
         relay.events
-            .sink { [unowned relay] event in
+            .sink { [unowned relay] _ in
                 // we have received an event from the relay. close the subscription.
                 try? relay.closeSubscription(with: subscriptionId)
                 exp2.fulfill()
