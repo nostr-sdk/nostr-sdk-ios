@@ -5,17 +5,18 @@
 //  Created by Bryan Montz on 5/23/23.
 //
 
-// NIP 1 - initial definition of tags
-// https://github.com/nostr-protocol/nips/blob/master/01.md
-//
-// NIP 10 - refinement of tags
-// https://github.com/nostr-protocol/nips/blob/master/10.md
-
 import Foundation
 
+/// A constant that describes the type of a ``Tag``.
 public enum TagIdentifier: Codable, Equatable {
+    
+    /// points to the id of an event this event is quoting, replying to or referring to somehow
     case event
+    
+    /// points to a pubkey of someone that is referred to in the event
     case pubkey
+    
+    /// a tag of unknown type
     case unknown(String)
     
     var rawValue: String {
@@ -43,8 +44,21 @@ public enum TagIdentifier: Codable, Equatable {
     }
 }
 
+/// A constant that describes a type of reference to an event.
+///
+/// See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/10.md#marked-e-tags-preferred) for a description of marked "e" tags.
 public enum EventTagMarker: Codable, Equatable {
-    case root, reply, mention, unknown(String)
+    /// Denotes the root id of the reply thread being responded to.
+    case root
+    
+    /// Denotes the id of the reply event being responded to.
+    case reply
+    
+    /// Denotes a quoted or reposted event id.
+    case mention
+    
+    /// Denotes an unknown marker type.
+    case unknown(String)
     
     init(rawValue: String) {
         switch rawValue {
@@ -81,14 +95,27 @@ public enum EventTagMarker: Codable, Equatable {
     }
 }
 
+/// A reference to an event, pubkey, or other content
+///
+/// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md) for an initial definition of tags.
+/// See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/01.md) for further refinement and additions to tags.
 public class Tag: Codable, Equatable {
     public static func == (lhs: Tag, rhs: Tag) -> Bool {
         lhs.isEqual(to: rhs)
     }
     
+    /// The type of tag: event, pubkey, or other unknown type.
     let identifier: TagIdentifier
+    
+    /// The content identifier associated with the type. For example, for the
+    /// pubkey type, the `contentIdentifier` is the 32-byte, hex-encoded pubkey.
     let contentIdentifier: String
     
+    /// Creates and returns a tag object that references some piece of content.
+    /// - Parameters:
+    ///   - identifier: The type of tag: event, pubkey, or other unknown type.
+    ///   - contentIdentifier: The content identifier associated with the type. For example, for the
+    ///                        pubkey type, the `contentIdentifier` is the 32-byte, hex-encoded pubkey.
     init(identifier: TagIdentifier, contentIdentifier: String) {
         self.identifier = identifier
         self.contentIdentifier = contentIdentifier
@@ -122,10 +149,22 @@ public class Tag: Codable, Equatable {
     }
 }
 
+/// A tag referencing a pubkey
+///
+/// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md) and [NIP-02](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
 public class PubkeyTag: Tag {
+    /// The URL of a recommended relay associated with the reference.
     let recommendedRelayURL: String?
+    
+    /// A local name for the profile (can also be set to an empty string or not provided).
     let petname: String?
     
+    /// Creates and returns a tag for a pubkey.
+    /// - Parameters:
+    ///   - contentIdentifier: The content identifier associated with the type. For example, for the
+    ///                        pubkey type, the `contentIdentifier` is the 32-byte, hex-encoded pubkey.
+    ///   - recommendedRelayURL: The URL of a recommended relay associated with the reference.
+    ///   - petname: A local name for the profile (can also be set to an empty string or not provided).
     init(contentIdentifier: String, recommendedRelayURL: String? = nil, petname: String? = nil) {
         self.recommendedRelayURL = recommendedRelayURL
         self.petname = petname
@@ -162,9 +201,17 @@ public class PubkeyTag: Tag {
     }
 }
 
+/// A tag referencing an event
+/// 
+/// See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/10.md#marked-e-tags-preferred)
 public class EventTag: Tag {
+    /// The type of the ``EventTag``.
     let marker: EventTagMarker?
     
+    /// Creates and returns tag referencing an event.
+    /// - Parameters:
+    ///   - contentIdentifier: The event id.
+    ///   - marker: The type of reference. See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/10.md#marked-e-tags-preferred) for a description of marked "e" tags.
     init(contentIdentifier: String, marker: EventTagMarker? = nil) {
         self.marker = marker
         super.init(identifier: .event, contentIdentifier: contentIdentifier)
