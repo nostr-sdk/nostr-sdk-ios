@@ -9,7 +9,7 @@ import Foundation
 
 /// A structure that describes a filter to subscribe to relays with.
 ///
-/// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md)
+/// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#communication-between-clients-and-relays)
 public struct Filter: Codable {
     /// a list of event ids or prefixes
     public let ids: [String]?
@@ -46,7 +46,7 @@ public struct Filter: Codable {
         case limit = "limit"
     }
     
-    /// Creates the filter with the specified parameters
+    /// Creates and returns a filter with the specified parameters.
     ///
     /// - Parameters:
     ///   - ids: a list of event ids or prefixes
@@ -58,7 +58,7 @@ public struct Filter: Codable {
     ///   - until: an integer unix timestamp, events must be older than this to pass
     ///   - limit: maximum number of events to be returned in the initial query
     ///
-    ///   > Important: Event ids and pubkeys should be in the 32-byte hexadecimal format, not the `note...` and `npub...` formats
+    /// > Important: Event ids and pubkeys should be in the 32-byte hexadecimal format, not the `note...` and `npub...` formats.
     public init(ids: [String]? = nil, authors: [String]? = nil, kinds: [Int]? = nil, events: [String]? = nil, pubkeys: [String]? = nil, since: Int? = nil, until: Int? = nil, limit: Int? = nil) {
         self.ids = ids
         self.authors = authors
