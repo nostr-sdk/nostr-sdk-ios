@@ -45,12 +45,6 @@ struct NIP05Response: Codable {
     let relays: [String: [String]]?
 }
 
-public protocol DataRequesting {
-    func data(from url: URL, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
-}
-
-extension URLSession: DataRequesting {}
-
 /// Provides functions for parsing and requesting data associated with a [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md#nip-05) identifier.
 public protocol NIP05DataRequesting {}
 public extension NIP05DataRequesting {
