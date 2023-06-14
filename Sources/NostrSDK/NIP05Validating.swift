@@ -22,16 +22,16 @@ public enum NIP05ValidationError: Error {
 /// A response to a [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md#nip-05) request.
 ///
 /// It be decoded from json data that looks like this:
-///```json
-///{
-///  "names": {
-///    "bob": "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9"
-///  },
-///  "relays": {
-///    "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [ "wss://relay.example.com", "wss://relay2.example.com" ]
-///  }
-///}
-///```
+/// ```json
+/// {
+///   "names": {
+///     "bob": "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9"
+///   },
+///   "relays": {
+///     "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [ "wss://relay.example.com", "wss://relay2.example.com" ]
+///   }
+/// }
+/// ```
 struct NIP05Response: Codable {
     
     /// An object with names as properties and hex-encoded pubkeys as values.
