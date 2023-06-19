@@ -120,9 +120,6 @@ public final class Relay: ObservableObject {
                     self.delegate?.relayStateDidChange(self, state: self.state)
                 }
             }
-        
-        state = .connecting
-        socket.connect()
     }
     
     private func receive(_ message: URLSessionWebSocketTask.Message) {
@@ -147,6 +144,25 @@ public final class Relay: ObservableObject {
         @unknown default:
             break
         }
+    }
+
+    /// Connects to the relay if it is not already in a connected or connecting state.
+    public func connect() {
+        guard state != .connected && state != .connecting else {
+            return
+        }
+
+        state = .connecting
+        socket.connect()
+    }
+
+    /// Disconnects from the relay if it is in a connected or connecting state.
+    public func disconnect() {
+        guard state == .connected || state == .connecting else {
+            return
+        }
+
+        socket.disconnect()
     }
     
     /// Sends a request to the relay.
@@ -175,7 +191,7 @@ public final class Relay: ObservableObject {
     /// Sends a request to the relay to close the subscription with the provided id.
     /// - Parameter subscriptionId: The subscription id to close
     ///
-    /// Call this function to cleanly close the connection with the relay
+    /// Call this function to cleanly close the subscription with the relay
     /// when the results of the subscription are no longer needed.
     public func closeSubscription(with subscriptionId: String) throws {
         guard let request = RelayRequest.close(subscriptionId: subscriptionId).encoded else {

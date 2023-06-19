@@ -20,6 +20,7 @@ final class RelayTests: XCTestCase {
     
     func testConnectAndReceive() throws {
         let relay = try Relay(url: RelayTests.RelayURL)
+        relay.connect()
         
         let exp = expectation(description: "connect")
         
@@ -50,6 +51,7 @@ final class RelayTests: XCTestCase {
     
     func testRelayDelegate() throws {
         let relay = try Relay(url: RelayTests.RelayURL)
+        relay.connect()
         relay.delegate = self
         
         let exp = expectation(description: "connect")
