@@ -72,7 +72,13 @@ public final class Relay: ObservableObject {
     }
     
     /// A Publisher that publishes the relay's current state.
-    @Published public private(set) var state: State = .notConnected
+    @Published public private(set) var state: State = .notConnected {
+        didSet {
+            if state != oldValue {
+                delegate?.relayStateDidChange(self, state: state)
+            }
+        }
+    }
     
     let socket: WebSocket
     private var socketSubscription: AnyCancellable?
@@ -114,10 +120,6 @@ public final class Relay: ObservableObject {
                 case .error(let error):
                     self?.state = .error(error)
                     self?.logger.error("\(event.description)")
-                }
-                
-                if let self {
-                    self.delegate?.relayStateDidChange(self, state: self.state)
                 }
             }
     }
