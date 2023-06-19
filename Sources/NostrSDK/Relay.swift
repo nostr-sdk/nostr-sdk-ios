@@ -24,12 +24,17 @@ public enum RelayURLError: Error, CustomStringConvertible {
 
 /// An error that occurs while building a relay request.
 public enum RelayRequestError: Error, CustomStringConvertible {
-    
+
+    /// An indication that there is no connection to the relay web socket.
+    case notConnected
+
     /// An indication that the request was invalid.
     case invalidRequest
     
     public var description: String {
         switch self {
+        case .notConnected:
+            return "There is no connection to the relay web socket."
         case .invalidRequest:
             return "The request was invalid."
         }
@@ -181,6 +186,10 @@ public final class Relay: ObservableObject {
     /// respond with events that match the provided filter.
     @discardableResult
     public func subscribe(with filter: Filter) throws -> String {
+        guard state == .connected else {
+            throw RelayRequestError.notConnected
+        }
+
         let subscriptionId = UUID().uuidString
         guard let request = RelayRequest.request(subscriptionId: subscriptionId,
                                                  filter: filter).encoded else {
@@ -196,6 +205,10 @@ public final class Relay: ObservableObject {
     /// Call this function to cleanly close the subscription with the relay
     /// when the results of the subscription are no longer needed.
     public func closeSubscription(with subscriptionId: String) throws {
+        guard state == .connected else {
+            throw RelayRequestError.notConnected
+        }
+
         guard let request = RelayRequest.close(subscriptionId: subscriptionId).encoded else {
             throw RelayRequestError.invalidRequest
         }
