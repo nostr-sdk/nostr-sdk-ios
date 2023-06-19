@@ -17,64 +17,82 @@ final class RelayTests: XCTestCase {
     
     private var connectExpectation: XCTestExpectation?
     private var receiveExpectation: XCTestExpectation?
+    private var disconnectExpectation: XCTestExpectation?
+    
+    override func setUp() {
+        connectExpectation = expectation(description: "connect")
+        receiveExpectation = expectation(description: "receive")
+        disconnectExpectation = expectation(description: "disconnect")
+    }
     
     func testConnectAndReceive() throws {
         let relay = try Relay(url: RelayTests.RelayURL)
-        
-        let exp = expectation(description: "connect")
+        relay.connect()
         
         relay.$state
+            .removeDuplicates()
             .sink { state in
-                if state == .connected {
-                    exp.fulfill()
+                switch state {
+                case .connected:
+                    self.connectExpectation?.fulfill()
+                case .notConnected:
+                    self.disconnectExpectation?.fulfill()
+                default:
+                    break
                 }
             }
             .store(in: &cancellables)
         
-        wait(for: [exp], timeout: 10)
+        wait(for: [connectExpectation!], timeout: 10)
         
         let subscriptionId = try relay.subscribe(with: Filter(kinds: [1], limit: 1))
-        
-        let exp2 = expectation(description: "receive")
         
         relay.events
             .sink { [unowned relay] _ in
                 // we have received an event from the relay. close the subscription.
                 try? relay.closeSubscription(with: subscriptionId)
-                exp2.fulfill()
+                self.receiveExpectation?.fulfill()
             }
             .store(in: &cancellables)
         
-        wait(for: [exp2], timeout: 10)
+        wait(for: [receiveExpectation!], timeout: 10)
+        
+        relay.disconnect()
+        
+        wait(for: [disconnectExpectation!], timeout: 10)
+        
+        cancellables.removeAll()
     }
     
     func testRelayDelegate() throws {
         let relay = try Relay(url: RelayTests.RelayURL)
         relay.delegate = self
+        relay.connect()
         
-        let exp = expectation(description: "connect")
-        
-        connectExpectation = exp
-        
-        wait(for: [exp], timeout: 10)
+        wait(for: [connectExpectation!], timeout: 10)
         
         let subscriptionId = try relay.subscribe(with: Filter(kinds: [1], limit: 1))
         
-        let exp2 = expectation(description: "receive")
-        
-        receiveExpectation = exp2
-        
-        wait(for: [exp2], timeout: 10)
+        wait(for: [receiveExpectation!], timeout: 10)
         
         try? relay.closeSubscription(with: subscriptionId)
+        
+        relay.disconnect()
+        
+        wait(for: [disconnectExpectation!], timeout: 10)
     }
 }
 
 extension RelayTests: RelayDelegate {
     
     func relayStateDidChange(_ relay: Relay, state: Relay.State) {
-        if state == .connected {
+        switch state {
+        case .connected:
             connectExpectation?.fulfill()
+        case .notConnected:
+            disconnectExpectation?.fulfill()
+        default:
+            break
         }
     }
     
