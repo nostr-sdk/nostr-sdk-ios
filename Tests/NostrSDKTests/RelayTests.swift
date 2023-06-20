@@ -19,13 +19,11 @@ final class RelayTests: XCTestCase {
     private var receiveExpectation: XCTestExpectation?
     private var disconnectExpectation: XCTestExpectation?
     
-    override func setUp() {
+    func testConnectAndReceive() throws {
         connectExpectation = expectation(description: "connect")
         receiveExpectation = expectation(description: "receive")
         disconnectExpectation = expectation(description: "disconnect")
-    }
-    
-    func testConnectAndReceive() throws {
+
         let relay = try Relay(url: RelayTests.RelayURL)
         relay.connect()
         
@@ -63,8 +61,26 @@ final class RelayTests: XCTestCase {
         
         cancellables.removeAll()
     }
+
+    func testSubscribeWithoutConnection() throws {
+        let relay = try Relay(url: RelayTests.RelayURL)
+        XCTAssertThrowsError(try relay.subscribe(with: Filter(kinds: [1], limit: 1))) {
+            XCTAssertEqual($0 as? RelayRequestError, RelayRequestError.notConnected)
+        }
+    }
+
+    func testCloseSubscribeWithoutConnection() throws {
+        let relay = try Relay(url: RelayTests.RelayURL)
+        XCTAssertThrowsError(try relay.closeSubscription(with: "foobar")) {
+            XCTAssertEqual($0 as? RelayRequestError, RelayRequestError.notConnected)
+        }
+    }
     
     func testRelayDelegate() throws {
+        connectExpectation = expectation(description: "connect")
+        receiveExpectation = expectation(description: "receive")
+        disconnectExpectation = expectation(description: "disconnect")
+
         let relay = try Relay(url: RelayTests.RelayURL)
         relay.delegate = self
         relay.connect()
