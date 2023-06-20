@@ -1,0 +1,9 @@
+{
+  "content": "This is a test message.",
+  "created_at": 1687090842,
+  "id": "b7fbbb4d473db3b3a671ad995f1248d56e9a2ed7f145c1e5f74308e60db2eba7",
+  "kind": 1,
+  "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+  "sig": "09a1dcace3cec8cd9934b544cede6955c9876e385d73491f1ca5354a0baecda834c43ac9510ef779f8c8c7543b3faccd821e40e0a52dde8527d071cb0d53230c",
+  "tags": []
+}
