@@ -48,7 +48,7 @@ public protocol RelayDelegate: AnyObject {
 }
 
 /// An object that communicates with a relay.
-public final class Relay: ObservableObject {
+public final class Relay: ObservableObject, EventVerifying {
     
     /// Constants indicating the current state of the relay.
     public enum State: Equatable {
@@ -212,6 +212,22 @@ public final class Relay: ObservableObject {
         guard let request = RelayRequest.close(subscriptionId: subscriptionId).encoded else {
             throw RelayRequestError.invalidRequest
         }
+        send(request: request)
+    }
+    
+    /// Publishes an event to the relay.
+    /// - Parameter event: The ``NostrEvent`` to publish
+    public func publishEvent(_ event: NostrEvent) throws {
+        guard state == .connected else {
+            throw RelayRequestError.notConnected
+        }
+        
+        try verifyEvent(event)
+        
+        guard let request = RelayRequest.event(event).encoded else {
+            throw RelayRequestError.invalidRequest
+        }
+        
         send(request: request)
     }
 }

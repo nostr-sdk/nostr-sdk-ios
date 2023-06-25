@@ -42,7 +42,7 @@ public extension SignatureVerifying {
     /// Throws an error if there is a problem with the input parameters or if the signature is invalid. See ``SignatureVerifyingError``.
     ///
     /// If this function does not throw an error, then the signature has been successfully verified.
-    func verifySignature(_ signature: String, for message: String, with publicKey: String) throws {
+    func verifySignature(_ signature: String, for message: String, withPublicKey publicKey: String) throws {
         guard let signatureData = signature.hexadecimalData, signatureData.count == 64 else {
             throw SignatureVerifyingError.unexpectedSignatureLength
         }
