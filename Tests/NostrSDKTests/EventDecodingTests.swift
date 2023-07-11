@@ -75,4 +75,22 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertTrue(event.content.hasPrefix("{\"pubkey\":\"33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689\""))
         XCTAssertEqual(event.signature, "8c81d6c5b44f134bdded8f6d20c9d299fcbe3bc9687df14d7516e4781b60a00fa7bb71eb73e29c3ca3bc6da2198710c82f64859f79ea33434cffa4d80c29b1c2")
     }
+
+    func testDecodeReaction() throws {
+
+        let event: NostrEvent = try decodeFixture(filename: "reaction")
+
+        XCTAssertEqual(event.id, "8a3217770794fabe89adac500dcd5d38966d3ba3cb83fabc97b58135980f76cd")
+        XCTAssertEqual(event.pubkey, "2779f3d9f42c7dee17f0e6bcdcf89a8f9d592d19e3b1bbd27ef1cffd1a7f98d1")
+        XCTAssertEqual(event.createdAt, 1689029084)
+        XCTAssertEqual(event.kind, .reaction)
+
+        let expectedTags = [
+            EventTag(contentIdentifier: "62dcc905c282dd712bbe6b47d2e40feb333f8a0c39899617f4ca37337199ede0"),
+            PubkeyTag(contentIdentifier: "e1ff3bfdd4e40315959b08b4fcc8245eaa514637e1d4ec2ae166b743341be1af")
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+        XCTAssertEqual(event.content, "🤙")
+        XCTAssertEqual(event.signature, "c0dea5d4612d834e13e0dcfeff71a345f761d868bf27fd5e3fe521b76872d5da3db05375f8739a4bad86189d63720187c08170827990b113b477437f17e4a906")
+    }
 }
