@@ -34,4 +34,9 @@ public enum EventKind: Int, Codable {
     ///
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#nip-18).
     case repost = 6
+
+    /// This kind of note is used to signal a reaction to other notes.
+    ///
+    /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+    case reaction = 7
 }
