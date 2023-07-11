@@ -38,7 +38,12 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// > Note: The reposted event must be a kind 1 text note.
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#nip-18).
     case repost
-    
+
+    /// This kind of note is used to signal a reaction to other notes.
+    ///
+    /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+    case reaction
+
     /// This kind of note is used to signal to followers that another event is worth reading.
     ///
     /// > Note: The reposted event can be any kind of event other than a kind 1 text note.
@@ -55,6 +60,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .recommendServer,
         .contactList,
         .repost,
+        .reaction,
         .genericRepost
     ]
 
@@ -70,6 +76,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .recommendServer: return 2
         case .contactList: return 3
         case .repost: return 6
+        case .reaction: return 7
         case .genericRepost: return 16
         case let .unknown(value): return value
         }
