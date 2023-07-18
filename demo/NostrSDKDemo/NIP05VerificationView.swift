@@ -44,7 +44,7 @@ struct NIP05VerficationView: View {
                     Text("Get Pubkey")
                 }
 
-                if let pubkeyResult  {
+                if let pubkeyResult {
                     Text(pubkeyResult)
                         .textSelection(.enabled)
                 }

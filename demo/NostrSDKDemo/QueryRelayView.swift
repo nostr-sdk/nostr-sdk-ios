@@ -65,7 +65,7 @@ struct QueryRelayView: View {
                             Text("\(number)")
                         }
                     }
-                    .onChange(of: selectedKind) { newValue in
+                    .onChange(of: selectedKind) { _ in
                         events = []
                     }
 

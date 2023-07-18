@@ -24,4 +24,3 @@ struct ListOptionView_Previews: PreviewProvider {
         ListOptionView(destinationView: AnyView(GenerateKeyView()), imageName: "key", labelText: "Key Generation")
     }
 }
-
