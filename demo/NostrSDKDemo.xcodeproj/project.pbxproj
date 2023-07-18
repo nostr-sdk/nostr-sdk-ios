@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		F786D8F72A3BAED800A29915 /* QueryRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F786D8F62A3BAED800A29915 /* QueryRelayView.swift */; };
+		F7A81BDE2A66201800EBCB0C /* NostrSDK in Frameworks */ = {isa = PBXBuildFile; productRef = F7A81BDD2A66201800EBCB0C /* NostrSDK */; };
 		F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */; };
 		F7CB362E2A35127B0098F35C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362D2A35127B0098F35C /* ContentView.swift */; };
 		F7CB36302A35127C0098F35C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7CB362F2A35127C0098F35C /* Assets.xcassets */; };
 		F7CB36332A35127C0098F35C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7CB36322A35127C0098F35C /* Preview Assets.xcassets */; };
-		F7CB363B2A3512E20098F35C /* NostrSDK in Frameworks */ = {isa = PBXBuildFile; productRef = F7CB363A2A3512E20098F35C /* NostrSDK */; };
 		F7CB36412A3ACD530098F35C /* GenerateKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36402A3ACD530098F35C /* GenerateKeyView.swift */; };
 		F7CB36432A3ACD7B0098F35C /* ListOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36422A3ACD7B0098F35C /* ListOptionView.swift */; };
 		F7CB36452A3ACE6E0098F35C /* ConnectRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36442A3ACE6E0098F35C /* ConnectRelayView.swift */; };
@@ -37,18 +37,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7CB363B2A3512E20098F35C /* NostrSDK in Frameworks */,
+				F7A81BDE2A66201800EBCB0C /* NostrSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F7A81BDC2A66201800EBCB0C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F7CB361F2A35127B0098F35C = {
 			isa = PBXGroup;
 			children = (
 				F7CB362A2A35127B0098F35C /* NostrSDKDemo */,
 				F7CB36292A35127B0098F35C /* Products */,
+				F7A81BDC2A66201800EBCB0C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,7 +109,7 @@
 			);
 			name = NostrSDKDemo;
 			packageProductDependencies = (
-				F7CB363A2A3512E20098F35C /* NostrSDK */,
+				F7A81BDD2A66201800EBCB0C /* NostrSDK */,
 			);
 			productName = NostrSDKDemo;
 			productReference = F7CB36282A35127B0098F35C /* NostrSDKDemo.app */;
@@ -380,7 +388,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F7CB363A2A3512E20098F35C /* NostrSDK */ = {
+		F7A81BDD2A66201800EBCB0C /* NostrSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F7CB36392A3512E20098F35C /* XCRemoteSwiftPackageReference "nostr-sdk-ios" */;
 			productName = NostrSDK;
