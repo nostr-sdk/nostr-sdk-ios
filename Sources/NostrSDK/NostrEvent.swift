@@ -19,7 +19,7 @@ public struct NostrEvent: Codable {
     public let pubkey: String
     
     /// unix timestamp in seconds
-    public let createdAt: TimeInterval
+    public let createdAt: Int64
     
     /// integer
     public let kind: EventKind
@@ -43,44 +43,50 @@ public struct NostrEvent: Codable {
         case signature = "sig"
     }
     
-    /// the date the event was created
-    public var createdDate: Date {
-        Date(timeIntervalSince1970: createdAt)
+    init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String) {
+        self.id = id
+        self.pubkey = pubkey
+        self.createdAt = createdAt
+        self.kind = kind
+        self.tags = tags
+        self.content = content
+        self.signature = signature
     }
     
-    /// the serialized event
-    ///
-    /// To obtain the `event.id`, we sha256 the serialized event. The serialization is done over the UTF-8 JSON-serialized string (with no white space or line breaks) of the following structure:
-    ///
-    /// ```json
-    /// [
-    ///    0,
-    ///    <pubkey, as a (lowercase) hex string>,
-    ///    <created_at, as a number>,
-    ///    <kind, as a number>,
-    ///    <tags, as an array of arrays of non-null strings>,
-    ///    <content, as a string>
-    /// ]
-    /// ```
-    ///
-    /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures).
-    public var serializedForSigning: String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .withoutEscapingSlashes
-        
-        let tagsString: String
-        if let tagsData = try? encoder.encode(tags) {
-            tagsString = String(decoding: tagsData, as: UTF8.self)
-        } else {
-            tagsString = "[]"
-        }
-        
-        let contentString: String
-        if let contentData = try? encoder.encode(content) {
-            contentString = String(decoding: contentData, as: UTF8.self)
-        } else {
-            contentString = "\"\""
-        }
-        return "[0,\"\(pubkey)\",\(Int64(createdAt)),\(kind.rawValue),\(tagsString),\(contentString)]"
+    init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        self.kind = kind
+        self.content = content
+        self.tags = tags
+        self.createdAt = createdAt
+        pubkey = keypair.publicKey.hex
+        id = EventSerializer.identifierForEvent(withPubkey: keypair.publicKey.hex,
+                                                createdAt: createdAt,
+                                                kind: kind.rawValue,
+                                                tags: tags,
+                                                content: content)
+        signature = try keypair.privateKey.signatureForContent(id)
+    }
+    
+    /// the date the event was created
+    public var createdDate: Date {
+        Date(timeIntervalSince1970: TimeInterval(createdAt))
+    }
+    
+    /// the event serialized, so that it can be signed
+    public var serialized: String {
+        EventSerializer.serializedEvent(withPubkey: pubkey,
+                                        createdAt: createdAt,
+                                        kind: kind.rawValue,
+                                        tags: tags,
+                                        content: content)
+    }
+    
+    /// the event.id calculated as a SHA256 of the serialized event. See ``EventSerializer``.
+    public var calculatedId: String {
+        EventSerializer.identifierForEvent(withPubkey: pubkey,
+                                           createdAt: createdAt,
+                                           kind: kind.rawValue,
+                                           tags: tags,
+                                           content: content)
     }
 }
