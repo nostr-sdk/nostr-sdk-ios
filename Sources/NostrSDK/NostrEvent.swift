@@ -19,7 +19,7 @@ public struct NostrEvent: Codable {
     public let pubkey: String
     
     /// unix timestamp in seconds
-    public let createdAt: TimeInterval
+    public let createdAt: Int64
     
     /// integer
     public let kind: EventKind
@@ -43,7 +43,7 @@ public struct NostrEvent: Codable {
         case signature = "sig"
     }
     
-    init(id: String, pubkey: String, createdAt: TimeInterval, kind: EventKind, tags: [Tag], content: String, signature: String) {
+    init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String) {
         self.id = id
         self.pubkey = pubkey
         self.createdAt = createdAt
@@ -53,14 +53,14 @@ public struct NostrEvent: Codable {
         self.signature = signature
     }
     
-    init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: TimeInterval = Date.now.timeIntervalSince1970, signedBy keypair: Keypair) throws {
+    init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         self.kind = kind
         self.content = content
         self.tags = tags
         self.createdAt = createdAt
         pubkey = keypair.publicKey.hex
         id = EventSerializer.identifierForEvent(withPubkey: keypair.publicKey.hex,
-                                                createdAt: Int64(createdAt),
+                                                createdAt: createdAt,
                                                 kind: kind.rawValue,
                                                 tags: tags,
                                                 content: content)
@@ -69,13 +69,13 @@ public struct NostrEvent: Codable {
     
     /// the date the event was created
     public var createdDate: Date {
-        Date(timeIntervalSince1970: createdAt)
+        Date(timeIntervalSince1970: TimeInterval(createdAt))
     }
     
     /// the event serialized, so that it can be signed
     public var serialized: String {
         EventSerializer.serializedEvent(withPubkey: pubkey,
-                                        createdAt: Int64(createdAt),
+                                        createdAt: createdAt,
                                         kind: kind.rawValue,
                                         tags: tags,
                                         content: content)
@@ -84,7 +84,7 @@ public struct NostrEvent: Codable {
     /// the event.id calculated as a SHA256 of the serialized event. See ``EventSerializer``.
     public var calculatedId: String {
         EventSerializer.identifierForEvent(withPubkey: pubkey,
-                                           createdAt: Int64(createdAt),
+                                           createdAt: createdAt,
                                            kind: kind.rawValue,
                                            tags: tags,
                                            content: content)
