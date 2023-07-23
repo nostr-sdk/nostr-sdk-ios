@@ -12,7 +12,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
 
     func testDecodeSetMetadata() throws {
 
-        let event: NostrEvent = try decodeFixture(filename: "set_metadata")
+        let event: SetMetadataEvent = try decodeFixture(filename: "set_metadata")
 
         XCTAssertEqual(event.id, "d214c914b0ab49ec919fa5f60fabf746f421e432d96f941bd2573e4d22e36b51")
         XCTAssertEqual(event.pubkey, "00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700")
@@ -21,11 +21,28 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.tags, [])
         XCTAssertTrue(event.content.hasPrefix("{\"banner\":\"https://nostr.build/i/nostr.build"))
         XCTAssertEqual(event.signature, "7bb7f031fbf41f49eeb44fdfb061bc8d143197d33fae8d29b017709adf2b17c76e78ccb2ee128ee93d0661cad4c626a747d48a178745c94944a693ff31ea7619")
+        
+        // access metadata properties from raw dictionary
+        XCTAssertEqual(event.rawUserMetadata["name"] as? String, "cameri")
+        XCTAssertEqual(event.rawUserMetadata["about"] as? String, "@HodlWithLedn. All opinions are my own.\nBitcoiner class of 2021. Core Nostr Developer. Author of Nostream. Professional Relay Operator.")
+        XCTAssertEqual(event.rawUserMetadata["website"] as? String, "https://primal.net/cameri")
+        XCTAssertEqual(event.rawUserMetadata["nip05"] as? String, "cameri@elder.nostr.land")
+        XCTAssertEqual(event.rawUserMetadata["picture"] as? String, "https://nostr.build/i/9396d5cd901304726883aea7363543f121e1d53964dd3149cadecd802608aebe.jpg")
+        XCTAssertEqual(event.rawUserMetadata["banner"] as? String, "https://nostr.build/i/nostr.build_90a51a2e50c9f42288260d01b3a2a4a1c7a9df085423abad7809e76429da7cdc.gif")
+        
+        // access metadata properties from decoded object
+        let userMetadata = try XCTUnwrap(event.userMetadata)
+        XCTAssertEqual(userMetadata.name, "cameri")
+        XCTAssertEqual(userMetadata.about, "@HodlWithLedn. All opinions are my own.\nBitcoiner class of 2021. Core Nostr Developer. Author of Nostream. Professional Relay Operator.")
+        XCTAssertEqual(userMetadata.website, URL(string: "https://primal.net/cameri"))
+        XCTAssertEqual(userMetadata.nostrAddress, "cameri@elder.nostr.land")
+        XCTAssertEqual(userMetadata.pictureURL, URL(string: "https://nostr.build/i/9396d5cd901304726883aea7363543f121e1d53964dd3149cadecd802608aebe.jpg"))
+        XCTAssertEqual(userMetadata.bannerPictureURL, URL(string: "https://nostr.build/i/nostr.build_90a51a2e50c9f42288260d01b3a2a4a1c7a9df085423abad7809e76429da7cdc.gif"))
     }
 
     func testDecodeTextNote() throws {
 
-        let event: NostrEvent = try decodeFixture(filename: "text_note")
+        let event: TextNoteEvent = try decodeFixture(filename: "text_note")
 
         XCTAssertEqual(event.id, "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")
         XCTAssertEqual(event.pubkey, "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
@@ -39,6 +56,24 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.content, "I think it stays persistent on your profile, but interface setting doesn’t persist. Bug.  ")
         XCTAssertEqual(event.signature, "96e6667348b2b1fc5f6e73e68fb1605f571ad044077dda62a35c15eb8290f2c4559935db461f8466df3dcf39bc2e11984c5344f65aabee4520dd6653d74cdc09")
+        
+        XCTAssertEqual(event.mentionedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
+        XCTAssertEqual(event.mentionedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
+    }
+    
+    func testDecodeRecommendServer() throws {
+        
+        let event: RecommendServerEvent = try decodeFixture(filename: "recommend_server")
+        
+        XCTAssertEqual(event.id, "test-id")
+        XCTAssertEqual(event.pubkey, "test-pubkey")
+        XCTAssertEqual(event.createdAt, 1683799330)
+        XCTAssertEqual(event.kind, .recommendServer)
+        XCTAssertEqual(event.tags, [])
+        XCTAssertEqual(event.content, "wss://nostr.relay")
+        XCTAssertEqual(event.signature, "test-signature")
+
+        XCTAssertEqual(event.relayURL, URL(string: "wss://nostr.relay"))
     }
     
     func testDecodeContactList() throws {

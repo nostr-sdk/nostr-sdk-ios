@@ -7,6 +7,25 @@
 
 import Foundation
 
+/// A type used for decoding and mapping a kind number to a ``NostrEvent`` subclass.
+fileprivate struct EventKindMapper: Decodable {
+    let kind: EventKind
+    
+    enum CodingKeys: CodingKey {
+        case kind
+    }
+    
+    /// The ``NostrEvent`` subclass associated with the kind.
+    var classForKind: NostrEvent.Type {
+        switch kind {
+        case .setMetadata:      return SetMetadataEvent.self
+        case .textNote:         return TextNoteEvent.self
+        case .recommendServer:  return RecommendServerEvent.self
+        default:                return NostrEvent.self
+        }
+    }
+}
+
 enum RelayResponse: Decodable {
 
     struct CountResponse: Codable {
@@ -35,7 +54,15 @@ enum RelayResponse: Decodable {
         switch responseType {
         case .event:
             let subscriptionId = try container.decode(String.self)
-            let event = try container.decode(NostrEvent.self)
+            let kindMapper = try container.decode(EventKindMapper.self)
+            
+            // Since the decoding index in the container cannot be decremented, create a
+            // new container so we can use the class from the mapper.
+            var container2 = try decoder.unkeyedContainer()
+            _ = try? container2.decode(MessageType.self)
+            _ = try? container2.decode(String.self)
+            let event = try container2.decode(kindMapper.classForKind.self)
+            
             self = .event(subscriptionId: subscriptionId, event: event)
         case .notice:
             let message = try container.decode(String.self)
