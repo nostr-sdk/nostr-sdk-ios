@@ -12,6 +12,10 @@ import Foundation
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/b503f8a92b22be3037b8115fe3e644865a4fa155/01.md#basic-event-kinds)
 final class RecommendServerEvent: NostrEvent {
     var relayURL: URL? {
-        URL(string: content)
+        let components = URLComponents(string: content)
+        guard components?.scheme == "wss" || components?.scheme == "ws" else {
+            return nil
+        }
+        return components?.url
     }
 }
