@@ -8,7 +8,7 @@
 import Foundation
 
 /// An object that describes a user.
-public struct UserMetadata: Decodable {
+public struct UserMetadata: Codable {
     
     /// The user's name.
     public let name: String?
@@ -35,6 +35,15 @@ public struct UserMetadata: Decodable {
         case nostrAddress = "nip05"
         case pictureURL = "picture"
         case bannerPictureURL = "banner"
+    }
+    
+    public init(name: String?, about: String?, website: URL?, nostrAddress: String?, pictureURL: URL?, bannerPictureURL: URL?) {
+        self.name = name
+        self.about = about
+        self.website = website
+        self.nostrAddress = nostrAddress
+        self.pictureURL = pictureURL
+        self.bannerPictureURL = bannerPictureURL
     }
 }
 
