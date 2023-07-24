@@ -8,7 +8,7 @@
 import Foundation
 
 /// A type used for decoding and mapping a kind number to a ``NostrEvent`` subclass.
-fileprivate struct EventKindMapper: Decodable {
+fileprivate struct EventKindMapper: Decodable {     // swiftlint:disable:this private_over_fileprivate
     let kind: EventKind
     
     enum CodingKeys: CodingKey {
