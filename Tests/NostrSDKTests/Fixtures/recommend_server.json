@@ -1,0 +1,9 @@
+{
+  "content": "wss://nostr.relay",
+  "created_at": 1683799330,
+  "id": "test-id",
+  "kind": 2,
+  "pubkey": "test-pubkey",
+  "sig": "test-signature",
+  "tags": []
+}
