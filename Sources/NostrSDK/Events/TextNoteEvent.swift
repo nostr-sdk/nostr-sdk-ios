@@ -14,13 +14,13 @@ public final class TextNoteEvent: NostrEvent {
     
     /// Pubkeys mentioned in the note content.
     public var mentionedPubkeys: [String] {
-        let pubkeyTags = tags.filter { $0.identifier == .pubkey }
-        return pubkeyTags.map { $0.contentIdentifier }
+        let pubkeyTags = tags.filter { $0.name == .pubkey }
+        return pubkeyTags.map { $0.value }
     }
     
     /// Events mentioned in the note content.
     public var mentionedEventIds: [String] {
-        let eventTags = tags.filter { $0.identifier == .event }
-        return eventTags.map { $0.contentIdentifier }
+        let eventTags = tags.filter { $0.name == .event }
+        return eventTags.map { $0.value }
     }
 }
