@@ -78,7 +78,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     
     func testDecodeContactList() throws {
 
-        let event: NostrEvent = try decodeFixture(filename: "contact_list")
+        let event: ContactListEvent = try decodeFixture(filename: "contact_list")
         
         XCTAssertEqual(event.id, "test-id")
         XCTAssertEqual(event.pubkey, "test-pubkey")
@@ -91,6 +91,33 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.signature, "hex-signature")
+    }
+    
+    func testDecodeContactListWithRelays() throws {
+        let event: ContactListEvent = try decodeFixture(filename: "contact_list_with_relays")
+
+        let expectedPubkeys = [
+            "3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681",
+            "07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f",
+            "020f2d21ae09bf35fcdfb65decf1478b846f5f728ab30c5eaabcd6d081a81c3e",
+            "58c741aa630c2da35a56a77c1d05381908bd10504fdd2d8b43f725efa6d23196",
+            "59fbee7369df7713dbbfa9bbdb0892c62eba929232615c6ff2787da384cb770f"
+        ]
+
+        XCTAssertEqual(event.contactPubkeys, expectedPubkeys)
+
+        let firstTag = Tag(name: .pubkey, value: "3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681")
+        XCTAssertEqual(event.contactPubkeyTags.first, firstTag)
+
+        let expectedRelays = [
+            "wss://relay.damus.io": RelayPermissions(read: true, write: true),
+            "wss://relay.current.fyi": RelayPermissions(read: false, write: true),
+            "wss://eden.nostr.land": RelayPermissions(read: true, write: true),
+            "wss://relay.snort.social": RelayPermissions(read: true, write: false),
+            "wss://nos.lol": RelayPermissions(read: true, write: true)
+        ]
+        
+        XCTAssertEqual(event.relays, expectedRelays)
     }
     
     func testDecodeRepost() throws {

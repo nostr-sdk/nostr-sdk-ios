@@ -1,0 +1,30 @@
+{
+  "id": "367d16ca453b07552c3cd4cc553da62e5c6b20c59747417691b7fda4efdb055a",
+  "pubkey": "07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f",
+  "created_at": 1681754187,
+  "kind": 3,
+  "tags": [
+    [
+      "p",
+      "3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681"
+    ],
+    [
+      "p",
+      "07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f"
+    ],
+    [
+      "p",
+      "020f2d21ae09bf35fcdfb65decf1478b846f5f728ab30c5eaabcd6d081a81c3e"
+    ],
+    [
+      "p",
+      "58c741aa630c2da35a56a77c1d05381908bd10504fdd2d8b43f725efa6d23196"
+    ],
+    [
+      "p",
+      "59fbee7369df7713dbbfa9bbdb0892c62eba929232615c6ff2787da384cb770f"
+    ]
+  ],
+  "content": "{\"wss://relay.damus.io\":{\"write\":true,\"read\":true},\"wss://relay.current.fyi\":{\"write\":true,\"read\":false},\"wss://eden.nostr.land\":{\"write\":true,\"read\":true},\"wss://relay.snort.social\":{\"write\":false,\"read\":true},\"wss://nos.lol\":{\"write\":true,\"read\":true}}",
+  "sig": "c83838d776595b6b7f31fb11970891402fc69983f88321a19c7f4f2b8891675b4c1eede4d73dc920068d353c90bbd839a34b4b03ebde34a3295c1c4b79094043"
+}
