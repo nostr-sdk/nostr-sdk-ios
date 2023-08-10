@@ -1,0 +1,19 @@
+{
+  "content": "{\"pubkey\":\"reposted-event-pubkey\",\"content\":\"wss:\/\/relay.test\",\"id\":\"test-id\",\"created_at\":1660947193,\"sig\":\"e46223e4324c910e9325b095093e3e8ef5122e223940b040553893124c66e3afb815599af97cc58f2b93cb240e37c42d75fb7747e896c6d51753b93aefb5f22a\",\"kind\":2,\"tags\":[[\"e\",\"9941b55c2844f275b7b8714a1c39859088a425ce798f740ea8fea879f9098641\"]]}",
+  "created_at": 1660947401,
+  "id": "f366fce0c21d201d7a2e3fc25d5a20ab481992ccced7de606965543a66c8643f",
+  "kind": 16,
+  "pubkey": "3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681",
+  "sig": "8f073e7ba13ad6d4709cac193a6bc6f8d7a1427114cb84547aa5c19af9e804a59a7432fc2669b1e2bf0cf6393243689a8dddb0eaeca754f35d6dc28bc8ca7d16",
+  "tags": [
+    [
+      "e",
+      "test-id",
+      "wss://reposted.relay"
+    ],
+    [
+      "p",
+      "reposted-event-pubkey"
+    ]
+  ]
+}

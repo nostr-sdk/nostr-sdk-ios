@@ -95,7 +95,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     
     func testDecodeRepost() throws {
         
-        let event: NostrEvent = try decodeFixture(filename: "repost")
+        let event: TextNoteRepostEvent = try decodeFixture(filename: "repost")
 
         XCTAssertEqual(event.id, "9353c66d99d600f51b9b1f309b804d2156facd227d643eb513eb8c508498da21")
         XCTAssertEqual(event.pubkey, "91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832")
@@ -109,5 +109,26 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertTrue(event.content.hasPrefix("{\"pubkey\":\"33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689\""))
         XCTAssertEqual(event.signature, "8c81d6c5b44f134bdded8f6d20c9d299fcbe3bc9687df14d7516e4781b60a00fa7bb71eb73e29c3ca3bc6da2198710c82f64859f79ea33434cffa4d80c29b1c2")
+        
+        XCTAssertEqual(event.repostedEventId, "6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34")
+        
+        let repostedNote = try XCTUnwrap(event.repostedNote)
+        XCTAssertEqual(repostedNote.id, "6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34")
+        XCTAssertEqual(repostedNote.pubkey, "33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689")
+        XCTAssertEqual(repostedNote.createdAt, 1684482315)
+    }
+    
+    func testDecodeGenericRepost() throws {
+        
+        let event: GenericRepostEvent = try decodeFixture(filename: "generic_repost")
+        
+        XCTAssertEqual(event.repostedEventPubkey, "reposted-event-pubkey")
+        XCTAssertEqual(event.repostedEventId, "test-id")
+        XCTAssertEqual(event.repostedEventRelayURL, "wss://reposted.relay")
+        
+        let repostedEvent = try XCTUnwrap(event.repostedEvent)
+        
+        XCTAssertEqual(repostedEvent.id, "test-id")
+        XCTAssertEqual(repostedEvent.kind, .recommendServer)
     }
 }
