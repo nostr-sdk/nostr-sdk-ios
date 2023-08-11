@@ -134,9 +134,9 @@ public extension DirectMessageEncrypting {
         }
 
         let algorithm: CCAlgorithm = UInt32(kCCAlgorithmAES128)
-        let options:   CCOptions   = UInt32(kCCOptionPKCS7Padding)
+        let options: CCOptions   = UInt32(kCCOptionPKCS7Padding)
 
-        var numberOfBytesDecrypted :size_t = 0
+        var numberOfBytesDecrypted: size_t = 0
 
         let status = CCCrypt(operation,
                              algorithm,
