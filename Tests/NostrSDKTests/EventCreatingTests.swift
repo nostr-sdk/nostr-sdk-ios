@@ -27,6 +27,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
 
         // Content should be decryptable
         XCTAssertEqual(try event.decryptedContent(keypair: Keypair.test), content)
+
+        try verifyEvent(event)
     }
     
     func testCreateSetMetadataEvent() throws {

@@ -29,7 +29,7 @@ public extension DirectMessageEncrypting {
         
         let iv = randomBytes(count: 16).bytes
         let utf8Content = Data(content.utf8).bytes
-        guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: sharedSecret, shared_sec: sharedSecret) else {
+        guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: iv, shared_sec: sharedSecret) else {
             throw DirectMessageEncryptingError.encryptionError
         }
 
