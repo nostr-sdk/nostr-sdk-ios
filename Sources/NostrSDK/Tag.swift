@@ -126,7 +126,7 @@ public class Tag: Codable, Equatable {
     ///   - value: The content identifier associated with the type. For example, for the
     ///                        pubkey type, the `value` is the 32-byte, hex-encoded pubkey.
     ///   - otherParameters: The remaining parameters in the array of strings the tag consists of.
-    public init(name: TagName, value: String, otherParameters: [String] = []) {
+    init(name: TagName, value: String, otherParameters: [String] = []) {
         self.name = name
         self.value = value
         self.otherParameters = otherParameters

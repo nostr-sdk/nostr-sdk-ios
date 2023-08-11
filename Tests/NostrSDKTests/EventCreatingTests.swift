@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import NostrSDK
+@testable import NostrSDK
 import XCTest
 
 final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
