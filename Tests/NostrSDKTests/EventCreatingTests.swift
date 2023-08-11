@@ -10,6 +10,21 @@ import NostrSDK
 import XCTest
 
 final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
+
+    func testDirectMessageEvent() throws {
+        let content = "Secret message."
+        let recipientPubKey = Keypair.test.publicKey
+        let recipientTag = Tag(name: .pubkey, value: recipientPubKey.hex)
+
+        let event = try directMessage(withContent: content, recipient: recipientPubKey, signedBy: Keypair.test)
+
+        // Content should contain "?iv=" if encrypted
+        XCTAssert(event.content.contains("?iv="))
+
+        // Recipient should be tagged
+        let tag = try XCTUnwrap(event.tags.first)
+        XCTAssertEqual(tag, recipientTag)
+    }
     
     func testCreateSetMetadataEvent() throws {
         let meta = UserMetadata(name: "Nostr SDK Test",

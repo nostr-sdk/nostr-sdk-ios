@@ -11,7 +11,7 @@ enum EventCreatingError: Error {
     case invalidInput
 }
 
-public protocol EventCreating {}
+public protocol EventCreating: DirectMessageEncrypting {}
 public extension EventCreating {
     
     /// Creates a set metadata event (kind 0) and signs it with the provided ``Keypair``.
@@ -27,6 +27,28 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
         return try SetMetadataEvent(kind: .setMetadata, content: metadataAsString, signedBy: keypair)
+    }
+
+    /// Creates a direct message event (kind 4) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - content: The content of the text note.
+    ///   - recipient: The PublicKey of the recipient.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed direct message event.
+    ///
+    /// See [NIP-04 - Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
+    func directMessage(withContent content: String, recipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
+        let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
+
+        guard let sharedSecret = try? getSharedSecret(sender: keypair, recipient: pubkey) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        guard let encryptedMessage = try? encode(content: content, sharedSecret: sharedSecret) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        return try DirectMessageEvent(kind: .directMessage, content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
     
     /// Creates a text note event (kind 1) and signs it with the provided ``Keypair``.

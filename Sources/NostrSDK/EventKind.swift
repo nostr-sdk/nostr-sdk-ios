@@ -32,6 +32,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     ///
     /// See [NIP-02 - Contact List and Petnames](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
     case contactList
+
+    /// This kind of event should have a recipeint pubkey tag.
+    ///
+    /// See [NIP-04 - Direct Messages](https://github.com/nostr-protocol/nips/blob/master/04.md)
+    case directMessage
     
     /// This kind of note is used to signal to followers that another event is worth reading.
     ///
@@ -69,6 +74,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .textNote: return 1
         case .recommendServer: return 2
         case .contactList: return 3
+        case .directMessage: return 4
         case .repost: return 6
         case .genericRepost: return 16
         case let .unknown(value): return value
