@@ -26,7 +26,7 @@ public extension DirectMessageEncrypting {
         recipientPublicKeyBytes.insert(2, at: 0)
 
         var recipientPublicKey = secp256k1_pubkey()
-        var sharedSecret = [UInt8](repeating: 0, count: 22)
+        var sharedSecret = [UInt8](repeating: 0, count: 32)
 
         var ok = secp256k1_ec_pubkey_parse(secp256k1.Context.rawRepresentation,
                                            &recipientPublicKey,
@@ -42,7 +42,7 @@ public extension DirectMessageEncrypting {
                             &recipientPublicKey,
                             senderPrivateKeyBytes,
                             {(output,x32,_,_) in
-                                memcpy(output,x32,32)
+                                memcpy(output, x32, 32)
                                 return 1
                             },
                             nil) != 0
