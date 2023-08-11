@@ -40,11 +40,7 @@ public extension EventCreating {
     func directMessage(withContent content: String, recipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
         let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
 
-        guard let sharedSecret = try? getSharedSecret(sender: keypair, recipient: pubkey) else {
-            throw EventCreatingError.invalidInput
-        }
-
-        guard let encryptedMessage = try? encode(content: content, sharedSecret: sharedSecret) else {
+        guard let encryptedMessage = try? encrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
             throw EventCreatingError.invalidInput
         }
 

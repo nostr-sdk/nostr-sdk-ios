@@ -24,6 +24,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         // Recipient should be tagged
         let tag = try XCTUnwrap(event.tags.first)
         XCTAssertEqual(tag, recipientTag)
+
+        // Content should be decryptable
+        XCTAssertEqual(try event.decryptedContent(keypair: Keypair.test), content)
     }
     
     func testCreateSetMetadataEvent() throws {

@@ -14,24 +14,78 @@ public enum DirectMessageEncryptingError: Error {
     case pubkeyParsing
     case sharedSecretCreation
     case encryptionError
+    case decryptionError
+    case missingValue
 }
 
 public protocol DirectMessageEncrypting {}
 public extension DirectMessageEncrypting {
 
-    func getSharedSecret(sender keypair: Keypair, recipient pubkey: PublicKey) throws -> [UInt8] {
-        let senderPrivateKeyBytes = keypair.privateKey.dataRepresentation.bytes
-        var recipientPublicKeyBytes = pubkey.dataRepresentation.bytes
+    func encrypt(content: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
 
-        recipientPublicKeyBytes.insert(2, at: 0)
+        guard let sharedSecret = try? getSharedSecret(privateKey: privateKey, recipient: publicKey) else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        let iv = randomBytes(count: 16).bytes
+        let utf8Content = Data(content.utf8).bytes
+        guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: sharedSecret, shared_sec: sharedSecret) else {
+            throw DirectMessageEncryptingError.encryptionError
+        }
+
+        return encodeDMBase64(content: encryptedMessage.bytes, iv: iv)
+    }
+
+    func decrypt(encryptedContent message: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
+        guard let sharedSecret = try? getSharedSecret(privateKey: privateKey, recipient: publicKey) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        let sections = Array(message.split(separator: "?"))
+
+        if sections.count != 2 {
+            throw DirectMessageEncryptingError.decryptionError
+        }
+
+        guard let encryptedContent = sections.first,
+              let encryptedContentData = Data(base64Encoded: String(encryptedContent)) else {
+            throw DirectMessageEncryptingError.decryptionError
+        }
+
+        guard let ivContent = sections.last else {
+            throw DirectMessageEncryptingError.decryptionError
+        }
+
+        let ivContentTrimmed = ivContent.dropFirst(3)
+
+        guard let ivContentData = Data(base64Encoded: String(ivContentTrimmed)) else {
+            throw DirectMessageEncryptingError.decryptionError
+        }
+        
+        guard let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, shared_sec: sharedSecret) else {
+            throw DirectMessageEncryptingError.decryptionError
+        }
+
+        guard let decryptedMessage = String(data: decryptedContentData, encoding: .utf8) else {
+            throw DirectMessageEncryptingError.decryptionError
+        }
+
+        return decryptedMessage
+    }
+
+    private func getSharedSecret(privateKey: PrivateKey, recipient pubkey: PublicKey) throws -> [UInt8] {
+        let privateKeyBytes = privateKey.dataRepresentation.bytes
+        var publicKeyBytes = pubkey.dataRepresentation.bytes
+
+        publicKeyBytes.insert(2, at: 0)
 
         var recipientPublicKey = secp256k1_pubkey()
         var sharedSecret = [UInt8](repeating: 0, count: 32)
 
         var ok = secp256k1_ec_pubkey_parse(secp256k1.Context.rawRepresentation,
                                            &recipientPublicKey,
-                                           recipientPublicKeyBytes,
-                                           recipientPublicKeyBytes.count) != 0
+                                           publicKeyBytes,
+                                           publicKeyBytes.count) != 0
 
         if !ok {
             throw DirectMessageEncryptingError.pubkeyParsing
@@ -40,7 +94,7 @@ public extension DirectMessageEncrypting {
         ok = secp256k1_ecdh(secp256k1.Context.rawRepresentation,
                             &sharedSecret,
                             &recipientPublicKey,
-                            senderPrivateKeyBytes,
+                            privateKeyBytes,
                             {(output,x32,_,_) in
                                 memcpy(output, x32, 32)
                                 return 1
@@ -54,15 +108,6 @@ public extension DirectMessageEncrypting {
         return sharedSecret
     }
 
-    func encode(content: String, sharedSecret: [UInt8]) throws -> String {
-        let iv = randomBytes(count: 16).bytes
-        let utf8Content = Data(content.utf8).bytes
-        guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: sharedSecret, shared_sec: sharedSecret) else {
-            throw DirectMessageEncryptingError.encryptionError
-        }
-
-        return encodeDMBase64(content: encryptedMessage.bytes, iv: iv)
-    }
 
     private func AESDecrypt(data: [UInt8], iv: [UInt8], shared_sec: [UInt8]) -> Data? {
         return AESOperation(operation: CCOperation(kCCDecrypt), data: data, iv: iv, shared_sec: shared_sec)
