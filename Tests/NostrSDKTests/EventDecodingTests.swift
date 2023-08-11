@@ -60,6 +60,23 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.mentionedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
         XCTAssertEqual(event.mentionedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
     }
+
+    func testDecodeDirectMessage() throws {
+        let event: DirectMessageEvent = try decodeFixture(filename: "dm")
+
+        XCTAssertEqual(event.content, "+0V/p6oNtFXAlWVzDTx6wg==?iv=L6gDJ8ei4k1t3lUNgYAahw==")
+        XCTAssertEqual(event.id, "a606649e4995a12226902bd38573c21b04732c0835e415d09be6fbe93879b666")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.createdAt, 1691768179)
+        XCTAssertEqual(event.kind, .directMessage)
+
+        let expectedTags = [
+            Tag(name: .pubkey, value: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        ]
+        XCTAssertEqual(expectedTags, event.tags)
+
+        XCTAssertEqual(try event.decryptedContent(keypair: Keypair.test), "Secret message.")
+    }
     
     func testDecodeRecommendServer() throws {
         

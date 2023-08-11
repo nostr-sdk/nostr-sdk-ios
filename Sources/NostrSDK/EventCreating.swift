@@ -38,12 +38,11 @@ public extension EventCreating {
     ///
     /// See [NIP-04 - Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
     func directMessage(withContent content: String, recipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
-        let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
-
         guard let encryptedMessage = try? encrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
             throw EventCreatingError.invalidInput
         }
 
+        let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
         return try DirectMessageEvent(kind: .directMessage, content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
     
