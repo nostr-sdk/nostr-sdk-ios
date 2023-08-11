@@ -2,7 +2,7 @@
 //  DirectMessageEncrypting.swift
 //  
 //
-//  Created by Honk on 8/10/23.
+//  Created by Joel Klabo on 8/10/23.
 //
 
 import Foundation
@@ -29,7 +29,7 @@ public extension DirectMessageEncrypting {
         
         let iv = randomBytes(count: 16).bytes
         let utf8Content = Data(content.utf8).bytes
-        guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: iv, shared_sec: sharedSecret) else {
+        guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: iv, sharedSecret: sharedSecret) else {
             throw DirectMessageEncryptingError.encryptionError
         }
 
@@ -62,7 +62,7 @@ public extension DirectMessageEncrypting {
             throw DirectMessageEncryptingError.decryptionError
         }
         
-        guard let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, shared_sec: sharedSecret) else {
+        guard let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, sharedSecret: sharedSecret) else {
             throw DirectMessageEncryptingError.decryptionError
         }
 
@@ -75,46 +75,44 @@ public extension DirectMessageEncrypting {
 
     private func getSharedSecret(privateKey: PrivateKey, recipient pubkey: PublicKey) throws -> [UInt8] {
         let privateKeyBytes = privateKey.dataRepresentation.bytes
-        var publicKeyBytes = pubkey.dataRepresentation.bytes
+        let publicKeyBytes = preparePublicKeyBytes(from: pubkey)
 
-        publicKeyBytes.insert(2, at: 0)
+        let recipientPublicKey = try parsePublicKey(from: publicKeyBytes)
+        return try computeSharedSecret(using: recipientPublicKey, and: privateKeyBytes)
+    }
 
+    private func preparePublicKeyBytes(from pubkey: PublicKey) -> [UInt8] {
+        var bytes = pubkey.dataRepresentation.bytes
+        bytes.insert(2, at: 0)
+        return bytes
+    }
+
+    private func parsePublicKey(from bytes: [UInt8]) throws -> secp256k1_pubkey {
         var recipientPublicKey = secp256k1_pubkey()
-        var sharedSecret = [UInt8](repeating: 0, count: 32)
-
-        var ok = secp256k1_ec_pubkey_parse(secp256k1.Context.rawRepresentation,
-                                           &recipientPublicKey,
-                                           publicKeyBytes,
-                                           publicKeyBytes.count) != 0
-
-        if !ok {
+        guard secp256k1_ec_pubkey_parse(secp256k1.Context.rawRepresentation, &recipientPublicKey, bytes, bytes.count) != 0 else {
             throw DirectMessageEncryptingError.pubkeyParsing
         }
+        return recipientPublicKey
+    }
 
-        ok = secp256k1_ecdh(secp256k1.Context.rawRepresentation,
-                            &sharedSecret,
-                            &recipientPublicKey,
-                            privateKeyBytes,
-                            {(output,x32,_,_) in
-                                memcpy(output, x32, 32)
-                                return 1
-                            },
-                            nil) != 0
-
-        if !ok {
+    private func computeSharedSecret(using publicKey: secp256k1_pubkey, and privateKeyBytes: [UInt8]) throws -> [UInt8] {
+        var sharedSecret = [UInt8](repeating: 0, count: 32)
+        var mutablePublicKey = publicKey
+        guard secp256k1_ecdh(secp256k1.Context.rawRepresentation, &sharedSecret, &mutablePublicKey, privateKeyBytes, { (output, x32, _, _) in
+            memcpy(output, x32, 32)
+            return 1
+        }, nil) != 0 else {
             throw DirectMessageEncryptingError.sharedSecretCreation
         }
-
         return sharedSecret
     }
 
-
-    private func AESDecrypt(data: [UInt8], iv: [UInt8], shared_sec: [UInt8]) -> Data? {
-        return AESOperation(operation: CCOperation(kCCDecrypt), data: data, iv: iv, shared_sec: shared_sec)
+    private func AESDecrypt(data: [UInt8], iv: [UInt8], sharedSecret: [UInt8]) -> Data? {
+        return AESOperation(operation: CCOperation(kCCDecrypt), data: data, iv: iv, sharedSecret: sharedSecret)
     }
 
-    private func AESEncrypt(data: [UInt8], iv: [UInt8], shared_sec: [UInt8]) -> Data? {
-        return AESOperation(operation: CCOperation(kCCEncrypt), data: data, iv: iv, shared_sec: shared_sec)
+    private func AESEncrypt(data: [UInt8], iv: [UInt8], sharedSecret: [UInt8]) -> Data? {
+        return AESOperation(operation: CCOperation(kCCEncrypt), data: data, iv: iv, sharedSecret: sharedSecret)
     }
 
     private func encodeDMBase64(content: [UInt8], iv: [UInt8]) -> String {
@@ -123,41 +121,41 @@ public extension DirectMessageEncrypting {
         return contentBase64 + "?iv=" + ivBase64
     }
 
-    private func AESOperation(operation: CCOperation, data: [UInt8], iv: [UInt8], shared_sec: [UInt8]) -> Data? {
-        let data_len = data.count
-        let bsize = kCCBlockSizeAES128
-        let len = Int(data_len) + bsize
-        var decrypted_data = [UInt8](repeating: 0, count: len)
+    private func AESOperation(operation: CCOperation, data: [UInt8], iv: [UInt8], sharedSecret: [UInt8]) -> Data? {
+        let dataLength = data.count
+        let blockSize = kCCBlockSizeAES128
+        let len = Int(dataLength) + blockSize
+        var decryptedData = [UInt8](repeating: 0, count: len)
 
-        let key_length = size_t(kCCKeySizeAES256)
-        if shared_sec.count != key_length {
-            assert(false, "unexpected shared_sec len: \(shared_sec.count) != 32")
+        let keyLength = size_t(kCCKeySizeAES256)
+        if sharedSecret.count != keyLength {
+            assert(false, "unexpected shared_sec len: \(sharedSecret.count) != 32")
             return nil
         }
 
         let algorithm: CCAlgorithm = UInt32(kCCAlgorithmAES128)
         let options:   CCOptions   = UInt32(kCCOptionPKCS7Padding)
 
-        var num_bytes_decrypted :size_t = 0
+        var numberOfBytesDecrypted :size_t = 0
 
-        let status = CCCrypt(operation,  /*op:*/
-                             algorithm,  /*alg:*/
-                             options,    /*options:*/
-                             shared_sec, /*key:*/
-                             key_length, /*keyLength:*/
-                             iv,         /*iv:*/
-                             data,       /*dataIn:*/
-                             data_len, /*dataInLength:*/
-                             &decrypted_data,/*dataOut:*/
-                             len,/*dataOutAvailable:*/
-                             &num_bytes_decrypted/*dataOutMoved:*/
+        let status = CCCrypt(operation,
+                             algorithm,
+                             options,
+                             sharedSecret,
+                             keyLength,
+                             iv,
+                             data,
+                             dataLength,
+                             &decryptedData,
+                             len,
+                             &numberOfBytesDecrypted
         )
 
         if UInt32(status) != UInt32(kCCSuccess) {
             return nil
         }
 
-        return Data(bytes: decrypted_data, count: num_bytes_decrypted)
+        return Data(bytes: decryptedData, count: numberOfBytesDecrypted)
     }
 
     private func randomBytes(count: Int) -> Data {
