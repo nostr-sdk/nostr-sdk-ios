@@ -27,7 +27,7 @@ public extension DirectMessageEncrypting {
             throw EventCreatingError.invalidInput
         }
         
-        let iv = randomBytes(count: 16).bytes
+        let iv = Data.randomBytes(count: 16).bytes
         let utf8Content = Data(content.utf8).bytes
         guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: iv, sharedSecret: sharedSecret) else {
             throw DirectMessageEncryptingError.encryptionError
@@ -150,15 +150,5 @@ public extension DirectMessageEncrypting {
         }
 
         return Data(bytes: decryptedData, count: numberOfBytesDecrypted)
-    }
-
-    private func randomBytes(count: Int) -> Data {
-        var bytes = [Int8](repeating: 0, count: count)
-        guard
-            SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess
-        else {
-            fatalError("can't copy secure random data")
-        }
-        return Data(bytes: bytes, count: count)
     }
 }
