@@ -32,12 +32,12 @@ public extension EventCreating {
     /// Creates a direct message event (kind 4) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - content: The content of the text note.
-    ///   - recipient: The PublicKey of the recipient.
+    ///   - toRecipient: The PublicKey of the recipient.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed direct message event.
     ///
     /// See [NIP-04 - Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
-    func directMessage(withContent content: String, recipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
+    func directMessage(withContent content: String, toRecipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
         guard let encryptedMessage = try? encrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
             throw EventCreatingError.invalidInput
         }

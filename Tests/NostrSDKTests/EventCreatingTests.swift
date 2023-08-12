@@ -16,7 +16,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         let recipientPubKey = Keypair.test.publicKey
         let recipientTag = Tag(name: .pubkey, value: recipientPubKey.hex)
 
-        let event = try directMessage(withContent: content, recipient: recipientPubKey, signedBy: Keypair.test)
+        let event = try directMessage(withContent: content, toRecipient: recipientPubKey, signedBy: Keypair.test)
 
         // Content should contain "?iv=" if encrypted
         XCTAssert(event.content.contains("?iv="))
