@@ -11,8 +11,8 @@ import CommonCrypto
 import CryptoKit
 
 public enum DirectMessageEncryptingError: Error {
-    case pubkeyParsing
-    case sharedSecretCreation
+    case pubkeyInvalid
+    case unsuccessfulExponentiation
     case encryptionError
     case decryptionError
     case missingValue
@@ -82,7 +82,7 @@ public extension DirectMessageEncrypting {
     private func parsePublicKey(from bytes: [UInt8]) throws -> secp256k1_pubkey {
         var recipientPublicKey = secp256k1_pubkey()
         guard secp256k1_ec_pubkey_parse(secp256k1.Context.rawRepresentation, &recipientPublicKey, bytes, bytes.count) != 0 else {
-            throw DirectMessageEncryptingError.pubkeyParsing
+            throw DirectMessageEncryptingError.pubkeyInvalid
         }
         return recipientPublicKey
     }
@@ -94,7 +94,7 @@ public extension DirectMessageEncrypting {
             memcpy(output, x32, 32)
             return 1
         }, nil) != 0 else {
-            throw DirectMessageEncryptingError.sharedSecretCreation
+            throw DirectMessageEncryptingError.unsuccessfulExponentiation
         }
         return sharedSecret
     }
