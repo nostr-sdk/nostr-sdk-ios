@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// An event that contains an encrypted message
+/// An event that contains an encrypted message.
 ///
 /// > Note: [NIP-04 Specification](https://github.com/nostr-protocol/nips/blob/master/04.md)
 public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
