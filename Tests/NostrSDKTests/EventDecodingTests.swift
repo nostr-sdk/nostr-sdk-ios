@@ -75,7 +75,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         ]
         XCTAssertEqual(expectedTags, event.tags)
 
-        XCTAssertEqual(try event.decryptedContent(keypair: Keypair.test), "Secret message.")
+        XCTAssertEqual(try event.decryptedContent(using: Keypair.test.privateKey), "Secret message.")
     }
     
     func testDecodeRecommendServer() throws {

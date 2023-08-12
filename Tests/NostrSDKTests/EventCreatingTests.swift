@@ -26,7 +26,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         XCTAssertEqual(tag, recipientTag)
 
         // Content should be decryptable
-        XCTAssertEqual(try event.decryptedContent(keypair: Keypair.test), content)
+        XCTAssertEqual(try event.decryptedContent(using: Keypair.test.privateKey), content)
 
         try verifyEvent(event)
     }
