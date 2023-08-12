@@ -12,6 +12,7 @@ import Foundation
 /// > Note: [NIP-04 Specification](https://github.com/nostr-protocol/nips/blob/master/04.md)
 public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
 
+    /// Returns decrypted content from Event given a `privateKey`
     public func decryptedContent(using privateKey: PrivateKey) throws -> String {
         let recipient = tags.first { tag in
             tag.name == .pubkey
