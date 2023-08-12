@@ -21,8 +21,6 @@ public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
            fatalError()
         }
 
-        let decryptedContent = try decrypt(encryptedContent: content, privateKey: privateKey, publicKey: recipientPublicKey)
-
-        return decryptedContent
+        return try decrypt(encryptedContent: content, privateKey: privateKey, publicKey: recipientPublicKey)
     }
 }
