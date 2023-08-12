@@ -13,16 +13,16 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                ListOptionView(destinationView: AnyView(ConnectRelayView()),
+                ListOptionView(destinationView: AnyView(ConnectRelayDemoView()),
                                imageName: "powerplug",
                                labelText: "Connect to relay")
-                ListOptionView(destinationView: AnyView(QueryRelayView()),
+                ListOptionView(destinationView: AnyView(QueryRelayDemoView()),
                                imageName: "list.bullet.rectangle.portrait",
                                labelText: "Query relay")
-                ListOptionView(destinationView: AnyView(GenerateKeyView()),
+                ListOptionView(destinationView: AnyView(GenerateKeyDemoView()),
                                imageName: "key",
                                labelText: "Key Generation")
-                ListOptionView(destinationView: AnyView(NIP05VerficationView()),
+                ListOptionView(destinationView: AnyView(NIP05VerficationDemoView()),
                                imageName: "checkmark.seal",
                                labelText: "NIP-05")
             }

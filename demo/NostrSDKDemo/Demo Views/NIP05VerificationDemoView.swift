@@ -1,5 +1,5 @@
 //
-//  NIP05VerificationView.swift
+//  NIP05VerificationDemoView.swift
 //  NostrSDKDemo
 //
 //  Created by Joel Klabo on 6/15/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import NostrSDK
 
-struct NIP05VerficationView: View {
+struct NIP05VerficationDemoView: View {
 
     @State private var identifier: String = ""
     @State private var pubkeyResult: String?
@@ -103,6 +103,6 @@ struct Validator: NIP05Validating, NIP05DataRequesting {}
 
 struct NIP05VerficationView_Previews: PreviewProvider {
     static var previews: some View {
-        NIP05VerficationView()
+        NIP05VerficationDemoView()
     }
 }

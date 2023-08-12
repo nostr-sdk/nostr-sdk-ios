@@ -21,6 +21,6 @@ struct ListOptionView: View {
 
 struct ListOptionView_Previews: PreviewProvider {
     static var previews: some View {
-        ListOptionView(destinationView: AnyView(GenerateKeyView()), imageName: "key", labelText: "Key Generation")
+        ListOptionView(destinationView: AnyView(GenerateKeyDemoView()), imageName: "key", labelText: "Key Generation")
     }
 }

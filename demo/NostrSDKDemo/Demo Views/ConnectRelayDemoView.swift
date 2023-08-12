@@ -9,7 +9,7 @@ import SwiftUI
 import NostrSDK
 import Combine
 
-struct ConnectRelayView: View {
+struct ConnectRelayDemoView: View {
 
     @State private var relayURLString = ""
     @State private var relay: Relay?
@@ -69,6 +69,6 @@ struct ConnectRelayView: View {
 
 struct ConnectRelayView_Previews: PreviewProvider {
     static var previews: some View {
-        ConnectRelayView()
+        ConnectRelayDemoView()
     }
 }
