@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */; };
+		F78221C42A8803F3008D5AE8 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C32A8803F3008D5AE8 /* Helpers.swift */; };
 		F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */; };
 		F7A81BDE2A66201800EBCB0C /* NostrSDK in Frameworks */ = {isa = PBXBuildFile; productRef = F7A81BDD2A66201800EBCB0C /* NostrSDK */; };
 		F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */; };
@@ -21,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectRelayView.swift; sourceTree = "<group>"; };
+		F78221C32A8803F3008D5AE8 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryRelayDemoView.swift; sourceTree = "<group>"; };
 		F7CB36282A35127B0098F35C /* NostrSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NostrSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NostrSDKDemoApp.swift; sourceTree = "<group>"; };
@@ -63,6 +65,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		F78221C22A8803E1008D5AE8 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				F78221C32A8803F3008D5AE8 /* Helpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		F7A81BDC2A66201800EBCB0C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -90,6 +100,7 @@
 		F7CB362A2A35127B0098F35C /* NostrSDKDemo */ = {
 			isa = PBXGroup;
 			children = (
+				F78221C22A8803E1008D5AE8 /* Helpers */,
 				F78221BD2A87EF99008D5AE8 /* Views */,
 				F78221BC2A87EF6C008D5AE8 /* Demo Views */,
 				F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */,
@@ -187,6 +198,7 @@
 				F7CB362E2A35127B0098F35C /* ContentView.swift in Sources */,
 				F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */,
 				F7CB36472A3B74380098F35C /* NIP05VerificationDemoView.swift in Sources */,
+				F78221C42A8803F3008D5AE8 /* Helpers.swift in Sources */,
 				F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */,
 				F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */,
 				F7CB36412A3ACD530098F35C /* GenerateKeyDemoView.swift in Sources */,

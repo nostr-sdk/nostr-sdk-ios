@@ -79,9 +79,8 @@ struct QueryRelayDemoView: View {
 
 struct QueryRelayView_Previews: PreviewProvider {
     static var previews: some View {
-        let relay = Binding.constant(Optional(try! Relay(url: URL(string: "wss://relay.damus.io")!)))
         NavigationView {
-            QueryRelayDemoView(relay: relay)
+            QueryRelayDemoView(relay: DemoHelper.previewRelay)
         }
     }
 }
