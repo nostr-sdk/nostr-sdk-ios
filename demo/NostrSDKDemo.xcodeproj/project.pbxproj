@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */; };
 		F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */; };
 		F7A81BDE2A66201800EBCB0C /* NostrSDK in Frameworks */ = {isa = PBXBuildFile; productRef = F7A81BDD2A66201800EBCB0C /* NostrSDK */; };
 		F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */; };
@@ -15,11 +16,11 @@
 		F7CB36332A35127C0098F35C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7CB36322A35127C0098F35C /* Preview Assets.xcassets */; };
 		F7CB36412A3ACD530098F35C /* GenerateKeyDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36402A3ACD530098F35C /* GenerateKeyDemoView.swift */; };
 		F7CB36432A3ACD7B0098F35C /* ListOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36422A3ACD7B0098F35C /* ListOptionView.swift */; };
-		F7CB36452A3ACE6E0098F35C /* ConnectRelayDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36442A3ACE6E0098F35C /* ConnectRelayDemoView.swift */; };
 		F7CB36472A3B74380098F35C /* NIP05VerificationDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB36462A3B74380098F35C /* NIP05VerificationDemoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectRelayView.swift; sourceTree = "<group>"; };
 		F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryRelayDemoView.swift; sourceTree = "<group>"; };
 		F7CB36282A35127B0098F35C /* NostrSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NostrSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NostrSDKDemoApp.swift; sourceTree = "<group>"; };
@@ -28,7 +29,6 @@
 		F7CB36322A35127C0098F35C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F7CB36402A3ACD530098F35C /* GenerateKeyDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateKeyDemoView.swift; sourceTree = "<group>"; };
 		F7CB36422A3ACD7B0098F35C /* ListOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOptionView.swift; sourceTree = "<group>"; };
-		F7CB36442A3ACE6E0098F35C /* ConnectRelayDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectRelayDemoView.swift; sourceTree = "<group>"; };
 		F7CB36462A3B74380098F35C /* NIP05VerificationDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIP05VerificationDemoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -49,7 +49,6 @@
 			children = (
 				F7CB36462A3B74380098F35C /* NIP05VerificationDemoView.swift */,
 				F7CB36402A3ACD530098F35C /* GenerateKeyDemoView.swift */,
-				F7CB36442A3ACE6E0098F35C /* ConnectRelayDemoView.swift */,
 				F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */,
 			);
 			path = "Demo Views";
@@ -59,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				F7CB36422A3ACD7B0098F35C /* ListOptionView.swift */,
+				F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -187,7 +187,7 @@
 				F7CB362E2A35127B0098F35C /* ContentView.swift in Sources */,
 				F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */,
 				F7CB36472A3B74380098F35C /* NIP05VerificationDemoView.swift in Sources */,
-				F7CB36452A3ACE6E0098F35C /* ConnectRelayDemoView.swift in Sources */,
+				F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */,
 				F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */,
 				F7CB36412A3ACD530098F35C /* GenerateKeyDemoView.swift in Sources */,
 				F7CB36432A3ACD7B0098F35C /* ListOptionView.swift in Sources */,
