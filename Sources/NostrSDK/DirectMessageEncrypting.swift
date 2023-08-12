@@ -21,14 +21,14 @@ public enum DirectMessageEncryptingError: Error {
 public protocol DirectMessageEncrypting {}
 public extension DirectMessageEncrypting {
 
-    /// Produces a `String` containing `content`that has been encrypted using a sender's`privateKey` and a recipients `publicKey` .
-    /// This function can `throw` in the case of a failure to create a shared secret, a failure to successfully encrypt, or an invalid `publicKey`.
+    /// Produces a `String`  containing `content` that has been encrypted using a sender's `privateKey`  and a recipients `publicKey` .
+    /// This function can `throw`  in the case of a failure to create a shared secret, a failure to successfully encrypt, or an invalid `publicKey`.
     ///
     /// - Parameters:
     ///   - content: The content to encrypt.
     ///   - privateKey: The private key of the sender.
     ///   - publicKey: The public key of the intended recipient.
-    /// - Returns: Encrypted content..
+    /// - Returns: Encrypted content.
     func encrypt(content: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
 
         let sharedSecret = try getSharedSecret(privateKey: privateKey, recipient: publicKey)
@@ -42,7 +42,7 @@ public extension DirectMessageEncrypting {
         return encodeDMBase64(content: encryptedMessage.bytes, iv: iv)
     }
 
-    /// Produces a `String` containing `encryptedContent`that has been decrypted using a recipient's`privateKey` and a sender's `publicKey` .
+    /// Produces a `String`  containing `encryptedContent` that has been decrypted using a recipient's `privateKey`  and a sender's `publicKey` .
     /// This function can `throw` in the case of a failure to create a shared secret, a failure to successfully encrypt, or an invalid `publicKey`.
 
     /// - Parameters:
