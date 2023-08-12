@@ -18,7 +18,7 @@ public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
         }
 
         guard let recipientPublicKeyHex = recipient?.value, let recipientPublicKey = PublicKey(hex: recipientPublicKeyHex) else {
-           fatalError()
+            throw DirectMessageEncryptingError.pubkeyParsing
         }
 
         return try decrypt(encryptedContent: content, privateKey: privateKey, publicKey: recipientPublicKey)
