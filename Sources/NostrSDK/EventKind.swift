@@ -33,7 +33,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// See [NIP-02 - Contact List and Petnames](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
     case contactList
 
-    /// This kind of event should have a recipeint pubkey tag.
+    /// This kind of event should have a recipient pubkey tag.
     ///
     /// See [NIP-04 - Direct Messages](https://github.com/nostr-protocol/nips/blob/master/04.md)
     case directMessage
