@@ -23,9 +23,7 @@ public extension DirectMessageEncrypting {
 
     func encrypt(content: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
 
-        guard let sharedSecret = try? getSharedSecret(privateKey: privateKey, recipient: publicKey) else {
-            throw EventCreatingError.invalidInput
-        }
+        let sharedSecret = try getSharedSecret(privateKey: privateKey, recipient: publicKey)
         
         let iv = Data.randomBytes(count: 16).bytes
         let utf8Content = Data(content.utf8).bytes
