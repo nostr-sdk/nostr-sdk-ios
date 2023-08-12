@@ -59,6 +59,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .textNote,
         .recommendServer,
         .contactList,
+        .directMessage,
         .repost,
         .genericRepost
     ]
