@@ -58,15 +58,9 @@ public extension DirectMessageEncrypting {
 
         let ivContentTrimmed = ivContent.dropFirst(3)
 
-        guard let ivContentData = Data(base64Encoded: String(ivContentTrimmed)) else {
-            throw DirectMessageEncryptingError.decryptionError
-        }
-        
-        guard let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, sharedSecret: sharedSecret) else {
-            throw DirectMessageEncryptingError.decryptionError
-        }
-
-        guard let decryptedMessage = String(data: decryptedContentData, encoding: .utf8) else {
+        guard let ivContentData = Data(base64Encoded: String(ivContentTrimmed)),
+              let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, sharedSecret: sharedSecret),
+              let decryptedMessage = String(data: decryptedContentData, encoding: .utf8) else {
             throw DirectMessageEncryptingError.decryptionError
         }
 
