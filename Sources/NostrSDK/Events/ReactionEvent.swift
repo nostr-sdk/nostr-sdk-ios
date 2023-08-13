@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ReactionEvent.swift
 //  
 //
 //  Created by Terry Yiu on 8/12/23.
