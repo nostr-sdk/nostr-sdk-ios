@@ -15,9 +15,9 @@ struct QueryRelayDemoView: View {
 
     @State private var authorPubkey: String = ""
     @State private var events: [NostrEvent] = []
-    @State private var stateCancellable: AnyCancellable?
     @State private var eventsCancellable: AnyCancellable?
     @State private var errorString: String?
+    @State private var subscriptionId: String?
 
     private let kindOptions = [0, 1, 2]
 
@@ -37,33 +37,21 @@ struct QueryRelayDemoView: View {
                             Text("\(number)")
                         }
                     }
-                    .onChange(of: selectedKind) { _ in
-                        events = []
-                    }
-
-                    Button {
-                        do {
-                            let filter = Filter(authors: [authorPubkey], kinds: [selectedKind])
-                            try relay?.subscribe(with: filter)
-
-                            eventsCancellable = relay?.events
-                                .receive(on: DispatchQueue.main)
-                                .sink { event in
-                                    events.insert(event, at: 0)
-                                }
-                        } catch {
-                            errorString = error.localizedDescription
-                        }
-                    } label: {
-                        Text("Query")
-                    }
+                }
+                
+                Button {
+                    updateSubscription()
+                } label: {
+                    Text("Query")
                 }
 
-                if events.count > 0 {
+                if !events.isEmpty {
                     Section("Results") {
-                        Text("Note: send an event from this account and see it appear here.")
-                            .foregroundColor(.gray)
-                            .font(.footnote)
+                        if !authorPubkey.isEmpty {
+                            Text("Note: send an event from this account and see it appear here.")
+                                .foregroundColor(.gray)
+                                .font(.footnote)
+                        }
                         List(events, id: \.id) { event in
                             Text("\(event.content)")
                         }
@@ -73,6 +61,42 @@ struct QueryRelayDemoView: View {
                 Text(errorString ?? "Must connect to relay")
                     .foregroundColor(.red)
             }
+        }
+        .onChange(of: authorPubkey) { _ in
+            events = []
+            updateSubscription()
+        }
+        .onChange(of: selectedKind) { _ in
+            events = []
+            updateSubscription()
+        }
+    }
+    
+    private var currentFilter: Filter {
+        let authors: [String]?
+        if authorPubkey.isEmpty {
+            authors = nil
+        } else {
+            authors = [authorPubkey]
+        }
+        return Filter(authors: authors, kinds: [selectedKind])
+    }
+    
+    private func updateSubscription() {
+        do {
+            if let subscriptionId {
+                try relay?.closeSubscription(with: subscriptionId)
+            }
+            
+            subscriptionId = try relay?.subscribe(with: currentFilter)
+            
+            eventsCancellable = relay?.events
+                .receive(on: DispatchQueue.main)
+                .sink { event in
+                    events.insert(event, at: 0)
+                }
+        } catch {
+            errorString = error.localizedDescription
         }
     }
 }
