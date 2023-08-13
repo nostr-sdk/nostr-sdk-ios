@@ -57,7 +57,7 @@ public extension EventCreating {
         try TextNoteEvent(kind: .textNote, content: content, signedBy: keypair)
     }
     
-    /// Creates a recommend server event (kind 2) and signs it with the provided `Keypair``.`
+    /// Creates a recommend server event (kind 2) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - relayURL: The URL of the relay, which must be a websocket URL.
     ///   - keypair: The Keypair to sign with.
@@ -70,5 +70,24 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
         return try RecommendServerEvent(kind: .recommendServer, content: relayURL.absoluteString, signedBy: keypair)
+    }
+
+    /// Creates a reaction event (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - content: The content of the reaction.
+    ///   - reactedEvent: The NostrEvent being reacted to.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed reaction event.
+    ///
+    /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+    func reaction(withContent content: String, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
+        let eventTag = Tag(name: .event, value: reactedEvent.id)
+        let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
+
+        var tags = reactedEvent.tags.filter { $0.name == .event || $0.name == .pubkey }
+        tags.append(eventTag)
+        tags.append(pubkeyTag)
+
+        return try ReactionEvent(kind: .reaction, content: content, tags: tags, signedBy: keypair)
     }
 }

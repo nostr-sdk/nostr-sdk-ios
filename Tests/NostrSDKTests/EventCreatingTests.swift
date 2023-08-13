@@ -81,4 +81,26 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         XCTAssertThrowsError(try recommendServerEvent(withRelayURL: inputURL,
                                                       signedBy: Keypair.test))
     }
+
+    func testCreateReactionEvent() throws {
+        let reactedEvent = try textNote(withContent: "Hello world!",
+                                signedBy: Keypair.test)
+        let event = try reaction(withContent: "🤙",
+                                 reactedEvent: reactedEvent,
+                                 signedBy: Keypair.test)
+
+        XCTAssertEqual(event.kind, .reaction)
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.reactedEventId, reactedEvent.id)
+        XCTAssertEqual(event.reactedEventPubkey, reactedEvent.pubkey)
+        XCTAssertEqual(event.content, "🤙")
+
+        let expectedTags = [
+            Tag(name: .event, value: reactedEvent.id),
+            Tag(name: .pubkey, value: reactedEvent.pubkey)
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+
+        try verifyEvent(event)
+    }
 }
