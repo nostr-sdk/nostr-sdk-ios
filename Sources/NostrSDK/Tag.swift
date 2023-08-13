@@ -103,7 +103,7 @@ public enum EventTagMarker: Codable, Equatable {
 /// A reference to an event, pubkey, or other content.
 ///
 /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md) for an initial definition of tags.
-/// See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/01.md) for further refinement and additions to tags.
+/// See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/10.md) for further refinement and additions to tags.
 /// See https://github.com/nostr-protocol/nips/tree/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c#standardized-tags for a list of all standardized tags.
 public class Tag: Codable, Equatable {
     public static func == (lhs: Tag, rhs: Tag) -> Bool {
