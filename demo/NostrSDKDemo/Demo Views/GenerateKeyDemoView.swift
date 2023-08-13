@@ -8,7 +8,7 @@
 import SwiftUI
 import NostrSDK
 
-struct GenerateKeyView: View {
+struct GenerateKeyDemoView: View {
 
     @State private var privateKey: String?
     @State private var publicKey: String?
@@ -44,6 +44,6 @@ struct GenerateKeyView: View {
 
 struct GenerateKeyView_Previews: PreviewProvider {
     static var previews: some View {
-        GenerateKeyView()
+        GenerateKeyDemoView()
     }
 }
