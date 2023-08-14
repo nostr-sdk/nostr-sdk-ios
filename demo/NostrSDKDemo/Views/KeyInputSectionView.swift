@@ -38,7 +38,7 @@ struct KeyInputSectionView: View {
                     .foregroundColor(.red)
             }
         }
-        .onChange(of: key) { newValue in
+        .onChange(of: key) { _ in
             isValid = checkValidity(key: key, type: type)
         }
         .onAppear {
