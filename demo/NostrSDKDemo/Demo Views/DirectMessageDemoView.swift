@@ -15,9 +15,6 @@ struct DirectMessageDemoView: View, EventCreating {
     @State private var recipientPublicKey = ""
     @State private var recipientPublicKeyIsValid: Bool = false
 
-    @State private var senderPublicKey = ""
-    @State private var senderPublicKeyIsValid: Bool = false
-
     @State private var senderPrivateKey = ""
     @State private var senderPrivateKeyIsValid: Bool = false
 
@@ -31,9 +28,6 @@ struct DirectMessageDemoView: View, EventCreating {
                                     type: .public)
             }
             Section("Sender") {
-                KeyInputSectionView(key: $senderPublicKey,
-                                    isValid: $senderPublicKeyIsValid,
-                                    type: .public)
                 KeyInputSectionView(key: $senderPrivateKey,
                                     isValid: $senderPrivateKeyIsValid,
                                     type: .private)
@@ -42,16 +36,45 @@ struct DirectMessageDemoView: View, EventCreating {
                 TextField("Enter a message.", text: $message)
             }
             Button("Send") {
-//                let directMessage = directmes
+                guard let recipientPublicKey = publicKey(),
+                      let senderKeyPair = keypair() else {
+                    return
+                }
+                do {
+                    let directMessage = try directMessage(withContent: message,
+                                                          toRecipient: recipientPublicKey,
+                                                          signedBy: senderKeyPair)
+                    try relay?.publishEvent(directMessage)
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
             .disabled(!readyToSend())
+        }
+    }
+
+    private func keypair() -> Keypair? {
+        if senderPrivateKey.contains("nsec") {
+            return Keypair(nsec: senderPrivateKey)
+        } else {
+            if let privateKey = PrivateKey(hex: senderPrivateKey) {
+                return Keypair(privateKey: privateKey)
+            }
+        }
+        return nil
+    }
+
+    private func publicKey() -> PublicKey? {
+        if recipientPublicKey.contains("npub") {
+            return PublicKey(npub: recipientPublicKey)
+        } else {
+            return PublicKey(hex: recipientPublicKey)
         }
     }
 
     private func readyToSend() -> Bool {
         if !message.isEmpty &&
             recipientPublicKeyIsValid &&
-            senderPublicKeyIsValid &&
             senderPrivateKeyIsValid {
             return true
         }
