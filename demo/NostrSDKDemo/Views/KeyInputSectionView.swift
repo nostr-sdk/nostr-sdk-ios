@@ -64,6 +64,7 @@ struct KeyInputSectionView: View {
         }
     }
 
+    // swiftlint:disable unused_optional_binding
     private func checkValidity(publicKey: String) -> Bool {
         if publicKey.contains("npub") {
             if let _ = PublicKey(npub: publicKey) {
@@ -95,6 +96,7 @@ struct KeyInputSectionView: View {
             }
         }
     }
+    // swiftlint:enable unused_optional_binding
 }
 
 struct KeyInputSectionView_Previews: PreviewProvider {
