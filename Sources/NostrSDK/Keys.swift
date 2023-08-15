@@ -65,6 +65,11 @@ public struct PublicKey {
     }
 
     public init?(hex: String) {
+        guard hex.isEmpty == false else {
+            print("Trying to create public key with empty string")
+            return nil
+        }
+
         guard let dataRepresentation = hex.hexDecoded else {
             print("Could not decode hex representation of public key.")
             return nil
@@ -107,6 +112,11 @@ public struct PrivateKey {
     }
 
     public init?(hex: String) {
+        guard hex.isEmpty == false else {
+            print("Trying to create private key with empty string")
+            return nil
+        }
+
         guard let dataRepresentation = hex.hexDecoded else {
             print("Could not decode hex representation of private key.")
             return nil
