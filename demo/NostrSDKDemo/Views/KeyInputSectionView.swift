@@ -45,55 +45,37 @@ struct KeyInputSectionView: View {
             }
         }
         .onChange(of: key) { _ in
-            isValid = checkValidity(key: key, type: type)
+            isValid = isKeyValid(key, type: type)
         }
         .onAppear {
-            isValid = checkValidity(key: key, type: type)
+            isValid = isKeyValid(key, type: type)
         }
     }
 
-    private func checkValidity(key: String, type: KeyType) -> Bool {
+    private func isKeyValid(_ key: String, type: KeyType) -> Bool {
         switch type {
         case .public:
-            return checkValidity(publicKey: key)
+            return isValid(publicKey: key)
         case .private:
-            return checkValidity(privateKey: key)
+            return isValid(privateKey: key)
         }
     }
 
-    // swiftlint:disable unused_optional_binding
-    private func checkValidity(publicKey: String) -> Bool {
+    private func isValid(publicKey: String) -> Bool {
         if publicKey.contains("npub") {
-            if let _ = PublicKey(npub: publicKey) {
-                return true
-            } else {
-                return false
-            }
+            return PublicKey(npub: publicKey) != nil
         } else {
-            if let _ = PublicKey(hex: publicKey) {
-                return true
-            } else {
-                return false
-            }
+            return PublicKey(hex: publicKey) != nil
         }
     }
 
-    private func checkValidity(privateKey: String) -> Bool {
+    private func isValid(privateKey: String) -> Bool {
         if privateKey.contains("nsec") {
-            if let _ = PrivateKey(nsec: privateKey) {
-                return true
-            } else {
-                return false
-            }
+            return PrivateKey(nsec: privateKey) != nil
         } else {
-            if let _ = PrivateKey(hex: privateKey) {
-                return true
-            } else {
-                return false
-            }
+            return PrivateKey(hex: privateKey) != nil
         }
     }
-    // swiftlint:enable unused_optional_binding
 }
 
 struct KeyInputSectionView_Previews: PreviewProvider {
