@@ -10,7 +10,7 @@ import Foundation
 /// A structure that describes a filter to subscribe to relays with.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#communication-between-clients-and-relays)
-public struct Filter: Codable {
+public struct Filter: Codable, Hashable, Equatable {
     /// a list of event ids or prefixes
     public let ids: [String]?
     
