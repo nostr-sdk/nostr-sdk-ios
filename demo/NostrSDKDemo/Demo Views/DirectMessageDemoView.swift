@@ -73,12 +73,9 @@ struct DirectMessageDemoView: View, EventCreating {
     }
 
     private func readyToSend() -> Bool {
-        if !message.isEmpty &&
-            recipientPublicKeyIsValid &&
-            senderPrivateKeyIsValid {
-            return true
-        }
-        return false
+        !message.isEmpty &&
+        recipientPublicKeyIsValid &&
+        senderPrivateKeyIsValid
     }
 }
 
