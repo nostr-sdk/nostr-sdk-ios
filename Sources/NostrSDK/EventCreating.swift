@@ -28,23 +28,6 @@ public extension EventCreating {
         }
         return try SetMetadataEvent(kind: .setMetadata, content: metadataAsString, signedBy: keypair)
     }
-
-    /// Creates a ``DirectMessageEvent`` (kind 4) and signs it with the provided ``Keypair``.
-    /// - Parameters:
-    ///   - content: The content of the text note.
-    ///   - toRecipient: The PublicKey of the recipient.
-    ///   - keypair: The Keypair to sign with.
-    /// - Returns: The signed ``DirectMessageEvent``.
-    ///
-    /// See [NIP-04 - Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
-    func directMessage(withContent content: String, toRecipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
-        guard let encryptedMessage = try? encrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
-            throw EventCreatingError.invalidInput
-        }
-
-        let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
-        return try DirectMessageEvent(kind: .directMessage, content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
-    }
     
     /// Creates a ``TextNoteEvent`` (kind 1) and signs it with the provided ``Keypair``.
     /// - Parameters:
@@ -70,6 +53,23 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
         return try RecommendServerEvent(kind: .recommendServer, content: relayURL.absoluteString, signedBy: keypair)
+    }
+
+    /// Creates a ``DirectMessageEvent`` (kind 4) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - content: The content of the text note.
+    ///   - toRecipient: The PublicKey of the recipient.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``DirectMessageEvent``.
+    ///
+    /// See [NIP-04 - Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
+    func directMessage(withContent content: String, toRecipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
+        guard let encryptedMessage = try? encrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
+        return try DirectMessageEvent(kind: .directMessage, content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
 
     /// Creates a ``ReactionEvent`` (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
