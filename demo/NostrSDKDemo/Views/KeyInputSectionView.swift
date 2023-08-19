@@ -11,6 +11,12 @@ import NostrSDK
 enum KeyType {
     case `public`
     case `private`
+    var label: String {
+        switch self {
+        case .public: return "Public Key"
+        case .private: return "Private Key"
+        }
+    }
 }
 
 struct KeyInputSectionView: View {
@@ -22,7 +28,7 @@ struct KeyInputSectionView: View {
 
     var body: some View {
         HStack {
-            TextField(label(for: type),
+            TextField(type.label,
                       text: $key)
                 .font(.system(size: 16, weight: .regular, design: .monospaced))
                 .autocapitalization(.none)
@@ -43,15 +49,6 @@ struct KeyInputSectionView: View {
         }
         .onAppear {
             isValid = checkValidity(key: key, type: type)
-        }
-    }
-
-    private func label(for type: KeyType) -> String {
-        switch type {
-        case .public:
-            return "Public Key"
-        case .private:
-            return "Private Key"
         }
     }
 
