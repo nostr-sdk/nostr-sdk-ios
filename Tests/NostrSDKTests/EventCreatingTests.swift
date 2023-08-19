@@ -10,26 +10,6 @@ import Foundation
 import XCTest
 
 final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
-
-    func testDirectMessageEvent() throws {
-        let content = "Secret message."
-        let recipientPubKey = Keypair.test.publicKey
-        let recipientTag = Tag(name: .pubkey, value: recipientPubKey.hex)
-
-        let event = try directMessage(withContent: content, toRecipient: recipientPubKey, signedBy: Keypair.test)
-
-        // Content should contain "?iv=" if encrypted
-        XCTAssert(event.content.contains("?iv="))
-
-        // Recipient should be tagged
-        let tag = try XCTUnwrap(event.tags.first)
-        XCTAssertEqual(tag, recipientTag)
-
-        // Content should be decryptable
-        XCTAssertEqual(try event.decryptedContent(using: Keypair.test.privateKey), content)
-
-        try verifyEvent(event)
-    }
     
     func testCreateSetMetadataEvent() throws {
         let meta = UserMetadata(name: "Nostr SDK Test",
@@ -80,6 +60,58 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         let inputURL = URL(string: "https://not-a-socket.com")!
         XCTAssertThrowsError(try recommendServerEvent(withRelayURL: inputURL,
                                                       signedBy: Keypair.test))
+    }
+    
+    func testCreateContactListEvent() throws {
+        let pubkeys = [
+            "83y9iuhw9u0t8thw8w80u",
+            "19048ut34h23y89jio3r8",
+            "5r623gyewfbh8uuiq83rd"
+        ]
+        
+        let event = try contactList(withPubkeys: pubkeys,
+                                    signedBy: Keypair.test)
+        
+        let expectedTags: [Tag] = [
+            Tag(name: .pubkey, value: "83y9iuhw9u0t8thw8w80u"),
+            Tag(name: .pubkey, value: "19048ut34h23y89jio3r8"),
+            Tag(name: .pubkey, value: "5r623gyewfbh8uuiq83rd")
+        ]
+        
+        XCTAssertEqual(event.tags, expectedTags)
+    }
+    
+    func testCreateContactListEventWithPetnames() throws {
+        let tags: [Tag] = [
+            Tag(name: .pubkey, value: "83y9iuhw9u0t8thw8w80u", otherParameters: ["bob"]),
+            Tag(name: .pubkey, value: "19048ut34h23y89jio3r8", otherParameters: ["alice"]),
+            Tag(name: .pubkey, value: "5r623gyewfbh8uuiq83rd", otherParameters: ["steve"])
+        ]
+        
+        let event = try contactList(withPubkeyTags: tags,
+                                    signedBy: Keypair.test)
+        
+        XCTAssertEqual(event.tags, tags)
+    }
+    
+    func testDirectMessageEvent() throws {
+        let content = "Secret message."
+        let recipientPubKey = Keypair.test.publicKey
+        let recipientTag = Tag(name: .pubkey, value: recipientPubKey.hex)
+
+        let event = try directMessage(withContent: content, toRecipient: recipientPubKey, signedBy: Keypair.test)
+
+        // Content should contain "?iv=" if encrypted
+        XCTAssert(event.content.contains("?iv="))
+
+        // Recipient should be tagged
+        let tag = try XCTUnwrap(event.tags.first)
+        XCTAssertEqual(tag, recipientTag)
+
+        // Content should be decryptable
+        XCTAssertEqual(try event.decryptedContent(using: Keypair.test.privateKey), content)
+
+        try verifyEvent(event)
     }
 
     func testCreateReactionEvent() throws {

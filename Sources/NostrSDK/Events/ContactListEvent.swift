@@ -32,6 +32,10 @@ public struct RelayPermissions: Equatable {
 /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
 public final class ContactListEvent: NostrEvent {
     
+    convenience init(tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try self.init(kind: .contactList, content: "", tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
     /// Pubkeys for followed/known profiles.
     var contactPubkeys: [String] {
         tags.filter({ $0.name == .pubkey }).map { $0.value }
