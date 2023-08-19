@@ -75,7 +75,7 @@ public extension EventCreating {
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``ContactListEvent``.
     ///
-    /// Use this initializer if you do not intend to include petnames as part of the contact list.
+    /// Use this initializer if you intend to include petnames as part of the contact list.
     ///
     /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
     func contactList(withPubkeyTags pubkeyTags: [Tag], signedBy keypair: Keypair) throws -> ContactListEvent {
