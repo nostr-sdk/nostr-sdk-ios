@@ -20,6 +20,10 @@ struct ContentView: View {
                     ListOptionView(destinationView: AnyView(QueryRelayDemoView(relay: $relay)),
                                    imageName: "list.bullet.rectangle.portrait",
                                    labelText: "Query relay")
+                    ListOptionView(destinationView:
+                                    AnyView(DirectMessageDemoView(relay: $relay)),
+                                   imageName: "list.bullet",
+                                   labelText: "Direct Message")
                     ListOptionView(destinationView: AnyView(GenerateKeyDemoView()),
                                    imageName: "key",
                                    labelText: "Key Generation")

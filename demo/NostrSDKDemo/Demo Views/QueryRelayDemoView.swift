@@ -24,42 +24,37 @@ struct QueryRelayDemoView: View {
     @State private var selectedKind = 1
 
     var body: some View {
-        Form {
-            if relay?.state == .connected {
-                Section("Query Relay") {
+        RelayFormView(relay: $relay) {
+            Section("Query Relay") {
 
-                    TextField(text: $authorPubkey) {
-                        Text("Author Public Key (HEX)")
-                    }
-
-                    Picker("Kind", selection: $selectedKind) {
-                        ForEach(kindOptions, id: \.self) { number in
-                            Text("\(number)")
-                        }
-                    }
-                }
-                
-                Button {
-                    updateSubscription()
-                } label: {
-                    Text("Query")
+                TextField(text: $authorPubkey) {
+                    Text("Author Public Key (HEX)")
                 }
 
-                if !events.isEmpty {
-                    Section("Results") {
-                        if !authorPubkey.isEmpty {
-                            Text("Note: send an event from this account and see it appear here.")
-                                .foregroundColor(.gray)
-                                .font(.footnote)
-                        }
-                        List(events, id: \.id) { event in
-                            Text("\(event.content)")
-                        }
+                Picker("Kind", selection: $selectedKind) {
+                    ForEach(kindOptions, id: \.self) { number in
+                        Text("\(number)")
                     }
                 }
-            } else {
-                Text(errorString ?? "Must connect to relay")
-                    .foregroundColor(.red)
+            }
+
+            Button {
+                updateSubscription()
+            } label: {
+                Text("Query")
+            }
+
+            if !events.isEmpty {
+                Section("Results") {
+                    if !authorPubkey.isEmpty {
+                        Text("Note: send an event from this account and see it appear here.")
+                            .foregroundColor(.gray)
+                            .font(.footnote)
+                    }
+                    List(events, id: \.id) { event in
+                        Text("\(event.content)")
+                    }
+                }
             }
         }
         .onChange(of: authorPubkey) { _ in
