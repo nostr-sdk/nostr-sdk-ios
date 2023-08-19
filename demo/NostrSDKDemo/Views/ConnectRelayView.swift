@@ -13,7 +13,7 @@ struct ConnectRelayView: View {
 
     @Binding var relay: Relay?
 
-    @State private var relayURLString = ""
+    @State private var relayURLString = "wss://relay.damus.io"
     @State private var relayError: String?
     @State private var state: Relay.State = .notConnected
     @State private var stateCancellable: AnyCancellable?
@@ -37,27 +37,33 @@ struct ConnectRelayView: View {
                 .autocorrectionDisabled()
 
                 Button("Connect") {
-                    // connect to relay
-                    if let relayURL = URL(string: relayURLString.lowercased()) {
-                        do {
-                            relay = try Relay(url: relayURL)
-                            relay?.connect()
-                            stateCancellable = relay?.$state
-                                .receive(on: DispatchQueue.main)
-                                .sink { newState in
-                                    state = newState
-                                }
-                        } catch {
-                            relayError = error.localizedDescription
-                        }
-                    } else {
-                        relayError = "Invalid URL String"
-                    }
+                    attemptRelayConnect()
                 }
                 Text(relayError ?? status(state))
             }
         }
         .padding()
+        .onAppear {
+            attemptRelayConnect()
+        }
+    }
+
+    private func attemptRelayConnect() {
+        if let relayURL = URL(string: relayURLString.lowercased()) {
+            do {
+                relay = try Relay(url: relayURL)
+                relay?.connect()
+                stateCancellable = relay?.$state
+                    .receive(on: DispatchQueue.main)
+                    .sink { newState in
+                        state = newState
+                    }
+            } catch {
+                relayError = error.localizedDescription
+            }
+        } else {
+            relayError = "Invalid URL String"
+        }
     }
 
     private func status(_ state: Relay.State?) -> String {
