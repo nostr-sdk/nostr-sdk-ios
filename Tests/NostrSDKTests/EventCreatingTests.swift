@@ -9,7 +9,7 @@ import Foundation
 @testable import NostrSDK
 import XCTest
 
-final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
+final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, FixtureLoading {
     
     func testCreateSetMetadataEvent() throws {
         let meta = UserMetadata(name: "Nostr SDK Test",
@@ -118,6 +118,25 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         try verifyEvent(event)
     }
 
+    func testRepostTextNoteEvent() throws {
+        let noteToRepost: TextNoteEvent = try decodeFixture(filename: "text_note")
+        
+        let event = try repost(event: noteToRepost, signedBy: Keypair.test)
+        let repostEvent = try XCTUnwrap(event as? TextNoteRepostEvent)
+        
+        XCTAssertEqual(repostEvent.kind, .repost)
+        
+        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")))
+        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .event, value: "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")))
+        
+        let repostedNote = try XCTUnwrap(repostEvent.repostedNote)
+        XCTAssertEqual(repostedNote.id, "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")
+        XCTAssertEqual(repostedNote.pubkey, "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
+        XCTAssertEqual(repostedNote.createdAt, 1682080184)
+        
+        try verifyEvent(event)
+    }
+    
     func testCreateReactionEvent() throws {
         let reactedEvent = try textNote(withContent: "Hello world!",
                                 signedBy: Keypair.test)
@@ -138,5 +157,24 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         XCTAssertEqual(event.tags, expectedTags)
 
         try verifyEvent(event)
+    }
+    
+    func testRepostNonTextNoteEvent() throws {
+        let eventToRepost: RecommendServerEvent = try decodeFixture(filename: "recommend_server")
+        
+        let repostEvent = try repost(event: eventToRepost, signedBy: Keypair.test)
+        XCTAssertFalse(repostEvent is TextNoteRepostEvent)
+        XCTAssertEqual(repostEvent.kind, .genericRepost)
+        
+        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .pubkey, value: "test-pubkey")))
+        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .event, value: "test-id")))
+        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .kind, value: "2")))
+        
+        let repostedEvent = try XCTUnwrap(repostEvent.repostedEvent)
+        XCTAssertEqual(repostedEvent.id, "test-id")
+        XCTAssertEqual(repostedEvent.pubkey, "test-pubkey")
+        XCTAssertEqual(repostedEvent.createdAt, 1683799330)
+        
+        try verifyEvent(repostEvent)
     }
 }

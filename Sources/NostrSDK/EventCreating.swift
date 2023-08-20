@@ -102,7 +102,32 @@ public extension EventCreating {
         let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
         return try DirectMessageEvent(content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
-
+    
+    /// Creates a ``TextNoteRepostEvent`` (kind 6) or ``GenericRepostEvent`` (kind 16) based on the kind of the event being reposted and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - event: The event to repost.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``TextNoteRepostEvent`` or ``GenericRepostEvent``.
+    ///
+    /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#reposts).
+    func repost(event: NostrEvent, signedBy keypair: Keypair) throws -> GenericRepostEvent {
+        let jsonData = try JSONEncoder().encode(event)
+        guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
+            throw EventCreatingError.invalidInput
+        }
+        var tags = [
+            Tag(name: .event, value: event.id),
+            Tag(name: .pubkey, value: event.pubkey)
+        ]
+        if event.kind == .textNote {
+            return try TextNoteRepostEvent(content: stringifiedJSON, tags: tags, signedBy: keypair)
+        } else {
+            tags.append(Tag(name: .kind, value: String(event.kind.rawValue)))
+            
+            return try GenericRepostEvent(content: stringifiedJSON, tags: tags, signedBy: keypair)
+        }
+    }
+    
     /// Creates a ``ReactionEvent`` (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - content: The content of the reaction.
