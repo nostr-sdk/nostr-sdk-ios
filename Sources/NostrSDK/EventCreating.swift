@@ -26,7 +26,7 @@ public extension EventCreating {
         guard let metadataAsString = String(data: metadataAsData, encoding: .utf8) else {
             throw EventCreatingError.invalidInput
         }
-        return try SetMetadataEvent(kind: .setMetadata, content: metadataAsString, signedBy: keypair)
+        return try SetMetadataEvent(content: metadataAsString, signedBy: keypair)
     }
     
     /// Creates a ``TextNoteEvent`` (kind 1) and signs it with the provided ``Keypair``.
@@ -37,7 +37,7 @@ public extension EventCreating {
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
     func textNote(withContent content: String, signedBy keypair: Keypair) throws -> TextNoteEvent {
-        try TextNoteEvent(kind: .textNote, content: content, signedBy: keypair)
+        try TextNoteEvent(content: content, signedBy: keypair)
     }
     
     /// Creates a ``RecommendServerEvent`` (kind 2) and signs it with the provided ``Keypair``.
@@ -52,7 +52,7 @@ public extension EventCreating {
         guard components?.scheme == "wss" || components?.scheme == "ws" else {
             throw EventCreatingError.invalidInput
         }
-        return try RecommendServerEvent(kind: .recommendServer, content: relayURL.absoluteString, signedBy: keypair)
+        return try RecommendServerEvent(content: relayURL.absoluteString, signedBy: keypair)
     }
     
     /// Creates a ``ContactListEvent`` (kind 3) following the provided pubkeys and signs it with the provided ``Keypair``.
@@ -100,7 +100,7 @@ public extension EventCreating {
         }
 
         let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
-        return try DirectMessageEvent(kind: .directMessage, content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
+        return try DirectMessageEvent(content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
 
     /// Creates a ``ReactionEvent`` (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
@@ -119,6 +119,6 @@ public extension EventCreating {
         tags.append(eventTag)
         tags.append(pubkeyTag)
 
-        return try ReactionEvent(kind: .reaction, content: content, tags: tags, signedBy: keypair)
+        return try ReactionEvent(content: content, tags: tags, signedBy: keypair)
     }
 }
