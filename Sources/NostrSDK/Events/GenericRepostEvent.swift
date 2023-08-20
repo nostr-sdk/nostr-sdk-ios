@@ -26,7 +26,7 @@ public class GenericRepostEvent: NostrEvent {
     }
     
     class var kind: EventKind {
-        .repost
+        .genericRepost
     }
     
     /// The pubkey of the reposted event.

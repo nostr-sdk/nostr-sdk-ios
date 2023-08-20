@@ -124,6 +124,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let event = try repost(event: noteToRepost, signedBy: Keypair.test)
         let repostEvent = try XCTUnwrap(event as? TextNoteRepostEvent)
         
+        XCTAssertEqual(repostEvent.kind, .repost)
+        
         XCTAssertTrue(repostEvent.tags.contains(Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")))
         XCTAssertTrue(repostEvent.tags.contains(Tag(name: .event, value: "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")))
         
@@ -162,6 +164,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         
         let repostEvent = try repost(event: eventToRepost, signedBy: Keypair.test)
         XCTAssertFalse(repostEvent is TextNoteRepostEvent)
+        XCTAssertEqual(repostEvent.kind, .genericRepost)
         
         XCTAssertTrue(repostEvent.tags.contains(Tag(name: .pubkey, value: "test-pubkey")))
         XCTAssertTrue(repostEvent.tags.contains(Tag(name: .event, value: "test-id")))
