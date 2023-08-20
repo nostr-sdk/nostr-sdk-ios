@@ -79,6 +79,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
         ]
         
         XCTAssertEqual(event.tags, expectedTags)
+        
+        try verifyEvent(event)
     }
     
     func testCreateContactListEventWithPetnames() throws {
@@ -92,6 +94,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying {
                                     signedBy: Keypair.test)
         
         XCTAssertEqual(event.tags, tags)
+        
+        try verifyEvent(event)
     }
     
     func testDirectMessageEvent() throws {
