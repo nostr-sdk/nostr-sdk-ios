@@ -12,6 +12,10 @@ import Foundation
 /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#reposts).
 public final class TextNoteRepostEvent: GenericRepostEvent {
     
+    override class var kind: EventKind {
+        .repost
+    }
+    
     /// The note that is being reposted.
     var repostedNote: TextNoteEvent? {
         guard let jsonData = content.data(using: .utf8),
