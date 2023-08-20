@@ -32,6 +32,19 @@ public struct RelayPermissions: Equatable {
 /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
 public final class ContactListEvent: NostrEvent {
     
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
+    
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
+    init(tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try super.init(kind: .contactList, content: "", tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
     /// Pubkeys for followed/known profiles.
     var contactPubkeys: [String] {
         tags.filter({ $0.name == .pubkey }).map { $0.value }
