@@ -52,6 +52,19 @@ public struct UserMetadata: Codable {
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/b503f8a92b22be3037b8115fe3e644865a4fa155/01.md#basic-event-kinds)
 public final class SetMetadataEvent: NostrEvent {
     
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
+    
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
+    init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try super.init(kind: .setMetadata, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
     /// A dictionary containing all of the properties in the `content` field of the ``NostrEvent``.
     public var rawUserMetadata: [String: Any] {
         guard let data = content.data(using: .utf8) else {

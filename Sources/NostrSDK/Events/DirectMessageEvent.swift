@@ -12,6 +12,19 @@ import Foundation
 /// > Note: [NIP-04 Specification](https://github.com/nostr-protocol/nips/blob/master/04.md)
 public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
 
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
+    
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
+    init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+        try super.init(kind: .directMessage, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+    }
+    
     /// Returns decrypted content from Event given a `privateKey`
     public func decryptedContent(using privateKey: PrivateKey) throws -> String {
         let recipient = tags.first { tag in
