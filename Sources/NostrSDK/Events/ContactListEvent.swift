@@ -46,12 +46,12 @@ public final class ContactListEvent: NostrEvent {
     }
     
     /// Pubkeys for followed/known profiles.
-    var contactPubkeys: [String] {
+    public var contactPubkeys: [String] {
         tags.filter({ $0.name == .pubkey }).map { $0.value }
     }
     
     /// Pubkey tags for followed/known profiles.
-    var contactPubkeyTags: [Tag] {
+    public var contactPubkeyTags: [Tag] {
         tags.filter({ $0.name == .pubkey })
     }
     
@@ -60,7 +60,7 @@ public final class ContactListEvent: NostrEvent {
     /// > Warning: This method of storing and accessing a user's relays is out of spec, not preferred,
     ///            and will be removed in the future. It is provided here for completeness and because of common usage.
     @available(*, deprecated, message: "This method of storing and accessing a user's relays is out of spec, not preferred, and will be removed in the future.")
-    var relays: [String: RelayPermissions] {
+    public var relays: [String: RelayPermissions] {
         guard let contentData = content.data(using: .utf8),
               let contentDictionary = try? JSONSerialization.jsonObject(with: contentData) as? [String: [AnyHashable: Any]] else {
             return [:]
