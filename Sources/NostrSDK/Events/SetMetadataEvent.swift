@@ -14,6 +14,7 @@ public struct UserMetadata: Codable {
     public let name: String?
     
     /// The user's display name.
+    /// > Warning: This property is not part of the Nostr specifications.
     public let displayName: String?
 
     /// The user's description of themself.
