@@ -13,6 +13,9 @@ public struct UserMetadata: Codable {
     /// The user's name.
     public let name: String?
     
+    /// The user's display name.
+    public let displayName: String?
+
     /// The user's description of themself.
     public let about: String?
     
@@ -35,10 +38,12 @@ public struct UserMetadata: Codable {
         case nostrAddress = "nip05"
         case pictureURL = "picture"
         case bannerPictureURL = "banner"
+        case displayName = "display_name"
     }
     
-    public init(name: String?, about: String?, website: URL?, nostrAddress: String?, pictureURL: URL?, bannerPictureURL: URL?) {
+    public init(name: String?, displayName: String?, about: String?, website: URL?, nostrAddress: String?, pictureURL: URL?, bannerPictureURL: URL?) {
         self.name = name
+        self.displayName = displayName
         self.about = about
         self.website = website
         self.nostrAddress = nostrAddress
