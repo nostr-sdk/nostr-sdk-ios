@@ -24,6 +24,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         
         // access metadata properties from raw dictionary
         XCTAssertEqual(event.rawUserMetadata["name"] as? String, "cameri")
+        XCTAssertEqual(event.rawUserMetadata["display_name"] as? String, "Cameri 🦦⚡️")
         XCTAssertEqual(event.rawUserMetadata["about"] as? String, "@HodlWithLedn. All opinions are my own.\nBitcoiner class of 2021. Core Nostr Developer. Author of Nostream. Professional Relay Operator.")
         XCTAssertEqual(event.rawUserMetadata["website"] as? String, "https://primal.net/cameri")
         XCTAssertEqual(event.rawUserMetadata["nip05"] as? String, "cameri@elder.nostr.land")

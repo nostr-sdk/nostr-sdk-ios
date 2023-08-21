@@ -13,6 +13,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     
     func testCreateSetMetadataEvent() throws {
         let meta = UserMetadata(name: "Nostr SDK Test",
+                                displayName: "Nostr SDK Display Name",
                                 about: "I'm a test account. I'm used to test the Nostr SDK for Apple platforms.",
                                 website: URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios")!,
                                 nostrAddress: "test@nostr.com",
@@ -22,6 +23,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let event = try setMetadataEvent(withUserMetadata: meta, signedBy: Keypair.test)
         
         XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test")
+        XCTAssertEqual(event.userMetadata?.displayName, "Nostr SDK Display Name")
         XCTAssertEqual(event.userMetadata?.about, "I'm a test account. I'm used to test the Nostr SDK for Apple platforms.")
         XCTAssertEqual(event.userMetadata?.website, URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"))
         XCTAssertEqual(event.userMetadata?.nostrAddress, "test@nostr.com")
