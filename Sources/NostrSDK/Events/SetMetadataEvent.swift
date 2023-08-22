@@ -51,6 +51,17 @@ public struct UserMetadata: Codable {
         self.pictureURL = pictureURL
         self.bannerPictureURL = bannerPictureURL
     }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
+        about = try container.decodeIfPresent(String.self, forKey: .about)
+        website = try? container.decodeIfPresent(URL.self, forKey: .website)
+        nostrAddress = try container.decodeIfPresent(String.self, forKey: .nostrAddress)
+        pictureURL = try? container.decodeIfPresent(URL.self, forKey: .pictureURL)
+        bannerPictureURL = try? container.decodeIfPresent(URL.self, forKey: .bannerPictureURL)
+    }
 }
 
 /// An event that contains a user profile.

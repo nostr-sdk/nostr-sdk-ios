@@ -41,6 +41,31 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(userMetadata.bannerPictureURL, URL(string: "https://nostr.build/i/nostr.build_90a51a2e50c9f42288260d01b3a2a4a1c7a9df085423abad7809e76429da7cdc.gif"))
     }
 
+    func testDecodeSetMetadataWithEmptyWebsite() throws {
+
+        let event: SetMetadataEvent = try decodeFixture(filename: "set_metadata_alternate")
+
+        XCTAssertEqual(event.id, "2883f411daaef3370f87dc4456fbe1184ab50ec97013249d7cdda4b8938d0b0a")
+        XCTAssertEqual(event.pubkey, "58c741aa630c2da35a56a77c1d05381908bd10504fdd2d8b43f725efa6d23196")
+        XCTAssertEqual(event.createdAt, 1676405699)
+        XCTAssertEqual(event.kind, .setMetadata)
+        XCTAssertEqual(event.tags, [])
+        XCTAssertTrue(event.content.hasPrefix("{\"website\":\"\",\"nip05\":"))
+        XCTAssertEqual(event.signature, "6f12e0090940bf923d96e9c1dce134c1c16c5fdb1e79efff3ed791bb6ff985b4dda609dc85e1ad15c752c6c5f4cbbf8949068731e1b881ac13b2eb1ce59fc578")
+
+        // access metadata properties from raw dictionary
+        XCTAssertEqual(event.rawUserMetadata["name"] as? String, "gladstein")
+        XCTAssertEqual(event.rawUserMetadata["display_name"] as? String, "gladstein")
+        XCTAssertEqual(event.rawUserMetadata["nip05"] as? String, "gladstein@nostrplebs.com")
+
+        // access metadata properties from decoded object
+        let userMetadata = try XCTUnwrap(event.userMetadata)
+        XCTAssertEqual(userMetadata.name, "gladstein")
+        XCTAssertEqual(userMetadata.about, "")
+        XCTAssertNil(userMetadata.website)
+        XCTAssertEqual(userMetadata.nostrAddress, "gladstein@nostrplebs.com")
+    }
+
     func testDecodeTextNote() throws {
 
         let event: TextNoteEvent = try decodeFixture(filename: "text_note")
