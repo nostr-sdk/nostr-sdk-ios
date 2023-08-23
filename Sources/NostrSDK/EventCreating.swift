@@ -146,4 +146,35 @@ public extension EventCreating {
 
         return try ReactionEvent(content: content, tags: tags, signedBy: keypair)
     }
+    
+    /// Creates a ``ReportEvent`` (kind 1984) which reports a user for spam, illegal and explicit content.
+    /// - Parameters:
+    ///   - pubkey: The pubkey being reported.
+    ///   - reportType: The type (or reason) for the reporting. See ``ReportType``.
+    ///   - additionalInformation: Additional information submitted by the entity reporting the content.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``ReportEvent``.
+    func reportUser(withPublicKey pubkey: PublicKey, reportType: ReportType, additionalInformation: String = "", signedBy keypair: Keypair) throws -> ReportEvent {
+        try ReportEvent(content: additionalInformation,
+                        tags: [Tag(name: .pubkey, value: pubkey.hex, otherParameters: [reportType.rawValue])],
+                        signedBy: keypair)
+    }
+    
+    /// Creates a ``ReportEvent`` (kind 1984) which reports other notes for spam, illegal and explicit content.
+    /// - Parameters:
+    ///   - note: The note being reported.
+    ///   - reportType: The type (or reason) for the reporting. See ``ReportType``.
+    ///   - additionalInformation: Additional information submitted by the entity reporting the content.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``ReportEvent``.
+    func reportNote(_ note: NostrEvent, reportType: ReportType, additionalInformation: String = "", signedBy keypair: Keypair) throws -> ReportEvent {
+        guard reportType != .impersonation else {
+            throw EventCreatingError.invalidInput
+        }
+        let tags = [
+            Tag(name: .event, value: note.id, otherParameters: [reportType.rawValue]),
+            Tag(name: .pubkey, value: note.pubkey)
+        ]
+        return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
+    }
 }

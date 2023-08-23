@@ -55,6 +55,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#nip-18).
     case genericRepost
 
+    /// This kind of note is used to report users or other notes for spam, illegal, and explicit content.
+    ///
+    /// See [NIP-56](https://github.com/nostr-protocol/nips/blob/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c/56.md#nip-56).
+    case report
+    
     /// Any other event kind number that isn't supported by this enum yet will be represented by `unknown` so that `NostrEvent`s of those event kinds can still be encoded and decoded.
     case unknown(RawValue)
 
@@ -67,7 +72,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .directMessage,
         .repost,
         .reaction,
-        .genericRepost
+        .genericRepost,
+        .report
     ]
 
     public init(rawValue: Int) {
@@ -85,6 +91,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .repost: return 6
         case .reaction: return 7
         case .genericRepost: return 16
+        case .report: return 1984
         case let .unknown(value): return value
         }
     }
