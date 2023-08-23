@@ -179,4 +179,39 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         
         try verifyEvent(repostEvent)
     }
+    
+    func testReportUser() throws {
+        let report = try reportUser(withPublicKey: Keypair.test.publicKey, reportType: .impersonation, additionalInformation: "he's lying!", signedBy: Keypair.test)
+        
+        XCTAssertEqual(report.kind, .report)
+        XCTAssertEqual(report.content, "he's lying!")
+        
+        let expectedTag = Tag(name: .pubkey, value: Keypair.test.publicKey.hex, otherParameters: ["impersonation"])
+        XCTAssertTrue(report.tags.contains(expectedTag))
+        
+        try verifyEvent(report)
+    }
+    
+    func testReportNote() throws {
+        let noteToReport: TextNoteEvent = try decodeFixture(filename: "text_note")
+        
+        let report = try reportNote(noteToReport, reportType: .profanity, additionalInformation: "mean words", signedBy: Keypair.test)
+        
+        XCTAssertEqual(report.kind, .report)
+        XCTAssertEqual(report.content, "mean words")
+        
+        let expectedPubkeyTag = Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
+        XCTAssertTrue(report.tags.contains(expectedPubkeyTag))
+        
+        let expectedEventTag = Tag(name: .event, value: noteToReport.id, otherParameters: ["profanity"])
+        XCTAssertTrue(report.tags.contains(expectedEventTag))
+        
+        try verifyEvent(report)
+    }
+    
+    func testReportNoteWithImpersonationShouldFail() throws {
+        let noteToReport: TextNoteEvent = try decodeFixture(filename: "text_note")
+        
+        XCTAssertThrowsError(try reportNote(noteToReport, reportType: .impersonation, additionalInformation: "mean words", signedBy: Keypair.test))
+    }
 }
