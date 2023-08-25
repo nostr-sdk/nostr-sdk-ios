@@ -112,7 +112,7 @@ extension RelayTests: RelayDelegate {
         }
     }
     
-    func relay(_ relay: Relay, didReceive event: NostrEvent) {
+    func relay(_ relay: Relay, didReceive event: RelayEvent) {
         receiveExpectation?.fulfill()
     }
 }
