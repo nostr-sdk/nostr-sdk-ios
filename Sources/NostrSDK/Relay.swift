@@ -44,7 +44,13 @@ public enum RelayRequestError: Error, CustomStringConvertible {
 /// An optional interface for receiving state updates and events
 public protocol RelayDelegate: AnyObject {
     func relayStateDidChange(_ relay: Relay, state: Relay.State)
-    func relay(_ relay: Relay, didReceive event: NostrEvent)
+    func relay(_ relay: Relay, didReceive event: RelayEvent)
+}
+
+/// A struct containing a nostr event and the subscription ID
+public struct RelayEvent {
+    let event: NostrEvent
+    let subscriptionId: String
 }
 
 /// An object that communicates with a relay.
@@ -89,8 +95,8 @@ public final class Relay: ObservableObject, EventVerifying {
     private var socketSubscription: AnyCancellable?
     
     /// A Publisher that publishes all events the relay receives.
-    public private(set) var events = PassthroughSubject<NostrEvent, Never>()
-    
+    public private(set) var events = PassthroughSubject<RelayEvent, Never>()
+
     /// An optional delegate interface for receiving state updates and events
     public weak var delegate: RelayDelegate?
     
@@ -133,9 +139,10 @@ public final class Relay: ObservableObject, EventVerifying {
         func handle(messageData: Data) {
             let response = RelayResponse.decode(data: messageData)
             switch response {
-            case .event(_, let event):
-                events.send(event)
-                delegate?.relay(self, didReceive: event)
+            case .event(let subscriptionId, let event):
+                let relayEvent = RelayEvent(event: event, subscriptionId: subscriptionId)
+                events.send(relayEvent)
+                delegate?.relay(self, didReceive: relayEvent)
             default:
                 break
             }
