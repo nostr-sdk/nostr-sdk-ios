@@ -32,12 +32,19 @@ public extension EventCreating {
     /// Creates a ``TextNoteEvent`` (kind 1) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - content: The content of the text note.
+    ///   - subject: A subject for the text note.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``TextNoteEvent``.
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
-    func textNote(withContent content: String, signedBy keypair: Keypair) throws -> TextNoteEvent {
-        try TextNoteEvent(content: content, signedBy: keypair)
+    func textNote(withContent content: String, subject: String? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
+        let tags: [Tag]
+        if let subject {
+            tags = [Tag(name: .subject, value: subject)]
+        } else {
+            tags = []
+        }
+        return try TextNoteEvent(content: content, tags: tags, signedBy: keypair)
     }
     
     /// Creates a ``RecommendServerEvent`` (kind 2) and signs it with the provided ``Keypair``.

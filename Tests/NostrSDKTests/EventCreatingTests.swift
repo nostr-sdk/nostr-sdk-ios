@@ -35,12 +35,14 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     
     func testCreateSignedTextNote() throws {
         let note = try textNote(withContent: "Hello world!",
+                                subject: "test-subject",
                                 signedBy: Keypair.test)
         
         XCTAssertEqual(note.kind, .textNote)
         XCTAssertEqual(note.content, "Hello world!")
+        XCTAssertEqual(note.subject, "test-subject")
         XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
-        XCTAssertEqual(note.tags, [])
+        XCTAssertEqual(note.tags, [Tag(name: .subject, value: "test-subject")])
         
         try verifyEvent(note)
     }

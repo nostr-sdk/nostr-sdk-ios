@@ -19,6 +19,9 @@ public enum TagName: Codable, Equatable {
     /// a stringified kind number
     case kind
     
+    /// a short subject for a text note, similar to subjects in emails
+    case subject
+    
     /// a tag of unknown type
     case unknown(String)
     
@@ -30,6 +33,8 @@ public enum TagName: Codable, Equatable {
             return "p"
         case .kind:
             return "k"
+        case .subject:
+            return "subject"
         case .unknown(let id):
             return id
         }
@@ -37,7 +42,7 @@ public enum TagName: Codable, Equatable {
     
     public static func == (lhs: TagName, rhs: TagName) -> Bool {
         switch (lhs, rhs) {
-        case (.event, .event), (.pubkey, .pubkey), (.kind, .kind): return true
+        case (.event, .event), (.pubkey, .pubkey), (.kind, .kind), (.subject, .subject): return true
         case (.unknown(let id1), .unknown(let id2)): return id1 == id2
         default: return false
         }
@@ -143,6 +148,8 @@ public class Tag: Codable, Equatable {
             name = .event
         case "k":
             name = .kind
+        case "subject":
+            name = .subject
         default:
             name = .unknown(type)
         }
