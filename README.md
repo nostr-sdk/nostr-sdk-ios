@@ -54,7 +54,7 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-51: Lists](https://github.com/nostr-protocol/nips/blob/master/51.md)
 - [ ] [NIP-52: Calendar Events](https://github.com/nostr-protocol/nips/blob/master/52.md)
 - [ ] [NIP-53: Live Activities](https://github.com/nostr-protocol/nips/blob/master/53.md)
-- [ ] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
+- [x] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-58: Badges](https://github.com/nostr-protocol/nips/blob/master/58.md)
 - [ ] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
