@@ -44,11 +44,41 @@ enum RelayResponse: Decodable {
         case count = "COUNT"
         case auth = "AUTH"
     }
+    
+    struct OKMessage {
+        let type: OKMessageType
+        let message: String?
+        
+        init(rawMessage: String) {
+            let components = rawMessage.split(separator: ":")
+            if let firstComponent = components.first {
+                type = OKMessageType(rawValue: String(firstComponent)) ?? .unknown
+            } else {
+                type = .unknown
+            }
+            
+            if components.count >= 2 {
+                message = components[1].trimmingCharacters(in: .whitespaces)
+            } else {
+                message = nil
+            }
+        }
+    }
+    
+    enum OKMessageType: String, Codable {
+        case unknown
+        case duplicate
+        case pow
+        case blocked
+        case rateLimited = "rate-limited"
+        case invalid
+        case error
+    }
 
     case notice(message: String)
     case eose(subscriptionId: String)
     case event(subscriptionId: String, event: NostrEvent)
-    case ok(eventId: String, success: Bool, message: String)
+    case ok(eventId: String, success: Bool, message: OKMessage)
     case count(subscriptionId: String, count: Int)
     case auth(challenge: String)
 
@@ -78,7 +108,7 @@ enum RelayResponse: Decodable {
             let eventId = try container.decode(String.self)
             let success = try container.decode(Bool.self)
             let message = try container.decode(String.self)
-            self = .ok(eventId: eventId, success: success, message: message)
+            self = .ok(eventId: eventId, success: success, message: OKMessage(rawMessage: message))
         case .count:
             let subscriptionId = try container.decode(String.self)
             let countResponse = try container.decode(CountResponse.self)
