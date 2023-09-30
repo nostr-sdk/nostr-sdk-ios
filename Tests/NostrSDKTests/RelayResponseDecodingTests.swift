@@ -64,7 +64,8 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
-            XCTAssertEqual(message, "")
+            XCTAssertEqual(message.type, .unknown)
+            XCTAssertNil(message.message)
         } else {
             XCTFail("failed to decode")
         }
@@ -80,7 +81,8 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
-            XCTAssertEqual(message, "pow: difficulty 25>=24")
+            XCTAssertEqual(message.type, .pow)
+            XCTAssertEqual(message.message, "difficulty 25>=24")
         } else {
             XCTFail("failed to decode")
         }
@@ -96,7 +98,8 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, false)
-            XCTAssertEqual(message, "blocked: tor exit nodes not allowed")
+            XCTAssertEqual(message.type, .blocked)
+            XCTAssertEqual(message.message, "tor exit nodes not allowed")
         } else {
             XCTFail("failed to decode")
         }
