@@ -87,6 +87,9 @@ struct QueryRelayDemoView: View {
             
             eventsCancellable = relay?.events
                 .receive(on: DispatchQueue.main)
+                .map {
+                    $0.event
+                }
                 .sink { event in
                     events.insert(event, at: 0)
                 }
