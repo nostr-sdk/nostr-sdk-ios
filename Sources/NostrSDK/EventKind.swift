@@ -38,6 +38,14 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// See [NIP-04 - Direct Messages](https://github.com/nostr-protocol/nips/blob/master/04.md)
     case directMessage
     
+    /// This kind of event indicates that the author requests that the events in the included
+    /// tags should be deleted.
+    /// > Note: This event can only *request* that the listed events be deleted. In reality, they
+    /// may not be deleted by all clients or relays.
+    ///
+    /// See [NIP-09 - Event Deletion](https://github.com/nostr-protocol/nips/blob/master/09.md)
+    case deletion
+    
     /// This kind of note is used to signal to followers that another event is worth reading.
     ///
     /// > Note: The reposted event must be a kind 1 text note.
@@ -70,6 +78,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .recommendServer,
         .contactList,
         .directMessage,
+        .deletion,
         .repost,
         .reaction,
         .genericRepost,
@@ -88,6 +97,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .recommendServer: return 2
         case .contactList: return 3
         case .directMessage: return 4
+        case .deletion: return 5
         case .repost: return 6
         case .reaction: return 7
         case .genericRepost: return 16

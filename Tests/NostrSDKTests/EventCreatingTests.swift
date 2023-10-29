@@ -121,7 +121,28 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         try verifyEvent(event)
     }
+    
+    func testDeletionEvent() throws {
+        let noteToDelete: TextNoteEvent = try decodeFixture(filename: "text_note_deletable")
+        let reason = "Didn't mean to post"
+        
+        let event = try delete(events: [noteToDelete], reason: reason, signedBy: Keypair.test)
+        
+        XCTAssertEqual(event.kind, .deletion)
+        
+        XCTAssertEqual(event.reason, "Didn't mean to post")
+        XCTAssertEqual(event.deletedEventIds, ["fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b"])
+        
+        try verifyEvent(event)
+    }
 
+    func testDeletionEventFailsWithMismatchedKey() throws {
+        let noteToDelete: TextNoteEvent = try decodeFixture(filename: "text_note")
+        let reason = "Didn't mean to post"
+        
+        XCTAssertThrowsError(try delete(events: [noteToDelete], reason: reason, signedBy: Keypair.test))
+    }
+    
     func testRepostTextNoteEvent() throws {
         let noteToRepost: TextNoteEvent = try decodeFixture(filename: "text_note")
         
