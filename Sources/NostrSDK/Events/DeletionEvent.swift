@@ -27,7 +27,7 @@ public final class DeletionEvent: NostrEvent {
     }
     
     /// The reason the creator of the event gave for deleting the included events.
-    var reason: String {
+    public var reason: String {
         content
     }
     
