@@ -110,6 +110,26 @@ public extension EventCreating {
         return try DirectMessageEvent(content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
     
+    /// Creates a ``DeletionEvent`` (kind 5) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - events: The events the signer would like to request deletion for.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``DeletionEvent``.
+    ///
+    /// > Important: Events can only be deleted using the same keypair that was used to create them.
+    /// See [NIP-09 Specification](https://github.com/nostr-protocol/nips/blob/master/09.md)
+    func delete(events: [NostrEvent], reason: String? = nil, signedBy keypair: Keypair) throws -> DeletionEvent {
+        // Verify that the events being deleted were created with the same keypair.
+        let creatorValidatedEvents = events.filter { $0.pubkey == keypair.publicKey.hex }
+        
+        guard !creatorValidatedEvents.isEmpty else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        let tags = creatorValidatedEvents.map { Tag(name: .event, value: $0.id) }
+        return try DeletionEvent(content: reason ?? "", tags: tags, signedBy: keypair)
+    }
+    
     /// Creates a ``TextNoteRepostEvent`` (kind 6) or ``GenericRepostEvent`` (kind 16) based on the kind of the event being reposted and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - event: The event to repost.
