@@ -17,32 +17,33 @@ public extension EventCreating {
     /// Creates a ``SetMetadataEvent`` (kind 0) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - userMetadata: The metadata to set.
+    ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the name or about fields.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``SetMetadataEvent``.
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
-    func setMetadataEvent(withUserMetadata userMetadata: UserMetadata, signedBy keypair: Keypair) throws -> SetMetadataEvent {
+    func setMetadataEvent(withUserMetadata userMetadata: UserMetadata, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> SetMetadataEvent {
         let metadataAsData = try JSONEncoder().encode(userMetadata)
         guard let metadataAsString = String(data: metadataAsData, encoding: .utf8) else {
             throw EventCreatingError.invalidInput
         }
-        return try SetMetadataEvent(content: metadataAsString, signedBy: keypair)
+        let customEmojiTags = customEmojis.map { $0.tag }
+        return try SetMetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
     }
     
     /// Creates a ``TextNoteEvent`` (kind 1) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - content: The content of the text note.
     ///   - subject: A subject for the text note.
+    ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the content field.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``TextNoteEvent``.
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
-    func textNote(withContent content: String, subject: String? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
-        let tags: [Tag]
+    func textNote(withContent content: String, subject: String? = nil, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> TextNoteEvent {
+        var tags: [Tag] = customEmojis.map { $0.tag }
         if let subject {
-            tags = [Tag(name: .subject, value: subject)]
-        } else {
-            tags = []
+            tags.append(Tag(name: .subject, value: subject))
         }
         return try TextNoteEvent(content: content, tags: tags, signedBy: keypair)
     }
@@ -173,7 +174,27 @@ public extension EventCreating {
 
         return try ReactionEvent(content: content, tags: tags, signedBy: keypair)
     }
-    
+
+    /// Creates a ``ReactionEvent`` (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - customEmoji: The custom emoji to emojify with if the matching shortcode is found in the content field.
+    ///   - reactedEvent: The NostrEvent being reacted to.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``ReactionEvent``.
+    ///
+    /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+    func reaction(withCustomEmoji customEmoji: CustomEmoji, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
+        let eventTag = Tag(name: .event, value: reactedEvent.id)
+        let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
+
+        var tags = reactedEvent.tags.filter { $0.name == .event || $0.name == .pubkey }
+        tags.append(eventTag)
+        tags.append(pubkeyTag)
+        tags.append(customEmoji.tag)
+
+        return try ReactionEvent(content: ":\(customEmoji.shortcode):", tags: tags, signedBy: keypair)
+    }
+
     /// Creates a ``ReportEvent`` (kind 1984) which reports a user for spam, illegal and explicit content.
     /// - Parameters:
     ///   - pubkey: The pubkey being reported.

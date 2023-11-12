@@ -1,0 +1,19 @@
+{
+  "id": "afc6f38482de8600bfbc85d9f1b404a2bbab8a65a3e2eb62f0ce47195e99886b",
+  "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+  "created_at": 1699770458,
+  "kind": 1,
+  "tags": [
+      [
+        "emoji",
+        "ostrich",
+        "https://nostrsdk.com/ostrich.png"
+    ],
+    [
+        "subject",
+        "test-subject"
+    ]
+  ],
+  "content": "Hello world! :ostrich:",
+  "sig": "7a110a5ad3a248985d11dbb90da3f254fa99fbae80bf6e270f36d1c697a6fbf3f6508a5a027f00e2fc9ca81aafdd67c52b09e80c49fa5f7ab3bc8d5836a08601"
+}

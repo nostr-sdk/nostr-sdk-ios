@@ -12,38 +12,58 @@ import XCTest
 final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, FixtureLoading {
     
     func testCreateSetMetadataEvent() throws {
-        let meta = UserMetadata(name: "Nostr SDK Test",
+        let meta = UserMetadata(name: "Nostr SDK Test :ostrich:",
                                 displayName: "Nostr SDK Display Name",
-                                about: "I'm a test account. I'm used to test the Nostr SDK for Apple platforms.",
-                                website: URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios")!,
+                                about: "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:",
+                                website: URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"),
                                 nostrAddress: "test@nostr.com",
-                                pictureURL: URL(string: "picture@nostr.com"),
-                                bannerPictureURL: URL(string: "banner@nostr.com")!)
-        
-        let event = try setMetadataEvent(withUserMetadata: meta, signedBy: Keypair.test)
-        
-        XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test")
+                                pictureURL: URL(string: "https://nostrsdk.com/picture.png"),
+                                bannerPictureURL: URL(string: "https://nostrsdk.com/banner.png"))
+
+        let ostrichImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
+        let appleImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/apple.png"))
+
+        let customEmojis = [
+            try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: ostrichImageURL)),
+            try XCTUnwrap(CustomEmoji(shortcode: "apple", imageURL: appleImageURL))
+        ]
+        let customEmojiTags = [
+            Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"]),
+            Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])
+        ]
+
+        let event = try setMetadataEvent(withUserMetadata: meta, customEmojis: customEmojis, signedBy: Keypair.test)
+
+        XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test :ostrich:")
         XCTAssertEqual(event.userMetadata?.displayName, "Nostr SDK Display Name")
-        XCTAssertEqual(event.userMetadata?.about, "I'm a test account. I'm used to test the Nostr SDK for Apple platforms.")
+        XCTAssertEqual(event.userMetadata?.about, "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:")
         XCTAssertEqual(event.userMetadata?.website, URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"))
         XCTAssertEqual(event.userMetadata?.nostrAddress, "test@nostr.com")
-        XCTAssertEqual(event.userMetadata?.pictureURL, URL(string: "picture@nostr.com"))
-        XCTAssertEqual(event.userMetadata?.bannerPictureURL, URL(string: "banner@nostr.com"))
-        
+        XCTAssertEqual(event.userMetadata?.pictureURL, URL(string: "https://nostrsdk.com/picture.png"))
+        XCTAssertEqual(event.userMetadata?.bannerPictureURL, URL(string: "https://nostrsdk.com/banner.png"))
+        XCTAssertEqual(event.customEmojis, customEmojis)
+        XCTAssertEqual(event.tags, customEmojiTags)
+
         try verifyEvent(event)
     }
     
     func testCreateSignedTextNote() throws {
-        let note = try textNote(withContent: "Hello world!",
+        let imageURLString = "https://nostrsdk.com/ostrich.png"
+        let imageURL = try XCTUnwrap(URL(string: imageURLString))
+        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
+
+        let note = try textNote(withContent: "Hello world! :ostrich:",
                                 subject: "test-subject",
+                                customEmojis: [customEmoji],
                                 signedBy: Keypair.test)
-        
+
         XCTAssertEqual(note.kind, .textNote)
-        XCTAssertEqual(note.content, "Hello world!")
+        XCTAssertEqual(note.content, "Hello world! :ostrich:")
         XCTAssertEqual(note.subject, "test-subject")
         XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
-        XCTAssertEqual(note.tags, [Tag(name: .subject, value: "test-subject")])
-        
+        XCTAssertEqual(note.tags, [Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString]), Tag(name: .subject, value: "test-subject")])
+        XCTAssertEqual(note.customEmojis, [customEmoji])
+
         try verifyEvent(note)
     }
     
@@ -183,7 +203,35 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         try verifyEvent(event)
     }
-    
+
+    func testCreateCustomEmojiReactionEvent() throws {
+        let reactedEvent = try textNote(withContent: "Hello world!",
+                                signedBy: Keypair.test)
+
+        let imageURLString = "https://nostrsdk.com/ostrich.png"
+        let imageURL = try XCTUnwrap(URL(string: imageURLString))
+        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
+        let event = try reaction(withCustomEmoji: customEmoji,
+                                 reactedEvent: reactedEvent,
+                                 signedBy: Keypair.test)
+
+        XCTAssertEqual(event.kind, .reaction)
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.reactedEventId, reactedEvent.id)
+        XCTAssertEqual(event.reactedEventPubkey, reactedEvent.pubkey)
+        XCTAssertEqual(event.content, ":ostrich:")
+        XCTAssertEqual(event.customEmojis, [customEmoji])
+
+        let expectedTags = [
+            Tag(name: .event, value: reactedEvent.id),
+            Tag(name: .pubkey, value: reactedEvent.pubkey),
+            Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString])
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+
+        try verifyEvent(event)
+    }
+
     func testRepostNonTextNoteEvent() throws {
         let eventToRepost: RecommendServerEvent = try decodeFixture(filename: "recommend_server")
         
