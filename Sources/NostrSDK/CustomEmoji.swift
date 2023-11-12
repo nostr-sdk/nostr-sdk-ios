@@ -24,11 +24,15 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
         Tag(name: .emoji, value: shortcode, otherParameters: [imageURL.absoluteString])
     }
 
+    /// Creates a ``CustomEmoji`` or returns nil if shortcode is invalid.
+    /// - Parameters:
+    ///   - shortcode: A name given for the emoji, which MUST be comprised of only alphanumeric characters and underscores.
+    ///   - imageURL: A URL to the corresponding image file of the emoji.
     init?(shortcode: String, imageURL: URL) {
         self.shortcode = shortcode
         self.imageURL = imageURL
 
-        if !isValidShortcode(shortcode) {
+        guard isValidShortcode(shortcode) else {
             return nil
         }
     }
@@ -60,15 +64,11 @@ public extension CustomEmojiValidating {
     func isValidShortcode(_ shortcode: String) -> Bool {
         let regex: NSRegularExpression
         do {
-            regex = try NSRegularExpression(pattern: "/\\A[_0-9a-zA-Z]+\\z/")
+            regex = try NSRegularExpression(pattern: "\\A[_0-9a-zA-Z]+\\z")
         } catch {
             return false
         }
 
-        guard regex.matches(in: shortcode, range: NSRange(location: 0, length: shortcode.count)).isEmpty else {
-            return false
-        }
-
-        return true
+        return !regex.matches(in: shortcode, range: NSRange(location: 0, length: shortcode.count)).isEmpty
     }
 }
