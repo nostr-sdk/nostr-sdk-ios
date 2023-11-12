@@ -19,6 +19,11 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
     /// A URL to the corresponding image file of the emoji.
     let imageURL: URL
 
+    /// ``Tag`` representation of the custom emoji.
+    var tag: Tag {
+        Tag(name: .emoji, value: shortcode, otherParameters: [imageURL.absoluteString])
+    }
+
     init?(shortcode: String, imageURL: URL) {
         self.shortcode = shortcode
         self.imageURL = imageURL
@@ -26,10 +31,6 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
         if !isValidShortcode(shortcode: shortcode) {
             return nil
         }
-    }
-
-    func tag() -> Tag {
-        Tag(name: .emoji, value: shortcode, otherParameters: [imageURL.absoluteString])
     }
 
     func isEqual(to customEmoji: CustomEmoji) -> Bool {

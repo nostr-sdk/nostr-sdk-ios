@@ -27,7 +27,7 @@ public extension EventCreating {
         guard let metadataAsString = String(data: metadataAsData, encoding: .utf8) else {
             throw EventCreatingError.invalidInput
         }
-        let customEmojiTags = customEmojis.map { $0.tag() }
+        let customEmojiTags = customEmojis.map { $0.tag }
         return try SetMetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
     }
     
@@ -41,7 +41,7 @@ public extension EventCreating {
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
     func textNote(withContent content: String, subject: String? = nil, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> TextNoteEvent {
-        var tags: [Tag] = customEmojis.map { $0.tag() }
+        var tags: [Tag] = customEmojis.map { $0.tag }
         if let subject {
             tags.append(Tag(name: .subject, value: subject))
         }
@@ -186,12 +186,11 @@ public extension EventCreating {
     func reaction(withCustomEmoji customEmoji: CustomEmoji, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
         let eventTag = Tag(name: .event, value: reactedEvent.id)
         let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
-        let emojiTag = customEmoji.tag()
 
         var tags = reactedEvent.tags.filter { $0.name == .event || $0.name == .pubkey }
         tags.append(eventTag)
         tags.append(pubkeyTag)
-        tags.append(emojiTag)
+        tags.append(customEmoji.tag)
 
         return try ReactionEvent(content: ":\(customEmoji.shortcode):", tags: tags, signedBy: keypair)
     }
