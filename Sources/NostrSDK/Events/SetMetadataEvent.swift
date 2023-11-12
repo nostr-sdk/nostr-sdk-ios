@@ -67,7 +67,7 @@ public struct UserMetadata: Codable {
 /// An event that contains a user profile.
 /// 
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/b503f8a92b22be3037b8115fe3e644865a4fa155/01.md#basic-event-kinds)
-public final class SetMetadataEvent: NostrEvent {
+public final class SetMetadataEvent: NostrEvent, CustomEmojiInterpreting {
     
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

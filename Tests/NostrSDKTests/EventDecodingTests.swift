@@ -66,6 +66,37 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(userMetadata.nostrAddress, "gladstein@nostrplebs.com")
     }
 
+    func testDecodeSetMetadataWithCustomEmojis() throws {
+
+        let event: SetMetadataEvent = try decodeFixture(filename: "set_metadata_custom_emojis")
+
+        XCTAssertEqual(event.id, "290e0e02411669d8c6f31b95259020458bb1ad43cec8a4fdf87e5c8628ab3e54")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.createdAt, 1699769361)
+        XCTAssertEqual(event.kind, .setMetadata)
+        XCTAssertEqual(event.tags, [Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"]), Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])])
+        XCTAssertTrue(event.content.hasPrefix("{\"banner\":\"https://nostrsdk.com/banner.png"))
+        XCTAssertEqual(event.signature, "9039249cca3b29208fade093a96c7929fa944dfe566ae77933efe738de75852d67e93cbe3c9321dbe95cabb705435071a5ce3116adadc135e493f5939e2e664c")
+
+        // access metadata properties from raw dictionary
+        XCTAssertEqual(event.rawUserMetadata["name"] as? String, "Nostr SDK Test :ostrich:")
+        XCTAssertEqual(event.rawUserMetadata["display_name"] as? String, "Nostr SDK Display Name")
+        XCTAssertEqual(event.rawUserMetadata["about"] as? String, "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:")
+        XCTAssertEqual(event.rawUserMetadata["website"] as? String, "https://github.com/nostr-sdk/nostr-sdk-ios")
+        XCTAssertEqual(event.rawUserMetadata["nip05"] as? String, "test@nostr.com")
+        XCTAssertEqual(event.rawUserMetadata["picture"] as? String, "https://nostrsdk.com/picture.png")
+        XCTAssertEqual(event.rawUserMetadata["banner"] as? String, "https://nostrsdk.com/banner.png")
+
+        // access metadata properties from decoded object
+        let userMetadata = try XCTUnwrap(event.userMetadata)
+        XCTAssertEqual(userMetadata.name, "Nostr SDK Test :ostrich:")
+        XCTAssertEqual(userMetadata.about, "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:")
+        XCTAssertEqual(userMetadata.website, URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"))
+        XCTAssertEqual(userMetadata.nostrAddress, "test@nostr.com")
+        XCTAssertEqual(userMetadata.pictureURL, URL(string: "https://nostrsdk.com/picture.png"))
+        XCTAssertEqual(userMetadata.bannerPictureURL, URL(string: "https://nostrsdk.com/banner.png"))
+    }
+
     func testDecodeTextNote() throws {
 
         let event: TextNoteEvent = try decodeFixture(filename: "text_note")
@@ -107,6 +138,28 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         
         XCTAssertEqual(event.mentionedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
         XCTAssertEqual(event.mentionedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
+
+    }
+
+    func testDecodeNoteWithCustomEmoji() throws {
+        let event: TextNoteEvent = try decodeFixture(filename: "text_note_custom_emoji")
+
+        XCTAssertEqual(event.id, "afc6f38482de8600bfbc85d9f1b404a2bbab8a65a3e2eb62f0ce47195e99886b")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.createdAt, 1699770458)
+        XCTAssertEqual(event.kind, .textNote)
+
+        let expectedTags = [
+            Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"]),
+            Tag(name: .subject, value: "test-subject")
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+        XCTAssertEqual(event.content, "Hello world! :ostrich:")
+        XCTAssertEqual(event.subject, "test-subject")
+        XCTAssertEqual(event.signature, "7a110a5ad3a248985d11dbb90da3f254fa99fbae80bf6e270f36d1c697a6fbf3f6508a5a027f00e2fc9ca81aafdd67c52b09e80c49fa5f7ab3bc8d5836a08601")
+
+        XCTAssertEqual(event.mentionedPubkeys, [])
+        XCTAssertEqual(event.mentionedEventIds, [])
 
     }
 
@@ -242,5 +295,27 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.reactedEventPubkey, "e1ff3bfdd4e40315959b08b4fcc8245eaa514637e1d4ec2ae166b743341be1af")
         XCTAssertEqual(event.content, "🤙")
         XCTAssertEqual(event.signature, "c0dea5d4612d834e13e0dcfeff71a345f761d868bf27fd5e3fe521b76872d5da3db05375f8739a4bad86189d63720187c08170827990b113b477437f17e4a906")
+    }
+
+    func testDecodeCustomEmojiReaction() throws {
+        let event: ReactionEvent = try decodeFixture(filename: "custom_emoji_reaction")
+
+        XCTAssertEqual(event.id, "342439c681a0db193992d144c38fce09deaa49e5d441fea6561175982f518f7d")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.createdAt, 1699768152)
+        XCTAssertEqual(event.kind, .reaction)
+
+        let expectedTags = [
+            Tag(name: .event, value: "dc0e8b27b37ec7854ec0d5b24c39901a8cf933be3b420ca3cee6242279f54a48"),
+            Tag(name: .pubkey, value: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"),
+            Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"])
+        ]
+        let imageUrl = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
+        XCTAssertEqual(event.customEmojis, [CustomEmoji(shortcode: "ostrich", imageUrl: imageUrl)])
+        XCTAssertEqual(event.tags, expectedTags)
+        XCTAssertEqual(event.reactedEventId, "dc0e8b27b37ec7854ec0d5b24c39901a8cf933be3b420ca3cee6242279f54a48")
+        XCTAssertEqual(event.reactedEventPubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.content, ":ostrich:")
+        XCTAssertEqual(event.signature, "eb20aaff71b309b386ed12a92208fd6a8322b66585331d039d63219c0724752a2ffee211ed99d1dd370f601282f0d3c49c36a28ac4252ee4d0f3f1ce0de06abb")
     }
 }

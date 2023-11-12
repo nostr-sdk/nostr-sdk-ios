@@ -1,0 +1,24 @@
+{
+    "content": ":ostrich:",
+    "created_at": 1699768152,
+    "id": "342439c681a0db193992d144c38fce09deaa49e5d441fea6561175982f518f7d",
+    "kind": 7,
+    "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+    "sig": "eb20aaff71b309b386ed12a92208fd6a8322b66585331d039d63219c0724752a2ffee211ed99d1dd370f601282f0d3c49c36a28ac4252ee4d0f3f1ce0de06abb",
+    "tags":
+    [
+        [
+            "e",
+            "dc0e8b27b37ec7854ec0d5b24c39901a8cf933be3b420ca3cee6242279f54a48"
+        ],
+        [
+            "p",
+            "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"
+        ],
+        [
+            "emoji",
+            "ostrich",
+            "https://nostrsdk.com/ostrich.png"
+        ]
+    ]
+}

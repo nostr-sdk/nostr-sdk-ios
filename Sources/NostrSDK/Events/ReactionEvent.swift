@@ -10,8 +10,8 @@ import Foundation
 /// A reaction event (kind 7) in response to a different event.
 ///
 /// See [NIP-25](https://github.com/nostr-protocol/nips/blob/master/25.md).
-public class ReactionEvent: NostrEvent {
-    
+public class ReactionEvent: NostrEvent, CustomEmojiInterpreting {
+
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }

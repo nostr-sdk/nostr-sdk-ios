@@ -1,0 +1,12 @@
+{
+  "content": "{\"banner\":\"https://nostrsdk.com/banner.png\",\"website\":\"https://github.com/nostr-sdk/nostr-sdk-ios\",\"picture\":\"https://nostrsdk.com/picture.png\",\"nip05\":\"test@nostr.com\",\"display_name\":\"Nostr SDK Display Name\",\"about\":\"I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:\",\"name\":\"Nostr SDK Test :ostrich:\"}",
+  "created_at": 1699769361,
+  "id": "290e0e02411669d8c6f31b95259020458bb1ad43cec8a4fdf87e5c8628ab3e54",
+  "kind": 0,
+  "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+  "sig": "9039249cca3b29208fade093a96c7929fa944dfe566ae77933efe738de75852d67e93cbe3c9321dbe95cabb705435071a5ce3116adadc135e493f5939e2e664c",
+  "tags": [
+    ["emoji", "ostrich", "https://nostrsdk.com/ostrich.png"],
+    ["emoji", "apple", "https://nostrsdk.com/apple.png"]
+  ]
+}
