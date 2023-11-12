@@ -28,7 +28,7 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
         self.shortcode = shortcode
         self.imageURL = imageURL
 
-        if !isValidShortcode(shortcode: shortcode) {
+        if !isValidShortcode(shortcode) {
             return nil
         }
     }
@@ -57,7 +57,7 @@ public extension CustomEmojiInterpreting {
 public protocol CustomEmojiValidating {}
 public extension CustomEmojiValidating {
     /// Returns true if a custom emoji shortcode is valid (comprised of only alphanumeric characters and underscores)..
-    func isValidShortcode(shortcode: String) -> Bool {
+    func isValidShortcode(_ shortcode: String) -> Bool {
         let regex: NSRegularExpression
         do {
             regex = try NSRegularExpression(pattern: "/\\A[_0-9a-zA-Z]+\\z/")
