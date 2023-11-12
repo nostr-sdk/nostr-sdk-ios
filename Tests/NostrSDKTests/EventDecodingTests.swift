@@ -310,8 +310,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
             Tag(name: .pubkey, value: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"),
             Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"])
         ]
-        let imageUrl = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
-        XCTAssertEqual(event.customEmojis, [CustomEmoji(shortcode: "ostrich", imageUrl: imageUrl)])
+        let imageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
+        XCTAssertEqual(event.customEmojis, [CustomEmoji(shortcode: "ostrich", imageURL: imageURL)])
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.reactedEventId, "dc0e8b27b37ec7854ec0d5b24c39901a8cf933be3b420ca3cee6242279f54a48")
         XCTAssertEqual(event.reactedEventPubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")

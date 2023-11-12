@@ -20,12 +20,12 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
                                 pictureURL: URL(string: "https://nostrsdk.com/picture.png"),
                                 bannerPictureURL: URL(string: "https://nostrsdk.com/banner.png"))
 
-        let ostrichImageUrl = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
-        let appleImageUrl = try XCTUnwrap(URL(string: "https://nostrsdk.com/apple.png"))
+        let ostrichImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
+        let appleImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/apple.png"))
 
         let customEmojis = [
-            try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageUrl: ostrichImageUrl)),
-            try XCTUnwrap(CustomEmoji(shortcode: "apple", imageUrl: appleImageUrl))
+            try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: ostrichImageURL)),
+            try XCTUnwrap(CustomEmoji(shortcode: "apple", imageURL: appleImageURL))
         ]
         let customEmojiTags = [
             Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"]),
@@ -48,9 +48,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
     
     func testCreateSignedTextNote() throws {
-        let imageUrlString = "https://nostrsdk.com/ostrich.png"
-        let imageUrl = try XCTUnwrap(URL(string: imageUrlString))
-        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageUrl: imageUrl))
+        let imageURLString = "https://nostrsdk.com/ostrich.png"
+        let imageURL = try XCTUnwrap(URL(string: imageURLString))
+        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
 
         let note = try textNote(withContent: "Hello world! :ostrich:",
                                 subject: "test-subject",
@@ -61,7 +61,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(note.content, "Hello world! :ostrich:")
         XCTAssertEqual(note.subject, "test-subject")
         XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
-        XCTAssertEqual(note.tags, [Tag(name: .emoji, value: "ostrich", otherParameters: [imageUrlString]), Tag(name: .subject, value: "test-subject")])
+        XCTAssertEqual(note.tags, [Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString]), Tag(name: .subject, value: "test-subject")])
         XCTAssertEqual(note.customEmojis, [customEmoji])
 
         try verifyEvent(note)
@@ -208,9 +208,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let reactedEvent = try textNote(withContent: "Hello world!",
                                 signedBy: Keypair.test)
 
-        let imageUrlString = "https://nostrsdk.com/ostrich.png"
-        let imageUrl = try XCTUnwrap(URL(string: imageUrlString))
-        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageUrl: imageUrl))
+        let imageURLString = "https://nostrsdk.com/ostrich.png"
+        let imageURL = try XCTUnwrap(URL(string: imageURLString))
+        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
         let event = try reaction(withCustomEmoji: customEmoji,
                                  reactedEvent: reactedEvent,
                                  signedBy: Keypair.test)
@@ -225,7 +225,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let expectedTags = [
             Tag(name: .event, value: reactedEvent.id),
             Tag(name: .pubkey, value: reactedEvent.pubkey),
-            Tag(name: .emoji, value: "ostrich", otherParameters: [imageUrlString])
+            Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString])
         ]
         XCTAssertEqual(event.tags, expectedTags)
 

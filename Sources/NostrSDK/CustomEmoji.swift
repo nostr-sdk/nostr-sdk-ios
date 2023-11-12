@@ -16,12 +16,12 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
     /// A name given for the emoji, which MUST be comprised of only alphanumeric characters and underscores.
     let shortcode: String
 
-    /// A a URL to the corresponding image file of the emoji.
-    let imageUrl: URL
+    /// A URL to the corresponding image file of the emoji.
+    let imageURL: URL
 
-    init?(shortcode: String, imageUrl: URL) {
+    init?(shortcode: String, imageURL: URL) {
         self.shortcode = shortcode
-        self.imageUrl = imageUrl
+        self.imageURL = imageURL
 
         if !isValidShortcode(shortcode: shortcode) {
             return nil
@@ -29,12 +29,12 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
     }
 
     func tag() -> Tag {
-        Tag(name: .emoji, value: shortcode, otherParameters: [imageUrl.absoluteString])
+        Tag(name: .emoji, value: shortcode, otherParameters: [imageURL.absoluteString])
     }
 
     func isEqual(to customEmoji: CustomEmoji) -> Bool {
         shortcode == customEmoji.shortcode &&
-        imageUrl == customEmoji.imageUrl
+        imageURL == customEmoji.imageURL
     }
 }
 
@@ -44,11 +44,11 @@ public extension CustomEmojiInterpreting {
     /// It does not fetch images from the specified URLs to determine if they exist.
     var customEmojis: [CustomEmoji] {
         return tags.compactMap { tag in
-            guard tag.name == .emoji, !tag.otherParameters.isEmpty, let imageUrlString = tag.otherParameters.first, let imageUrl = URL(string: imageUrlString) else {
+            guard tag.name == .emoji, !tag.otherParameters.isEmpty, let imageURLString = tag.otherParameters.first, let imageURL = URL(string: imageURLString) else {
                 return nil
             }
 
-            return CustomEmoji(shortcode: tag.value, imageUrl: imageUrl)
+            return CustomEmoji(shortcode: tag.value, imageURL: imageURL)
         }
     }
 }
