@@ -3,17 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A114FB42B0178AB00ABDBB0 /* NostrSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3A114FB32B0178AB00ABDBB0 /* NostrSDK */; };
 		F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */; };
 		F78221C42A8803F3008D5AE8 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C32A8803F3008D5AE8 /* Helpers.swift */; };
 		F78221C62A898063008D5AE8 /* DirectMessageDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C52A898063008D5AE8 /* DirectMessageDemoView.swift */; };
 		F78221C82A8981B9008D5AE8 /* RelayFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C72A8981B9008D5AE8 /* RelayFormView.swift */; };
 		F78221CE2A8999F9008D5AE8 /* KeyInputSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221CD2A8999F9008D5AE8 /* KeyInputSectionView.swift */; };
 		F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */; };
-		F7A81BDE2A66201800EBCB0C /* NostrSDK in Frameworks */ = {isa = PBXBuildFile; productRef = F7A81BDD2A66201800EBCB0C /* NostrSDK */; };
 		F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */; };
 		F7CB362E2A35127B0098F35C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362D2A35127B0098F35C /* ContentView.swift */; };
 		F7CB36302A35127C0098F35C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7CB362F2A35127C0098F35C /* Assets.xcassets */; };
@@ -45,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7A81BDE2A66201800EBCB0C /* NostrSDK in Frameworks */,
+				3A114FB42B0178AB00ABDBB0 /* NostrSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,7 +145,7 @@
 			);
 			name = NostrSDKDemo;
 			packageProductDependencies = (
-				F7A81BDD2A66201800EBCB0C /* NostrSDK */,
+				3A114FB32B0178AB00ABDBB0 /* NostrSDK */,
 			);
 			productName = NostrSDKDemo;
 			productReference = F7CB36282A35127B0098F35C /* NostrSDKDemo.app */;
@@ -176,7 +176,7 @@
 			);
 			mainGroup = F7CB361F2A35127B0098F35C;
 			packageReferences = (
-				F7CB36392A3512E20098F35C /* XCRemoteSwiftPackageReference "nostr-sdk-ios" */,
+				3A114FB22B0178AB00ABDBB0 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = F7CB36292A35127B0098F35C /* Products */;
 			projectDirPath = "";
@@ -356,7 +356,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.joelklabo.NostrSDKDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nostrsdk.NostrSDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -385,7 +385,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.joelklabo.NostrSDKDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nostrsdk.NostrSDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -416,21 +416,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		F7CB36392A3512E20098F35C /* XCRemoteSwiftPackageReference "nostr-sdk-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nostr-sdk/nostr-sdk-ios";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		3A114FB22B0178AB00ABDBB0 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F7A81BDD2A66201800EBCB0C /* NostrSDK */ = {
+		3A114FB32B0178AB00ABDBB0 /* NostrSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F7CB36392A3512E20098F35C /* XCRemoteSwiftPackageReference "nostr-sdk-ios" */;
 			productName = NostrSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
