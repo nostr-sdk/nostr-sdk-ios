@@ -38,7 +38,7 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
 - [ ] [NIP-27: Text Note References](https://github.com/nostr-protocol/nips/blob/master/27.md)
 - [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
-- [ ] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
+- [x] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
 - [ ] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
 - [ ] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
 - [ ] [NIP-33: Parameterized Replaceable Events](https://github.com/nostr-protocol/nips/blob/master/33.md)

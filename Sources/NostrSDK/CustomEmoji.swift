@@ -14,13 +14,13 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
     }
 
     /// A name given for the emoji, which MUST be comprised of only alphanumeric characters and underscores.
-    let shortcode: String
+    public let shortcode: String
 
     /// A URL to the corresponding image file of the emoji.
-    let imageURL: URL
+    public let imageURL: URL
 
     /// ``Tag`` representation of the custom emoji.
-    var tag: Tag {
+    public var tag: Tag {
         Tag(name: .emoji, value: shortcode, otherParameters: [imageURL.absoluteString])
     }
 
@@ -28,7 +28,7 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
     /// - Parameters:
     ///   - shortcode: A name given for the emoji, which MUST be comprised of only alphanumeric characters and underscores.
     ///   - imageURL: A URL to the corresponding image file of the emoji.
-    init?(shortcode: String, imageURL: URL) {
+    public init?(shortcode: String, imageURL: URL) {
         self.shortcode = shortcode
         self.imageURL = imageURL
 
