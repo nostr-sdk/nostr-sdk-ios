@@ -225,4 +225,150 @@ public extension EventCreating {
         ]
         return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
     }
+
+    /// Creates a ``DateBasedCalendarEventNostrEvent`` (kind 31922) which starts on a date and ends before a different date in the future.
+    /// Its use is appropriate for all-day or multi-day events where time and time zone hold no significance. e.g., anniversary, public holidays, vacation days.
+    /// - Parameters:
+    ///   - name: The name of the calendar event.
+    ///   - description: A detailed description of the calendar event.
+    ///   - start: An inclusive start date. Must be less than end, if it exists.
+    ///   - end: An exclusive end date. If omitted, the calendar event ends on the same date as start.
+    ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
+    ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
+    ///   - participants: The participants of the calendar event.
+    ///   - hashtags: Hashtags to categorize calendar event.
+    ///   - references: References / links to web pages, documents, video calls, recorded videos, etc.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``DateBasedCalendarEventNostrEvent``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func dateBasedCalendarEvent(withName name: String, description: String = "", start: DateComponents, end: DateComponents? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEventNostrEvent {
+
+        guard start.isValidDate(in: Calendar(identifier: .iso8601)) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        guard end?.isValidDate(in: Calendar(identifier: .iso8601)) == true else {
+            throw EventCreatingError.invalidInput
+        }
+
+        guard let startDate = start.date else {
+            throw EventCreatingError.invalidInput
+        }
+
+        let endDate = end?.date
+        // If the end date is ommitted, the calendar event ends on the same date as the start date.
+        if endDate != nil {
+            // The start date must occur before the end date, if it exists.
+            guard let endDate, startDate < endDate else {
+                throw EventCreatingError.invalidInput
+            }
+        }
+
+        // Create an ISO8601 formatter that formats strings in yyyy-mm-dd format so that
+        // the start and end dates conform to NIP-52.
+        let iso8601DateFormatter = ISO8601DateFormatter()
+        iso8601DateFormatter.formatOptions = .withFullDate
+
+        var tags: [Tag] = [
+            Tag(name: .unknown("d"), value: UUID().uuidString),
+            Tag(name: .unknown("name"), value: name),
+            Tag(name: .unknown("start"), value: iso8601DateFormatter.string(from: startDate))
+        ]
+
+        if let endDate {
+            tags.append(Tag(name: .unknown("end"), value: iso8601DateFormatter.string(from: endDate)))
+        }
+
+        if let location {
+            tags.append(Tag(name: .unknown("location"), value: location))
+        }
+
+        if let geohash {
+            tags.append(Tag(name: .unknown("g"), value: geohash))
+        }
+
+        if let participants, !participants.isEmpty {
+            tags += participants.map { $0.tag }
+        }
+
+        if let hashtags, !hashtags.isEmpty {
+            tags += hashtags.map { Tag(name: .hashtag, value: $0) }
+        }
+
+        if let references, !references.isEmpty {
+            tags += references.map { Tag(name: .unknown("r"), value: $0.absoluteString) }
+        }
+
+        return try DateBasedCalendarEventNostrEvent(content: description, tags: tags, signedBy: keypair)
+    }
+
+    /// Creates a ``TimeBasedCalendarEventNostrEvent`` (kind 31923) which spans between a start time and end time.
+    /// - Parameters:
+    ///   - name: The name of the calendar event.
+    ///   - description: A detailed description of the calendar event.
+    ///   - start: An inclusive start timestamp.
+    ///   - end: An exclusive end timestamp. If omitted, the calendar event ends instantaneously.
+    ///   - startTimeZone: The time zone of the start timestamp.
+    ///   - endTimeZone: The time zone of the end timestamp. If omitted and startTimeZone is provided, the time zone of the end timestamp is the same as the start timestamp.
+    ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
+    ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
+    ///   - participants: The participants of the calendar event.
+    ///   - hashtags: Hashtags to categorize calendar event.
+    ///   - references: References / links to web pages, documents, video calls, recorded videos, etc.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``TimeBasedCalendarEventNostrEvent``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func timeBasedCalendarEvent(withName name: String, description: String = "", start: Date, end: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEventNostrEvent {
+
+        // If the end timestamp is ommitted, the calendar event ends instantaneously.
+        if let end {
+            // The start timestamp must occur before the end timestamp, if it exists.
+            guard start < end else {
+                throw EventCreatingError.invalidInput
+            }
+        }
+
+        var tags: [Tag] = [
+            Tag(name: .unknown("d"), value: UUID().uuidString),
+            Tag(name: .unknown("name"), value: name),
+            Tag(name: .unknown("start"), value: String(Int64(start.timeIntervalSince1970)))
+        ]
+
+        if let end {
+            tags.append(Tag(name: .unknown("end"), value: String(Int64(end.timeIntervalSince1970))))
+        }
+
+        if let startTimeZone {
+            tags.append(Tag(name: .unknown("start_tzid"), value: startTimeZone.identifier))
+        }
+
+        // If the end time zone is omitted and the start time zone is provided, the time zone of the end timestamp is the same as the start timestamp.
+        if let endTimeZone {
+            tags.append(Tag(name: .unknown("end_tzid"), value: endTimeZone.identifier))
+        }
+
+        if let location {
+            tags.append(Tag(name: .unknown("location"), value: location))
+        }
+
+        if let geohash {
+            tags.append(Tag(name: .unknown("g"), value: geohash))
+        }
+
+        if let participants {
+            tags += participants.map { $0.tag }
+        }
+
+        if let hashtags {
+            tags += hashtags.map { Tag(name: .hashtag, value: $0) }
+        }
+
+        if let references {
+            tags += references.map { Tag(name: .unknown("r"), value: $0.absoluteString) }
+        }
+
+        return try TimeBasedCalendarEventNostrEvent(content: description, tags: tags, signedBy: keypair)
+    }
 }
