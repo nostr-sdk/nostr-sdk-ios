@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// A representation of date as it would appear in ISO 8601 format, which is in the Gregorian calendar. Time and time zone are omitted.
+/// A representation of a date as it would appear in the ISO 8601 format, which is in the Gregorian calendar. Time and time zone are omitted.
 public struct TimeOmittedDate: Comparable {
     public static func < (lhs: TimeOmittedDate, rhs: TimeOmittedDate) -> Bool {
         if lhs.year < rhs.year {
