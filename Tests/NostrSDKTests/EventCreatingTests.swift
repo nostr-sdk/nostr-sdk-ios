@@ -342,7 +342,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startComponents: dateComponents, endComponents: dateComponents, signedBy: Keypair.test))
     }
 
-    func testDateBasedCalendarEventWithStartDateNotBeforeEndDateShouldFail() throws {
+    func testDateBasedCalendarEventWithEndDateBeforeStartDateShouldFail() throws {
         let name = "Nostrica"
         let description = "First Nostr unconference"
         let calendar = Calendar(identifier: .iso8601)
@@ -439,7 +439,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, start: timestamp, end: timestamp, signedBy: Keypair.test))
     }
 
-    func testTimeBasedCalendarEventWithStartTimestampNotBeforeEndTimestampShouldFail() throws {
+    func testTimeBasedCalendarEventWithEndTimestampBeforeStartTimestampShouldFail() throws {
         let name = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
         let description = "Flight to Nostrica"
 
