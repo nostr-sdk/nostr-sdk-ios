@@ -25,66 +25,24 @@ public final class DateBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     }
 
     /// Inclusive start date.
-    /// Start date is represented by ``DateComponents`` in the calendar context of ``Calendar.Identifier.iso8601``, with only `year`, `month`, and `day` populated.
+    /// Start date is represented by ``TimeOmittedDate``.
     /// `nil` is returned if the backing `start` tag is malformed.
-    public var start: DateComponents? {
+    public var startDate: TimeOmittedDate? {
         guard let startString = tags.first(where: { $0.name.rawValue == "start" })?.value else {
             return nil
         }
 
-        return DateComponents(dateString: startString)
+        return TimeOmittedDate(dateString: startString)
     }
 
     /// Exclusive end date.
-    /// End date represented by ``DateComponents`` in the calendar context of ``Calendar.Identifier.iso8601``, with `year`, `month`, and `day` populated.
+    /// End date represented by ``TimeOmittedDate``.
     /// `nil` is returned if the backing `end` tag is malformed or if the calendar event ends on the same date as start.
-    public var end: DateComponents? {
+    public var endDate: TimeOmittedDate? {
         guard let endString = tags.first(where: { $0.name.rawValue == "end" })?.value else {
             return nil
         }
 
-        return DateComponents(dateString: endString)
-    }
-}
-
-extension DateComponents {
-    /// Initializes a date components value from a string representation of a date in the format of yyyy-mm-dd.
-    init?(dateString: String) {
-        let regex: NSRegularExpression
-        do {
-            regex = try NSRegularExpression(pattern: "\\A(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})\\z")
-        } catch {
-            return nil
-        }
-
-        let matches = regex.matches(in: dateString, range: NSRange(location: 0, length: dateString.count))
-        guard let match = matches.first else {
-            return nil
-        }
-
-        var captures: [String: Int] = [:]
-
-        // For each matched range, extract the named capture group
-        for name in ["year", "month", "day"] {
-            let matchRange = match.range(withName: name)
-
-            // Extract the substring matching the named capture group
-            if let substringRange = Range(matchRange, in: dateString) {
-                let capture = Int(dateString[substringRange])
-                captures[name] = capture
-            }
-        }
-
-        guard let year = captures["year"], let month = captures["month"], let day = captures["day"] else {
-            return nil
-        }
-
-        self.init(calendar: Calendar(identifier: .iso8601), year: year, month: month, day: day)
-
-        // Documentation for DateComponents.isValidDate says that this method is not necessarily cheap.
-        // If performance becomes a concern, reconsider if this check should be performed.
-        guard isValidDate else {
-            return nil
-        }
+        return TimeOmittedDate(dateString: endString)
     }
 }

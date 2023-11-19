@@ -25,7 +25,7 @@ public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// Inclusive start timestamp.
     /// The start timestamp is represented by ``Date``.
     /// `nil` is returned if the backing `start` tag is malformed.
-    public var start: Date? {
+    public var startTimestamp: Date? {
         guard let startString = tags.first(where: { $0.name.rawValue == "start" })?.value, let startSeconds = Int(startString) else {
             return nil
         }
@@ -36,7 +36,7 @@ public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// Exclusive end timestamp.
     /// End timestamp represented by ``Date``.
     /// `nil` is returned if the backing `end` tag is malformed or if the calendar event ends instanteously.
-    public var end: Date? {
+    public var endTimestamp: Date? {
         guard let endString = tags.first(where: { $0.name.rawValue == "end" })?.value, let endSeconds = Int(endString) else {
             return nil
         }

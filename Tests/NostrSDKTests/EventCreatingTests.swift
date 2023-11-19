@@ -290,9 +290,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let name = "Nostrica"
         let description = "First Nostr unconference"
 
-        let calendar = Calendar(identifier: .iso8601)
-        let startComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 19)
-        let endComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 21)
+        let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
+        let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 21))
 
         let location = "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica"
         let geohash = "d1sknt77t3xn"
@@ -310,8 +309,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let dateBasedCalendarEvent = try dateBasedCalendarEvent(
             withName: name,
             description: description,
-            startComponents: startComponents,
-            endComponents: endComponents,
+            startDate: startDate,
+            endDate: endDate,
             location: location,
             geohash: geohash,
             participants: participants,
@@ -322,8 +321,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         XCTAssertEqual(dateBasedCalendarEvent.name, name)
         XCTAssertEqual(dateBasedCalendarEvent.content, description)
-        XCTAssertEqual(dateBasedCalendarEvent.start, startComponents)
-        XCTAssertEqual(dateBasedCalendarEvent.end, endComponents)
+        XCTAssertEqual(dateBasedCalendarEvent.startDate, startDate)
+        XCTAssertEqual(dateBasedCalendarEvent.endDate, endDate)
         XCTAssertEqual(dateBasedCalendarEvent.location, location)
         XCTAssertEqual(dateBasedCalendarEvent.geohash, geohash)
         XCTAssertEqual(dateBasedCalendarEvent.participants, participants)
@@ -336,40 +335,18 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     func testDateBasedCalendarEventWithStartDateSameAsEndDateShouldFail() throws {
         let name = "Nostrica"
         let description = "First Nostr unconference"
-        let calendar = Calendar(identifier: .iso8601)
-        let dateComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 19)
+        let timeOmittedDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
 
-        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startComponents: dateComponents, endComponents: dateComponents, signedBy: Keypair.test))
+        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startDate: timeOmittedDate, endDate: timeOmittedDate, signedBy: Keypair.test))
     }
 
     func testDateBasedCalendarEventWithEndDateBeforeStartDateShouldFail() throws {
         let name = "Nostrica"
         let description = "First Nostr unconference"
-        let calendar = Calendar(identifier: .iso8601)
-        let startComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 19)
-        let endComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 18)
+        let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
+        let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 18))
 
-        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startComponents: startComponents, endComponents: endComponents, signedBy: Keypair.test))
-    }
-
-    func testDateBasedCalendarEventWithInvalidStartDateShouldFail() throws {
-        let name = "Nostrica"
-        let description = "First Nostr unconference"
-        let calendar = Calendar(identifier: .iso8601)
-        let startComponents = DateComponents(calendar: calendar, year: 2023, month: 2, day: 31)
-        let endComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 21)
-
-        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startComponents: startComponents, endComponents: endComponents, signedBy: Keypair.test))
-    }
-
-    func testDateBasedCalendarEventWithInvalidEndDateShouldFail() throws {
-        let name = "Nostrica"
-        let description = "First Nostr unconference"
-        let calendar = Calendar(identifier: .iso8601)
-        let startComponents = DateComponents(calendar: calendar, year: 2023, month: 2, day: 19)
-        let endComponents = DateComponents(calendar: calendar, year: 2023, month: 2, day: 31)
-
-        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startComponents: startComponents, endComponents: endComponents, signedBy: Keypair.test))
+        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startDate: startDate, endDate: endDate, signedBy: Keypair.test))
     }
 
     func testTimeBasedCalendarEvent() throws {
@@ -382,8 +359,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let endTimeZone = TimeZone(identifier: "America/Costa_Rica")
         let endComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: endTimeZone, year: 2023, month: 3, day: 17, hour: 11, minute: 42)
 
-        let start = try XCTUnwrap(startComponents.date)
-        let end = try XCTUnwrap(endComponents.date)
+        let startTimestamp = try XCTUnwrap(startComponents.date)
+        let endTimestamp = try XCTUnwrap(endComponents.date)
 
         let location = "John F. Kennedy International Airport, Queens, NY 11430, USA"
         let geohash = "dr5x1p57bg9e"
@@ -401,8 +378,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let timeBasedCalendarEvent = try timeBasedCalendarEvent(
             withName: name,
             description: description,
-            start: start,
-            end: end,
+            startTimestamp: startTimestamp,
+            endTimestamp: endTimestamp,
             startTimeZone: startTimeZone,
             endTimeZone: endTimeZone,
             location: location,
@@ -415,8 +392,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         XCTAssertEqual(timeBasedCalendarEvent.name, name)
         XCTAssertEqual(timeBasedCalendarEvent.content, description)
-        XCTAssertEqual(timeBasedCalendarEvent.start, start)
-        XCTAssertEqual(timeBasedCalendarEvent.end, end)
+        XCTAssertEqual(timeBasedCalendarEvent.startTimestamp, startTimestamp)
+        XCTAssertEqual(timeBasedCalendarEvent.endTimestamp, endTimestamp)
         XCTAssertEqual(timeBasedCalendarEvent.startTimeZone, startTimeZone)
         XCTAssertEqual(timeBasedCalendarEvent.endTimeZone, endTimeZone)
         XCTAssertEqual(timeBasedCalendarEvent.location, location)
@@ -436,7 +413,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let dateComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
         let timestamp = try XCTUnwrap(dateComponents.date)
 
-        XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, start: timestamp, end: timestamp, signedBy: Keypair.test))
+        XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, startTimestamp: timestamp, endTimestamp: timestamp, signedBy: Keypair.test))
     }
 
     func testTimeBasedCalendarEventWithEndTimestampBeforeStartTimestampShouldFail() throws {
@@ -447,9 +424,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
         let endComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 14)
 
-        let start = try XCTUnwrap(startComponents.date)
-        let end = try XCTUnwrap(endComponents.date)
+        let startTimestamp = try XCTUnwrap(startComponents.date)
+        let endTimestamp = try XCTUnwrap(endComponents.date)
 
-        XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, start: start, end: end, signedBy: Keypair.test))
+        XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, startTimestamp: startTimestamp, endTimestamp: endTimestamp, signedBy: Keypair.test))
     }
 }
