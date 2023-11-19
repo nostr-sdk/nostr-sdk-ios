@@ -46,6 +46,8 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
         return tag.otherParameters[1]
     }
 
+    /// Initializes a calendar event participant from a ``Tag``.
+    /// `nil` is returned if the tag is not a pubkey tag.
     public init?(pubkeyTag: Tag) {
         guard pubkeyTag.name == .pubkey else {
             return nil
@@ -54,6 +56,11 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
         self.tag = pubkeyTag
     }
 
+    /// Initializes a calendar event participant.
+    /// - Parameters:
+    ///   - pubkey: The public key of the participant.
+    ///   - relayURL: A relay in which the participant can be found
+    ///   - role: The role of the participant in the meeting.
     public init(pubkey: PublicKey, relayURL: URL? = nil, role: String? = nil) {
         var otherParameters: [String] = [relayURL?.absoluteString ?? ""]
         if let role, !role.isEmpty {
