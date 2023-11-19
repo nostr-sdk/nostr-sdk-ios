@@ -236,7 +236,7 @@ public extension EventCreating {
     ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
     ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
     ///   - participants: The participants of the calendar event.
-    ///   - hashtags: Hashtags to categorize calendar event.
+    ///   - hashtags: Hashtags to categorize the calendar event.
     ///   - references: References / links to web pages, documents, video calls, recorded videos, etc.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``DateBasedCalendarEventNostrEvent``.
@@ -256,11 +256,10 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
 
-        let endDate = end?.date
-        // If the end date is ommitted, the calendar event ends on the same date as the start date.
-        if endDate != nil {
+        // If the end date is omitted, the calendar event ends on the same date as the start date.
+        if let endDate = end?.date {
             // The start date must occur before the end date, if it exists.
-            guard let endDate, startDate < endDate else {
+            guard startDate < endDate else {
                 throw EventCreatingError.invalidInput
             }
         }
@@ -314,7 +313,7 @@ public extension EventCreating {
     ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
     ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
     ///   - participants: The participants of the calendar event.
-    ///   - hashtags: Hashtags to categorize calendar event.
+    ///   - hashtags: Hashtags to categorize the calendar event.
     ///   - references: References / links to web pages, documents, video calls, recorded videos, etc.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``TimeBasedCalendarEventNostrEvent``.
@@ -322,7 +321,7 @@ public extension EventCreating {
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
     func timeBasedCalendarEvent(withName name: String, description: String = "", start: Date, end: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEventNostrEvent {
 
-        // If the end timestamp is ommitted, the calendar event ends instantaneously.
+        // If the end timestamp is omitted, the calendar event ends instantaneously.
         if let end {
             // The start timestamp must occur before the end timestamp, if it exists.
             guard start < end else {

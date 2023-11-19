@@ -49,11 +49,11 @@ public final class DateBasedCalendarEventNostrEvent: NostrEvent, CalendarEventPa
     /// End date represented by ``DateComponents`` in the calendar context of ``Calendar.Identifier.iso8601``, with `year`, `month`, and `day` populated.
     /// `nil` is returned if the backing `end` tag is malformed or if the calendar event ends on the same date as start.
     public var end: DateComponents? {
-        guard let startString = tags.first(where: { $0.name.rawValue == "end" })?.value else {
+        guard let endString = tags.first(where: { $0.name.rawValue == "end" })?.value else {
             return nil
         }
 
-        return startString.dateStringAsDateComponents
+        return endString.dateStringAsDateComponents
     }
 
     /// The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.

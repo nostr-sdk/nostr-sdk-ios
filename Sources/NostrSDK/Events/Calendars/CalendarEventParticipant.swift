@@ -23,11 +23,9 @@ public struct CalendarEventParticipant: PubkeyTag, RelayTagParameter, Equatable 
 
     /// A relay in which the participant can be found. nil is returned if the relay URL is malformed.
     public var relay: URL? {
-        guard !tag.otherParameters.isEmpty else {
+        guard let relayString = tag.otherParameters.first else {
             return nil
         }
-
-        let relayString = tag.otherParameters[0]
         guard !relayString.isEmpty else {
             return nil
         }
@@ -48,16 +46,16 @@ public struct CalendarEventParticipant: PubkeyTag, RelayTagParameter, Equatable 
         return tag.otherParameters[1]
     }
 
-    public init?(tag: Tag) {
-        guard tag.name == .pubkey else {
+    public init?(pubkeyTag: Tag) {
+        guard pubkeyTag.name == .pubkey else {
             return nil
         }
 
-        self.tag = tag
+        self.tag = pubkeyTag
     }
 
-    public init(pubkey: PublicKey, relay: URL? = nil, role: String? = nil) {
-        var otherParameters: [String] = [relay?.absoluteString ?? ""]
+    public init(pubkey: PublicKey, relayURL: URL? = nil, role: String? = nil) {
+        var otherParameters: [String] = [relayURL?.absoluteString ?? ""]
         if let role, !role.isEmpty {
             otherParameters.append(role)
         }
