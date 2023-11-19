@@ -320,7 +320,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeDateBasedCalendarEvent() throws {
-        let event: DateBasedCalendarEventNostrEvent = try decodeFixture(filename: "date_based_calendar_event")
+        let event: DateBasedCalendarEvent = try decodeFixture(filename: "date_based_calendar_event")
 
         XCTAssertEqual(event.id, "14ff9ea332268384f9f72e2623371dd8edf8dd6b8f8b7f0b3d3df29317148d95")
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
@@ -335,11 +335,11 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
 
         let participants = event.participants
         let expectedParticipantPublicKey = Keypair.test.publicKey
-        let relay = URL(string: "wss://relay.nostrsdk.com")
+        let relayURL = URL(string: "wss://relay.nostrsdk.com")
         XCTAssertEqual(participants.count, 2)
         XCTAssertEqual(participants,
-                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relay: relay, role: "organizer"),
-                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relay: relay, role: "attendee")])
+                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "organizer"),
+                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "attendee")])
 
         XCTAssertEqual(event.hashtags, ["nostr", "unconference", "nostrica"])
 
@@ -350,7 +350,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeTimeBasedCalendarEvent() throws {
-        let event: TimeBasedCalendarEventNostrEvent = try decodeFixture(filename: "time_based_calendar_event")
+        let event: TimeBasedCalendarEvent = try decodeFixture(filename: "time_based_calendar_event")
 
         XCTAssertEqual(event.id, "091455f5c9509655e3a4f68f98e807349ac0b5525506b22978566a0bb0f3ced1")
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
@@ -367,11 +367,11 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
 
         let participants = event.participants
         let expectedParticipantPublicKey = Keypair.test.publicKey
-        let relay = URL(string: "wss://relay.nostrsdk.com")
+        let relayURL = URL(string: "wss://relay.nostrsdk.com")
         XCTAssertEqual(participants.count, 2)
         XCTAssertEqual(participants,
-                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relay: relay, role: "organizer"),
-                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relay: relay, role: "attendee")])
+                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "organizer"),
+                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "attendee")])
 
         XCTAssertEqual(event.hashtags, ["flights", "costarica"])
 

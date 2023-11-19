@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// A public key tag.
-public protocol PubkeyTag {
-    /// The pubkey of a tag.
+/// A public key provider.
+public protocol PubkeyProviding {
+    /// The public key.
     var pubkey: PublicKey? { get }
 }

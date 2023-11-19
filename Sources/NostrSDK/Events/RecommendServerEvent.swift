@@ -10,7 +10,7 @@ import Foundation
 /// An event that contains a relay the event creator wants to recommend to its followers.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/b503f8a92b22be3037b8115fe3e644865a4fa155/01.md#basic-event-kinds)
-public final class RecommendServerEvent: NostrEvent {
+public final class RecommendServerEvent: NostrEvent, RelayProviding {
     
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

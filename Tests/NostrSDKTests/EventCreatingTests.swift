@@ -291,15 +291,15 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let description = "First Nostr unconference"
 
         let calendar = Calendar(identifier: .iso8601)
-        let start = DateComponents(calendar: calendar, year: 2023, month: 3, day: 19)
-        let end = DateComponents(calendar: calendar, year: 2023, month: 3, day: 21)
+        let startComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 19)
+        let endComponents = DateComponents(calendar: calendar, year: 2023, month: 3, day: 21)
 
         let location = "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica"
         let geohash = "d1sknt77t3xn"
 
-        let relay = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
-        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relay: relay, role: "organizer"))
-        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relay: relay, role: "attendee"))
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
+        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "organizer"))
+        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "attendee"))
         let participants = [participant1, participant2]
 
         let hashtags = ["nostr", "unconference", "nostrica"]
@@ -310,8 +310,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let dateBasedCalendarEvent = try dateBasedCalendarEvent(
             withName: name,
             description: description,
-            start: start,
-            end: end,
+            startComponents: startComponents,
+            endComponents: endComponents,
             location: location,
             geohash: geohash,
             participants: participants,
@@ -322,8 +322,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         XCTAssertEqual(dateBasedCalendarEvent.name, name)
         XCTAssertEqual(dateBasedCalendarEvent.content, description)
-        XCTAssertEqual(dateBasedCalendarEvent.start, start)
-        XCTAssertEqual(dateBasedCalendarEvent.end, end)
+        XCTAssertEqual(dateBasedCalendarEvent.start, startComponents)
+        XCTAssertEqual(dateBasedCalendarEvent.end, endComponents)
         XCTAssertEqual(dateBasedCalendarEvent.location, location)
         XCTAssertEqual(dateBasedCalendarEvent.geohash, geohash)
         XCTAssertEqual(dateBasedCalendarEvent.participants, participants)
@@ -338,20 +338,20 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let description = "Flight to Nostrica"
 
         let startTimeZone = TimeZone(identifier: "America/New_York")
-        let startDateComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
+        let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
 
         let endTimeZone = TimeZone(identifier: "America/Costa_Rica")
-        let endDateComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: endTimeZone, year: 2023, month: 3, day: 17, hour: 11, minute: 42)
+        let endComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: endTimeZone, year: 2023, month: 3, day: 17, hour: 11, minute: 42)
 
-        let start = try XCTUnwrap(startDateComponents.date)
-        let end = try XCTUnwrap(endDateComponents.date)
+        let start = try XCTUnwrap(startComponents.date)
+        let end = try XCTUnwrap(endComponents.date)
 
         let location = "John F. Kennedy International Airport, Queens, NY 11430, USA"
         let geohash = "dr5x1p57bg9e"
 
-        let relay = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
-        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relay: relay, role: "organizer"))
-        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relay: relay, role: "attendee"))
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
+        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "organizer"))
+        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "attendee"))
         let participants = [participant1, participant2]
 
         let hashtags = ["flights", "costarica"]

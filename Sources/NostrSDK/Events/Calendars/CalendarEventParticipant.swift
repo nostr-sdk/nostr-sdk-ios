@@ -8,7 +8,7 @@
 import Foundation
 
 /// A participant in a calendar event.
-public struct CalendarEventParticipant: PubkeyTag, RelayTagParameter, Equatable {
+public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag
     }
@@ -22,7 +22,7 @@ public struct CalendarEventParticipant: PubkeyTag, RelayTagParameter, Equatable 
     }
 
     /// A relay in which the participant can be found. nil is returned if the relay URL is malformed.
-    public var relay: URL? {
+    public var relayURL: URL? {
         guard let relayString = tag.otherParameters.first else {
             return nil
         }
@@ -68,6 +68,6 @@ public struct CalendarEventParticipant: PubkeyTag, RelayTagParameter, Equatable 
 public protocol CalendarEventParticipantInterpreting: NostrEvent {}
 public extension CalendarEventParticipantInterpreting {
     var participants: [CalendarEventParticipant] {
-        tags.filter { $0.name == .pubkey }.compactMap { CalendarEventParticipant(tag: $0) }
+        tags.filter { $0.name == .pubkey }.compactMap { CalendarEventParticipant(pubkeyTag: $0) }
     }
 }

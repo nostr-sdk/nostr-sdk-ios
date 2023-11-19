@@ -15,10 +15,10 @@ final class CalendarEventParticipantTests: XCTestCase {
         let relay = "wss://relay.nostrsdk.com"
         let role = "organizer"
         let tag = Tag(name: .pubkey, value: pubkey.hex, otherParameters: [relay, role])
-        let calendarEventParticipant = try XCTUnwrap(CalendarEventParticipant(tag: tag))
+        let calendarEventParticipant = try XCTUnwrap(CalendarEventParticipant(pubkeyTag: tag))
 
         XCTAssertEqual(calendarEventParticipant.pubkey, pubkey)
-        XCTAssertEqual(calendarEventParticipant.relay?.absoluteString, relay)
+        XCTAssertEqual(calendarEventParticipant.relayURL?.absoluteString, relay)
         XCTAssertEqual(calendarEventParticipant.role, role)
         XCTAssertEqual(calendarEventParticipant.tag, tag)
     }

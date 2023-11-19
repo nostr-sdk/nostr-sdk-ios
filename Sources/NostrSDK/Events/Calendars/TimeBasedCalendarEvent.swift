@@ -1,5 +1,5 @@
 //
-//  TimeBasedCalendarEventEvent.swift
+//  TimeBasedCalendarEvent.swift
 //
 //
 //  Created by Terry Yiu on 11/16/23.
@@ -8,7 +8,7 @@
 import Foundation
 
 /// Time-based calendar event spans between a start time and end time.
-public final class TimeBasedCalendarEventNostrEvent: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, ReferenceTagInterpreting {
+public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -20,16 +20,6 @@ public final class TimeBasedCalendarEventNostrEvent: NostrEvent, CalendarEventPa
 
     public init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .timeBasedCalendarEvent, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
-    }
-    
-    /// Universally unique identifier (UUID).
-    public var uuid: String? {
-        tags.first { $0.name.rawValue == "d" }?.value
-    }
-
-    /// The name of the calendar event.
-    public var name: String? {
-        tags.first { $0.name.rawValue == "name" }?.value
     }
 
     /// Inclusive start timestamp.
@@ -71,15 +61,5 @@ public final class TimeBasedCalendarEventNostrEvent: NostrEvent, CalendarEventPa
         }
 
         return TimeZone(identifier: timeZoneIdentifier)
-    }
-
-    /// The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
-    public var location: String? {
-        tags.first { $0.name.rawValue == "location" }?.value
-    }
-
-    /// The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
-    public var geohash: String? {
-        tags.first { $0.name.rawValue == "g" }?.value
     }
 }

@@ -1,5 +1,5 @@
 //
-//  DateBasedCalendarEventNostrEvent.swift
+//  DateBasedCalendarEvent.swift
 //
 //
 //  Created by Terry Yiu on 11/13/23.
@@ -10,7 +10,7 @@ import Foundation
 /// Date-based calendar event starts on a date and ends before a different date in the future.
 /// Its use is appropriate for all-day or multi-day events where time and time zone hold no significance. e.g., anniversary, public holidays, vacation days.
 /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-public final class DateBasedCalendarEventNostrEvent: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, ReferenceTagInterpreting {
+public final class DateBasedCalendarEvent: NostrEvent, CalendarEventInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -24,16 +24,6 @@ public final class DateBasedCalendarEventNostrEvent: NostrEvent, CalendarEventPa
         try super.init(kind: .dateBasedCalendarEvent, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
 
-    /// Universally unique identifier (UUID).
-    public var uuid: String? {
-        tags.first { $0.name.rawValue == "d" }?.value
-    }
-
-    /// The name of the calendar event.
-    public var name: String? {
-        tags.first { $0.name.rawValue == "name" }?.value
-    }
-
     /// Inclusive start date.
     /// Start date is represented by ``DateComponents`` in the calendar context of ``Calendar.Identifier.iso8601``, with only `year`, `month`, and `day` populated.
     /// `nil` is returned if the backing `start` tag is malformed.
@@ -42,7 +32,7 @@ public final class DateBasedCalendarEventNostrEvent: NostrEvent, CalendarEventPa
             return nil
         }
 
-        return startString.dateStringAsDateComponents
+        return DateComponents(dateString: startString)
     }
 
     /// Exclusive end date.
@@ -53,16 +43,48 @@ public final class DateBasedCalendarEventNostrEvent: NostrEvent, CalendarEventPa
             return nil
         }
 
-        return endString.dateStringAsDateComponents
+        return DateComponents(dateString: endString)
     }
+}
 
-    /// The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
-    public var location: String? {
-        tags.first { $0.name.rawValue == "location" }?.value
-    }
+extension DateComponents {
+    /// Initializes a date components value from a string representation of a date in the format of yyyy-mm-dd.
+    init?(dateString: String) {
+        let regex: NSRegularExpression
+        do {
+            regex = try NSRegularExpression(pattern: "\\A(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})\\z")
+        } catch {
+            return nil
+        }
 
-    /// The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
-    public var geohash: String? {
-        tags.first { $0.name.rawValue == "g" }?.value
+        let matches = regex.matches(in: dateString, range: NSRange(location: 0, length: dateString.count))
+        guard let match = matches.first else {
+            return nil
+        }
+
+        var captures: [String: Int] = [:]
+
+        // For each matched range, extract the named capture group
+        for name in ["year", "month", "day"] {
+            let matchRange = match.range(withName: name)
+
+            // Extract the substring matching the named capture group
+            if let substringRange = Range(matchRange, in: dateString) {
+                let capture = Int(dateString[substringRange])
+                captures[name] = capture
+            }
+        }
+
+        guard let year = captures["year"], let month = captures["month"], let day = captures["day"] else {
+            return nil
+        }
+
+        self.init(calendar: Calendar(identifier: .iso8601), year: year, month: month, day: day)
+
+        // Documentation for DateComponents.isValidDate says that this method is not necessarily cheap.
+        // If performance becomes a concern, reconsider if this check should be performed.
+        guard isValidDate else {
+            return nil
+        }
     }
 }
