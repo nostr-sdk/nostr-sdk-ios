@@ -67,7 +67,15 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     ///
     /// See [NIP-56](https://github.com/nostr-protocol/nips/blob/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c/56.md#nip-56).
     case report
-    
+
+    /// This kind of event represents an occurrence that spans between a start date and end date.
+    /// See [NIP-52 - Date-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-events-1)
+    case dateBasedCalendarEvent
+
+    /// This kind of event represents an occurrence between moments in time.
+    /// See [NIP-52 - Time-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#time-based-calendar-event)
+    case timeBasedCalendarEvent
+
     /// Any other event kind number that isn't supported by this enum yet will be represented by `unknown` so that `NostrEvent`s of those event kinds can still be encoded and decoded.
     case unknown(RawValue)
 
@@ -82,7 +90,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .repost,
         .reaction,
         .genericRepost,
-        .report
+        .report,
+        .dateBasedCalendarEvent,
+        .timeBasedCalendarEvent
     ]
 
     public init(rawValue: Int) {
@@ -102,6 +112,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .reaction: return 7
         case .genericRepost: return 16
         case .report: return 1984
+        case .dateBasedCalendarEvent: return 31922
+        case .timeBasedCalendarEvent: return 31923
         case let .unknown(value): return value
         }
     }

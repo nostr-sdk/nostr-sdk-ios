@@ -285,4 +285,148 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         
         XCTAssertThrowsError(try reportNote(noteToReport, reportType: .impersonation, additionalInformation: "mean words", signedBy: Keypair.test))
     }
+
+    func testDateBasedCalendarEvent() throws {
+        let name = "Nostrica"
+        let description = "First Nostr unconference"
+
+        let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
+        let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 21))
+
+        let location = "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica"
+        let geohash = "d1sknt77t3xn"
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
+        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "organizer"))
+        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "attendee"))
+        let participants = [participant1, participant2]
+
+        let hashtags = ["nostr", "unconference", "nostrica"]
+        let reference1 = try XCTUnwrap(URL(string: "https://nostrica.com/"))
+        let reference2 = try XCTUnwrap(URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit"))
+        let references = [reference1, reference2]
+
+        let dateBasedCalendarEvent = try dateBasedCalendarEvent(
+            withName: name,
+            description: description,
+            startDate: startDate,
+            endDate: endDate,
+            location: location,
+            geohash: geohash,
+            participants: participants,
+            hashtags: hashtags,
+            references: references,
+            signedBy: Keypair.test
+        )
+
+        XCTAssertEqual(dateBasedCalendarEvent.name, name)
+        XCTAssertEqual(dateBasedCalendarEvent.content, description)
+        XCTAssertEqual(dateBasedCalendarEvent.startDate, startDate)
+        XCTAssertEqual(dateBasedCalendarEvent.endDate, endDate)
+        XCTAssertEqual(dateBasedCalendarEvent.location, location)
+        XCTAssertEqual(dateBasedCalendarEvent.geohash, geohash)
+        XCTAssertEqual(dateBasedCalendarEvent.participants, participants)
+        XCTAssertEqual(dateBasedCalendarEvent.hashtags, hashtags)
+        XCTAssertEqual(dateBasedCalendarEvent.references, references)
+
+        try verifyEvent(dateBasedCalendarEvent)
+    }
+
+    func testDateBasedCalendarEventWithStartDateSameAsEndDateShouldFail() throws {
+        let name = "Nostrica"
+        let description = "First Nostr unconference"
+        let timeOmittedDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
+
+        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startDate: timeOmittedDate, endDate: timeOmittedDate, signedBy: Keypair.test))
+    }
+
+    func testDateBasedCalendarEventWithEndDateBeforeStartDateShouldFail() throws {
+        let name = "Nostrica"
+        let description = "First Nostr unconference"
+        let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
+        let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 18))
+
+        XCTAssertThrowsError(try dateBasedCalendarEvent(withName: name, description: description, startDate: startDate, endDate: endDate, signedBy: Keypair.test))
+    }
+
+    func testTimeBasedCalendarEvent() throws {
+        let name = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
+        let description = "Flight to Nostrica"
+
+        let startTimeZone = TimeZone(identifier: "America/New_York")
+        let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
+
+        let endTimeZone = TimeZone(identifier: "America/Costa_Rica")
+        let endComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: endTimeZone, year: 2023, month: 3, day: 17, hour: 11, minute: 42)
+
+        let startTimestamp = try XCTUnwrap(startComponents.date)
+        let endTimestamp = try XCTUnwrap(endComponents.date)
+
+        let location = "John F. Kennedy International Airport, Queens, NY 11430, USA"
+        let geohash = "dr5x1p57bg9e"
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
+        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "organizer"))
+        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "attendee"))
+        let participants = [participant1, participant2]
+
+        let hashtags = ["flights", "costarica"]
+        let reference1 = try XCTUnwrap(URL(string: "https://nostrica.com/"))
+        let reference2 = try XCTUnwrap(URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit"))
+        let references = [reference1, reference2]
+
+        let timeBasedCalendarEvent = try timeBasedCalendarEvent(
+            withName: name,
+            description: description,
+            startTimestamp: startTimestamp,
+            endTimestamp: endTimestamp,
+            startTimeZone: startTimeZone,
+            endTimeZone: endTimeZone,
+            location: location,
+            geohash: geohash,
+            participants: participants,
+            hashtags: hashtags,
+            references: references,
+            signedBy: Keypair.test
+        )
+
+        XCTAssertEqual(timeBasedCalendarEvent.name, name)
+        XCTAssertEqual(timeBasedCalendarEvent.content, description)
+        XCTAssertEqual(timeBasedCalendarEvent.startTimestamp, startTimestamp)
+        XCTAssertEqual(timeBasedCalendarEvent.endTimestamp, endTimestamp)
+        XCTAssertEqual(timeBasedCalendarEvent.startTimeZone, startTimeZone)
+        XCTAssertEqual(timeBasedCalendarEvent.endTimeZone, endTimeZone)
+        XCTAssertEqual(timeBasedCalendarEvent.location, location)
+        XCTAssertEqual(timeBasedCalendarEvent.geohash, geohash)
+        XCTAssertEqual(timeBasedCalendarEvent.participants, participants)
+        XCTAssertEqual(timeBasedCalendarEvent.hashtags, hashtags)
+        XCTAssertEqual(timeBasedCalendarEvent.references, references)
+
+        try verifyEvent(timeBasedCalendarEvent)
+    }
+
+    func testTimeBasedCalendarEventWithStartTimestampSameAsEndTimestampShouldFail() throws {
+        let name = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
+        let description = "Flight to Nostrica"
+
+        let timeZone = TimeZone(identifier: "America/New_York")
+        let dateComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
+        let timestamp = try XCTUnwrap(dateComponents.date)
+
+        XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, startTimestamp: timestamp, endTimestamp: timestamp, signedBy: Keypair.test))
+    }
+
+    func testTimeBasedCalendarEventWithEndTimestampBeforeStartTimestampShouldFail() throws {
+        let name = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
+        let description = "Flight to Nostrica"
+
+        let timeZone = TimeZone(identifier: "America/New_York")
+        let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
+        let endComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 14)
+
+        let startTimestamp = try XCTUnwrap(startComponents.date)
+        let endTimestamp = try XCTUnwrap(endComponents.date)
+
+        XCTAssertThrowsError(try timeBasedCalendarEvent(withName: name, description: description, startTimestamp: startTimestamp, endTimestamp: endTimestamp, signedBy: Keypair.test))
+    }
 }

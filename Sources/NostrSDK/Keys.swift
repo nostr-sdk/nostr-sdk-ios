@@ -53,8 +53,12 @@ public struct Keypair {
     }
 }
 
-public struct PublicKey {
+public struct PublicKey: Equatable {
     static let humanReadablePrefix = "npub"
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hex == rhs.hex
+    }
 
     public let hex: String
     public let npub: String

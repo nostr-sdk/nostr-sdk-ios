@@ -318,4 +318,66 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.content, ":ostrich:")
         XCTAssertEqual(event.signature, "eb20aaff71b309b386ed12a92208fd6a8322b66585331d039d63219c0724752a2ffee211ed99d1dd370f601282f0d3c49c36a28ac4252ee4d0f3f1ce0de06abb")
     }
+
+    func testDecodeDateBasedCalendarEvent() throws {
+        let event: DateBasedCalendarEvent = try decodeFixture(filename: "date_based_calendar_event")
+
+        XCTAssertEqual(event.id, "14ff9ea332268384f9f72e2623371dd8edf8dd6b8f8b7f0b3d3df29317148d95")
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.createdAt, 1700320160)
+        XCTAssertEqual(event.kind, .dateBasedCalendarEvent)
+        XCTAssertEqual(event.uuid, "6E28808F-43FD-49FE-8B31-350066FD3886")
+        XCTAssertEqual(event.name, "Nostrica")
+        XCTAssertEqual(event.startDate, TimeOmittedDate(year: 2023, month: 3, day: 19))
+        XCTAssertEqual(event.endDate, TimeOmittedDate(year: 2023, month: 3, day: 21))
+        XCTAssertEqual(event.location, "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica")
+        XCTAssertEqual(event.geohash, "d1sknt77t3xn")
+
+        let participants = event.participants
+        let expectedParticipantPublicKey = Keypair.test.publicKey
+        let relayURL = URL(string: "wss://relay.nostrsdk.com")
+        XCTAssertEqual(participants.count, 2)
+        XCTAssertEqual(participants,
+                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "organizer"),
+                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "attendee")])
+
+        XCTAssertEqual(event.hashtags, ["nostr", "unconference", "nostrica"])
+
+        XCTAssertEqual(event.references, [URL(string: "https://nostrica.com/"), URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit")])
+
+        XCTAssertEqual(event.content, "First Nostr unconference")
+        XCTAssertEqual(event.signature, "5cd7174dff637af03b66f46a6ccc19b526d1fdc987583e6c6ced8fd7b2ce56f37510e989b7037dbf75d84cdac5256275e255e97c6ef42534613f2af78f5925dd")
+    }
+
+    func testDecodeTimeBasedCalendarEvent() throws {
+        let event: TimeBasedCalendarEvent = try decodeFixture(filename: "time_based_calendar_event")
+
+        XCTAssertEqual(event.id, "091455f5c9509655e3a4f68f98e807349ac0b5525506b22978566a0bb0f3ced1")
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.createdAt, 1700320270)
+        XCTAssertEqual(event.kind, .timeBasedCalendarEvent)
+        XCTAssertEqual(event.uuid, "9CD6DE6C-F8D9-44FB-B948-CB5A42434F8F")
+        XCTAssertEqual(event.name, "Flight from New York (JFK) to San José, Costa Rica (SJO)")
+        XCTAssertEqual(event.startTimestamp, Date(timeIntervalSince1970: 1679062500))
+        XCTAssertEqual(event.endTimestamp, Date(timeIntervalSince1970: 1679067720))
+        XCTAssertEqual(event.startTimeZone, TimeZone(identifier: "America/New_York"))
+        XCTAssertEqual(event.endTimeZone, TimeZone(identifier: "America/Costa_Rica"))
+        XCTAssertEqual(event.location, "John F. Kennedy International Airport, Queens, NY 11430, USA")
+        XCTAssertEqual(event.geohash, "dr5x1p57bg9e")
+
+        let participants = event.participants
+        let expectedParticipantPublicKey = Keypair.test.publicKey
+        let relayURL = URL(string: "wss://relay.nostrsdk.com")
+        XCTAssertEqual(participants.count, 2)
+        XCTAssertEqual(participants,
+                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "organizer"),
+                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "attendee")])
+
+        XCTAssertEqual(event.hashtags, ["flights", "costarica"])
+
+        XCTAssertEqual(event.references, [URL(string: "https://nostrica.com/"), URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit")])
+
+        XCTAssertEqual(event.content, "Flight to Nostrica")
+        XCTAssertEqual(event.signature, "57cdb0735645a7ff7112c2d863c425a75e82b540412117609c1c32bee833622a82acacd836b2790f0f08082e2700cdf1ac363c2aae1db87e613824fea2907845")
+    }
 }

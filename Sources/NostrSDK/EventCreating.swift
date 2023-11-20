@@ -225,4 +225,134 @@ public extension EventCreating {
         ]
         return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
     }
+
+    /// Creates a ``DateBasedCalendarEvent`` (kind 31922) which starts on a date and ends before a different date in the future.
+    /// Its use is appropriate for all-day or multi-day events where time and time zone hold no significance. e.g., anniversary, public holidays, vacation days.
+    /// - Parameters:
+    ///   - name: The name of the calendar event.
+    ///   - description: A detailed description of the calendar event.
+    ///   - startDate: An inclusive start date. Must be less than end, if it exists. If there are any components other than year, month,
+    ///   - endDate: An exclusive end date. If omitted, the calendar event ends on the same date as start.
+    ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
+    ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
+    ///   - participants: The participants of the calendar event.
+    ///   - hashtags: Hashtags to categorize the calendar event.
+    ///   - references: References / links to web pages, documents, video calls, recorded videos, etc.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``DateBasedCalendarEvent``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func dateBasedCalendarEvent(withName name: String, description: String = "", startDate: TimeOmittedDate, endDate: TimeOmittedDate? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEvent {
+
+        var tags: [Tag] = []
+
+        // If the end date is omitted, the calendar event ends on the same date as the start date.
+        if let endDate {
+            // The start date must occur before the end date, if it exists.
+            guard startDate < endDate else {
+                throw EventCreatingError.invalidInput
+            }
+
+            tags.append(Tag(name: .unknown("end"), value: endDate.dateString))
+        }
+
+        // Re-arrange tags so that it's easier to read with the identifier and name appearing first in the list of tags,
+        // and the end date being placed next to the start date.
+        tags = [
+            Tag(name: .unknown("d"), value: UUID().uuidString),
+            Tag(name: .unknown("name"), value: name),
+            Tag(name: .unknown("start"), value: startDate.dateString)
+        ] + tags
+
+        if let location {
+            tags.append(Tag(name: .unknown("location"), value: location))
+        }
+
+        if let geohash {
+            tags.append(Tag(name: .unknown("g"), value: geohash))
+        }
+
+        if let participants, !participants.isEmpty {
+            tags += participants.map { $0.tag }
+        }
+
+        if let hashtags, !hashtags.isEmpty {
+            tags += hashtags.map { Tag(name: .hashtag, value: $0) }
+        }
+
+        if let references, !references.isEmpty {
+            tags += references.map { Tag(name: .unknown("r"), value: $0.absoluteString) }
+        }
+
+        return try DateBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
+    }
+
+    /// Creates a ``TimeBasedCalendarEvent`` (kind 31923) which spans between a start time and end time.
+    /// - Parameters:
+    ///   - name: The name of the calendar event.
+    ///   - description: A detailed description of the calendar event.
+    ///   - startTimestamp: An inclusive start timestamp.
+    ///   - endTimestamp: An exclusive end timestamp. If omitted, the calendar event ends instantaneously.
+    ///   - startTimeZone: The time zone of the start timestamp.
+    ///   - endTimeZone: The time zone of the end timestamp. If omitted and startTimeZone is provided, the time zone of the end timestamp is the same as the start timestamp.
+    ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
+    ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
+    ///   - participants: The participants of the calendar event.
+    ///   - hashtags: Hashtags to categorize the calendar event.
+    ///   - references: References / links to web pages, documents, video calls, recorded videos, etc.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``TimeBasedCalendarEvent``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func timeBasedCalendarEvent(withName name: String, description: String = "", startTimestamp: Date, endTimestamp: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEvent {
+
+        // If the end timestamp is omitted, the calendar event ends instantaneously.
+        if let endTimestamp {
+            // The start timestamp must occur before the end timestamp, if it exists.
+            guard startTimestamp < endTimestamp else {
+                throw EventCreatingError.invalidInput
+            }
+        }
+
+        var tags: [Tag] = [
+            Tag(name: .unknown("d"), value: UUID().uuidString),
+            Tag(name: .unknown("name"), value: name),
+            Tag(name: .unknown("start"), value: String(Int64(startTimestamp.timeIntervalSince1970)))
+        ]
+
+        if let endTimestamp {
+            tags.append(Tag(name: .unknown("end"), value: String(Int64(endTimestamp.timeIntervalSince1970))))
+        }
+
+        if let startTimeZone {
+            tags.append(Tag(name: .unknown("start_tzid"), value: startTimeZone.identifier))
+        }
+
+        // If the end time zone is omitted and the start time zone is provided, the time zone of the end timestamp is the same as the start timestamp.
+        if let endTimeZone {
+            tags.append(Tag(name: .unknown("end_tzid"), value: endTimeZone.identifier))
+        }
+
+        if let location {
+            tags.append(Tag(name: .unknown("location"), value: location))
+        }
+
+        if let geohash {
+            tags.append(Tag(name: .unknown("g"), value: geohash))
+        }
+
+        if let participants {
+            tags += participants.map { $0.tag }
+        }
+
+        if let hashtags {
+            tags += hashtags.map { Tag(name: .hashtag, value: $0) }
+        }
+
+        if let references {
+            tags += references.map { Tag(name: .unknown("r"), value: $0.absoluteString) }
+        }
+
+        return try TimeBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
+    }
 }

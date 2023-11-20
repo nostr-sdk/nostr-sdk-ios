@@ -1,8 +1,11 @@
 disabled_rules:
-  - line_length
+  - cyclomatic_complexity
+  - file_length
   - identifier_name
-  - trailing_whitespace
+  - line_length
   - nesting
+  - trailing_whitespace
+  - type_body_length
 
 excluded:
   - .build
