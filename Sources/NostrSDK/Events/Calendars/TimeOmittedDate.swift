@@ -10,20 +10,12 @@ import Foundation
 /// A representation of a date as it would appear in the ISO 8601 format, which is in the Gregorian calendar. Time and time zone are omitted.
 public struct TimeOmittedDate: Comparable {
     public static func < (lhs: TimeOmittedDate, rhs: TimeOmittedDate) -> Bool {
-        if lhs.year < rhs.year {
-            return true
+        if lhs.year != rhs.year {
+            return lhs.year < rhs.year
         }
 
-        if lhs.year > rhs.year {
-            return false
-        }
-
-        if lhs.month < rhs.month {
-            return true
-        }
-
-        if lhs.month > rhs.month {
-            return false
+        if lhs.month != rhs.month {
+            return lhs.month < rhs.month
         }
 
         return lhs.day < rhs.day

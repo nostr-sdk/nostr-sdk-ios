@@ -59,7 +59,7 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
     /// Initializes a calendar event participant.
     /// - Parameters:
     ///   - pubkey: The public key of the participant.
-    ///   - relayURL: A relay in which the participant can be found
+    ///   - relayURL: A relay in which the participant can be found.
     ///   - role: The role of the participant in the meeting.
     public init(pubkey: PublicKey, relayURL: URL? = nil, role: String? = nil) {
         var otherParameters: [String] = [relayURL?.absoluteString ?? ""]
