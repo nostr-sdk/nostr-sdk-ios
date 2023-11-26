@@ -25,6 +25,7 @@ final class RelayTests: XCTestCase {
         disconnectExpectation = expectation(description: "disconnect")
 
         let relay = try Relay(url: RelayTests.RelayURL)
+        XCTAssertEqual(relay.url, RelayTests.RelayURL)
         relay.connect()
         
         relay.$state
