@@ -67,7 +67,12 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     ///
     /// See [NIP-56](https://github.com/nostr-protocol/nips/blob/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c/56.md#nip-56).
     case report
-
+    
+    /// This kind of event is for long-form texxt content, generally referred to as "articles" or "blog posts".
+    ///
+    /// See [NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md).
+    case longformContent
+    
     /// This kind of event represents an occurrence that spans between a start date and end date.
     /// See [NIP-52 - Date-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-events-1)
     case dateBasedCalendarEvent
@@ -91,6 +96,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .reaction,
         .genericRepost,
         .report,
+        .longformContent,
         .dateBasedCalendarEvent,
         .timeBasedCalendarEvent
     ]
@@ -112,6 +118,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .reaction: return 7
         case .genericRepost: return 16
         case .report: return 1984
+        case .longformContent: return 30023
         case .dateBasedCalendarEvent: return 31922
         case .timeBasedCalendarEvent: return 31923
         case let .unknown(value): return value

@@ -319,6 +319,23 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.signature, "eb20aaff71b309b386ed12a92208fd6a8322b66585331d039d63219c0724752a2ffee211ed99d1dd370f601282f0d3c49c36a28ac4252ee4d0f3f1ce0de06abb")
     }
 
+    func testDecodeLongformContentEvent() throws {
+        let event: LongformContentEvent = try decodeFixture(filename: "longform")
+        
+        XCTAssertEqual(event.kind, .longformContent)
+        XCTAssertEqual(event.id, "8f4b2477881ec73c824410610709163f6a4e8fda067de8c4bbd0a9e337901eac")
+        XCTAssertEqual(event.identifier, "F8SII-G5LDumDZgxGCVQS")
+        XCTAssertEqual(event.title, "Embracing Decentralization: Is Nostr the Answer to Social Network Concerns?")
+        XCTAssertEqual(event.summary, "")
+        XCTAssertEqual(event.imageURL, URL(string: "https://yakihonne.s3.ap-east-1.amazonaws.com/7489688c05bb72112dd82d54fdbf26bb5f03e1de48e97861d8fce294a2f16946/files/1700532108836-YAKIHONNES3.jpg"))
+        XCTAssertEqual(event.hashtags, ["Yakihonne Zap round 11"])
+        XCTAssertTrue(event.content.hasPrefix("![image](https://yakihonne.s3.ap-east-1.amazonaws.com/7489688c05b"))
+        XCTAssertTrue(event.content.hasSuffix("attracted Bitcoiners to the protocol."))
+        
+        let publishedAt = try XCTUnwrap(event.publishedAt?.timeIntervalSince1970)
+        XCTAssertEqual(Int64(publishedAt), 1700532108)
+    }
+    
     func testDecodeDateBasedCalendarEvent() throws {
         let event: DateBasedCalendarEvent = try decodeFixture(filename: "date_based_calendar_event")
 

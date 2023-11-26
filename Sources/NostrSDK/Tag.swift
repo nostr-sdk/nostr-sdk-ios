@@ -8,43 +8,64 @@
 import Foundation
 
 /// A constant that describes the type of a ``Tag``.
-public enum TagName: Codable, Equatable {
+public enum TagName: Codable, Equatable, CaseIterable {
+    
+    /// a custom emoji that defines the shortcode name and image URL of the image file
+    case emoji
     
     /// points to the id of an event this event is quoting, replying to or referring to somehow
     case event
     
+    /// a hashtag to categorize events for easy searching
+    case hashtag
+    
     /// points to a pubkey of someone that is referred to in the event
     case pubkey
+    
+    case publishedAt
+    
+    case identifier
+    
+    case image
     
     /// a stringified kind number
     case kind
     
     /// a short subject for a text note, similar to subjects in emails
     case subject
-
-    /// a custom emoji that defines the shortcode name and image URL of the image file
-    case emoji
-
-    /// a hashtag to categorize events for easy searching
-    case hashtag
-
+    
+    case summary
+    
+    /// a title for a long-form content event
+    case title
+    
     /// a tag of unknown type
     case unknown(String)
     
     var rawValue: String {
         switch self {
+        case .emoji:
+            return "emoji"
         case .event:
             return "e"
+        case .hashtag:
+            return "t"
         case .pubkey:
             return "p"
+        case .publishedAt:
+            return "published_at"
+        case .identifier:
+            return "d"
+        case .image:
+            return "image"
         case .kind:
             return "k"
         case .subject:
             return "subject"
-        case .emoji:
-            return "emoji"
-        case .hashtag:
-            return "t"
+        case .summary:
+            return "summary"
+        case .title:
+            return "title"
         case .unknown(let id):
             return id
         }
@@ -52,7 +73,17 @@ public enum TagName: Codable, Equatable {
     
     public static func == (lhs: TagName, rhs: TagName) -> Bool {
         switch (lhs, rhs) {
-        case (.event, .event), (.pubkey, .pubkey), (.kind, .kind), (.subject, .subject), (.emoji, .emoji), (.hashtag, .hashtag): return true
+        case (.emoji, .emoji),
+            (.event, .event),
+            (.hashtag, .hashtag),
+            (.pubkey, .pubkey),
+            (.publishedAt, .publishedAt),
+            (.identifier, .identifier),
+            (.image, .image),
+            (.kind, .kind),
+            (.subject, .subject),
+            (.summary, .summary),
+            (.title, .title): return true
         case (.unknown(let id1), .unknown(let id2)): return id1 == id2
         default: return false
         }
@@ -61,6 +92,23 @@ public enum TagName: Codable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         try container.encode(rawValue)
+    }
+    
+    /// List of all known tag names.
+    public static var allCases: [TagName] {
+        [
+            .emoji,
+            .event,
+            .hashtag,
+            .pubkey,
+            .publishedAt,
+            .identifier,
+            .image,
+            .kind,
+            .subject,
+            .summary,
+            .title
+        ]
     }
 }
 
@@ -151,23 +199,7 @@ public class Tag: Codable, Equatable {
         var container = try decoder.unkeyedContainer()
         
         let type = try container.decode(String.self)
-        switch type {
-        case "p":
-            name = .pubkey
-        case "e":
-            name = .event
-        case "k":
-            name = .kind
-        case "subject":
-            name = .subject
-        case "emoji":
-            name = .emoji
-        case "t":
-            name = .hashtag
-        default:
-            name = .unknown(type)
-        }
-        
+        name = TagName.allCases.first(where: { $0.rawValue == type }) ?? .unknown(type)
         value = try container.decode(String.self)
         
         var otherParameters = [String]()
