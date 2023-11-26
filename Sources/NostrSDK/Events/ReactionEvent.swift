@@ -26,10 +26,10 @@ public class ReactionEvent: NostrEvent, CustomEmojiInterpreting {
     }
     
     public var reactedEventId: String? {
-        tags.last(where: { $0.name == .event })?.value
+        tags.last(where: { $0.name == TagName.event.rawValue })?.value
     }
 
     public var reactedEventPubkey: String? {
-        tags.last(where: { $0.name == .pubkey })?.value
+        tags.last(where: { $0.name == TagName.pubkey.rawValue })?.value
     }
 }

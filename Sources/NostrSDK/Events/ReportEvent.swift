@@ -45,7 +45,7 @@ public final class ReportEvent: NostrEvent {
     
     /// The reason that the event or user was reported.
     public var reportType: ReportType? {
-        guard let tag = tags.first(where: { $0.name == .event }) ?? tags.first(where: { $0.name == .pubkey }),
+        guard let tag = tags.first(where: { $0.name == TagName.event.rawValue }) ?? tags.first(where: { $0.name == TagName.pubkey.rawValue }),
               let reportString = tag.otherParameters.first else {
             return nil
         }

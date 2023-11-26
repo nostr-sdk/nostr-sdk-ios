@@ -47,12 +47,12 @@ public final class ContactListEvent: NostrEvent {
     
     /// Pubkeys for followed/known profiles.
     public var contactPubkeys: [String] {
-        tags.filter({ $0.name == .pubkey }).map { $0.value }
+        tags.filter({ $0.name == TagName.pubkey.rawValue }).map { $0.value }
     }
     
     /// Pubkey tags for followed/known profiles.
     public var contactPubkeyTags: [Tag] {
-        tags.filter({ $0.name == .pubkey })
+        tags.filter({ $0.name == TagName.pubkey.rawValue })
     }
     
     /// Relays the user knows about.

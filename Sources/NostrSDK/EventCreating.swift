@@ -87,7 +87,7 @@ public extension EventCreating {
     ///
     /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
     func contactList(withPubkeyTags pubkeyTags: [Tag], signedBy keypair: Keypair) throws -> ContactListEvent {
-        guard !pubkeyTags.contains(where: { $0.name != .pubkey }) else {
+        guard !pubkeyTags.contains(where: { $0.name != TagName.pubkey.rawValue }) else {
             throw EventCreatingError.invalidInput
         }
         return try ContactListEvent(tags: pubkeyTags,
@@ -168,7 +168,7 @@ public extension EventCreating {
         let eventTag = Tag(name: .event, value: reactedEvent.id)
         let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
 
-        var tags = reactedEvent.tags.filter { $0.name == .event || $0.name == .pubkey }
+        var tags = reactedEvent.tags.filter { $0.name == TagName.event.rawValue || $0.name == TagName.pubkey.rawValue }
         tags.append(eventTag)
         tags.append(pubkeyTag)
 
@@ -187,7 +187,7 @@ public extension EventCreating {
         let eventTag = Tag(name: .event, value: reactedEvent.id)
         let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
 
-        var tags = reactedEvent.tags.filter { $0.name == .event || $0.name == .pubkey }
+        var tags = reactedEvent.tags.filter { $0.name == TagName.event.rawValue || $0.name == TagName.pubkey.rawValue }
         tags.append(eventTag)
         tags.append(pubkeyTag)
         tags.append(customEmoji.tag)
@@ -299,23 +299,23 @@ public extension EventCreating {
                 throw EventCreatingError.invalidInput
             }
 
-            tags.append(Tag(name: .unknown("end"), value: endDate.dateString))
+            tags.append(Tag(name: "end", value: endDate.dateString))
         }
 
         // Re-arrange tags so that it's easier to read with the identifier and name appearing first in the list of tags,
         // and the end date being placed next to the start date.
         tags = [
-            Tag(name: .unknown("d"), value: UUID().uuidString),
-            Tag(name: .unknown("name"), value: name),
-            Tag(name: .unknown("start"), value: startDate.dateString)
+            Tag(name: .identifier, value: UUID().uuidString),
+            Tag(name: "name", value: name),
+            Tag(name: "start", value: startDate.dateString)
         ] + tags
 
         if let location {
-            tags.append(Tag(name: .unknown("location"), value: location))
+            tags.append(Tag(name: "location", value: location))
         }
 
         if let geohash {
-            tags.append(Tag(name: .unknown("g"), value: geohash))
+            tags.append(Tag(name: "g", value: geohash))
         }
 
         if let participants, !participants.isEmpty {
@@ -327,7 +327,7 @@ public extension EventCreating {
         }
 
         if let references, !references.isEmpty {
-            tags += references.map { Tag(name: .unknown("r"), value: $0.absoluteString) }
+            tags += references.map { Tag(name: .webURL, value: $0.absoluteString) }
         }
 
         return try DateBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
@@ -361,30 +361,30 @@ public extension EventCreating {
         }
 
         var tags: [Tag] = [
-            Tag(name: .unknown("d"), value: UUID().uuidString),
-            Tag(name: .unknown("name"), value: name),
-            Tag(name: .unknown("start"), value: String(Int64(startTimestamp.timeIntervalSince1970)))
+            Tag(name: .identifier, value: UUID().uuidString),
+            Tag(name: "name", value: name),
+            Tag(name: "start", value: String(Int64(startTimestamp.timeIntervalSince1970)))
         ]
 
         if let endTimestamp {
-            tags.append(Tag(name: .unknown("end"), value: String(Int64(endTimestamp.timeIntervalSince1970))))
+            tags.append(Tag(name: "end", value: String(Int64(endTimestamp.timeIntervalSince1970))))
         }
 
         if let startTimeZone {
-            tags.append(Tag(name: .unknown("start_tzid"), value: startTimeZone.identifier))
+            tags.append(Tag(name: "start_tzid", value: startTimeZone.identifier))
         }
 
         // If the end time zone is omitted and the start time zone is provided, the time zone of the end timestamp is the same as the start timestamp.
         if let endTimeZone {
-            tags.append(Tag(name: .unknown("end_tzid"), value: endTimeZone.identifier))
+            tags.append(Tag(name: "end_tzid", value: endTimeZone.identifier))
         }
 
         if let location {
-            tags.append(Tag(name: .unknown("location"), value: location))
+            tags.append(Tag(name: "location", value: location))
         }
 
         if let geohash {
-            tags.append(Tag(name: .unknown("g"), value: geohash))
+            tags.append(Tag(name: "g", value: geohash))
         }
 
         if let participants {
@@ -396,7 +396,7 @@ public extension EventCreating {
         }
 
         if let references {
-            tags += references.map { Tag(name: .unknown("r"), value: $0.absoluteString) }
+            tags += references.map { Tag(name: .webURL, value: $0.absoluteString) }
         }
 
         return try TimeBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)

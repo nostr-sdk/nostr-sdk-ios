@@ -31,7 +31,7 @@ public class GenericRepostEvent: NostrEvent {
     
     /// The pubkey of the reposted event.
     var repostedEventPubkey: String? {
-        tags.first(where: { $0.name == .pubkey })?.value
+        tags.first(where: { $0.name == TagName.pubkey.rawValue })?.value
     }
     
     /// The note that is being reposted.
@@ -45,11 +45,11 @@ public class GenericRepostEvent: NostrEvent {
     
     /// The id of the event that is being reposted.
     var repostedEventId: String? {
-        tags.first(where: { $0.name == .event })?.value
+        tags.first(where: { $0.name == TagName.event.rawValue })?.value
     }
     
     /// The relay URL at which to fetch the reposted event.
     var repostedEventRelayURL: String? {
-        tags.first(where: { $0.name == .event })?.otherParameters.first
+        tags.first(where: { $0.name == TagName.event.rawValue })?.otherParameters.first
     }
 }
