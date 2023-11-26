@@ -135,6 +135,10 @@ public final class Relay: ObservableObject, EventVerifying {
             }
     }
     
+    public var url: URL {
+        socket.url
+    }
+    
     private func receive(_ message: URLSessionWebSocketTask.Message) {
         func handle(messageData: Data) {
             let response = RelayResponse.decode(data: messageData)

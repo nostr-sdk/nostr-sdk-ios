@@ -30,7 +30,7 @@ enum WebSocketEvent: CustomStringConvertible {
 
 final class WebSocket: NSObject, URLSessionWebSocketDelegate {
 
-    private let url: URL
+    let url: URL
     private let session: URLSession
     private lazy var webSocketTask: URLSessionWebSocketTask = {
         let task = session.webSocketTask(with: url)
