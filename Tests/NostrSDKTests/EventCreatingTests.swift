@@ -285,6 +285,37 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         
         XCTAssertThrowsError(try reportNote(noteToReport, reportType: .impersonation, additionalInformation: "mean words", signedBy: Keypair.test))
     }
+    
+    func testLongformContentEvent() throws {
+        let identifier = "my-blog-post"
+        let title = "My Blog Post"
+        let content = "Here is my long blog post"
+        let summary = "tldr: it's a blog post"
+        let imageURL = try XCTUnwrap(URL(string: "https://nostr.com"))
+        let hashtags = ["blog", "post"]
+        
+        let comps = DateComponents(calendar: Calendar(identifier: .iso8601), year: 2023, month: 11, day: 26, hour: 12)
+        let publishedDate = try XCTUnwrap(comps.date)
+        
+        let event = try longformContentEvent(withIdentifier: identifier,
+                                             title: title,
+                                             markdownContent: content,
+                                             summary: summary,
+                                             imageURL: imageURL,
+                                             hashtags: hashtags,
+                                             publishedAt: publishedDate,
+                                             signedBy: Keypair.test)
+        
+        XCTAssertEqual(event.identifier, identifier)
+        XCTAssertEqual(event.title, title)
+        XCTAssertEqual(event.content, content)
+        XCTAssertEqual(event.summary, summary)
+        XCTAssertEqual(event.imageURL, imageURL)
+        XCTAssertEqual(event.hashtags, hashtags)
+        XCTAssertEqual(event.publishedAt, publishedDate)
+        
+        try verifyEvent(event)
+    }
 
     func testDateBasedCalendarEvent() throws {
         let name = "Nostrica"

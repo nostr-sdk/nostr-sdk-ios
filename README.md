@@ -30,7 +30,7 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
 - [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
 - [ ] [NIP-22: Event `created_at` Limits](https://github.com/nostr-protocol/nips/blob/master/22.md)
-- [ ] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
+- [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
 - [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
 - [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
