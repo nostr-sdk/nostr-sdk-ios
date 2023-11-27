@@ -7,6 +7,13 @@
 
 import Foundation
 
+/// A long-form content event (kind 30023, a parameterized replaceable event) is for long-form text content, generally referred to as "articles" or "blog posts".
+///
+/// > Important: The `content` of these events should be a string text in Markdown syntax. To maximize compatibility and readability between different clients and devices, any client that is creating long-form notes:
+///              * MUST NOT hard line-break paragraphs of text, such as arbitrary line breaks at 80 column boundaries.
+///              * MUST NOT support adding HTML to Markdown.
+///
+/// > Note: [NIP-23 Specification](https://github.com/nostr-protocol/nips/blob/master/23.md)
 public final class LongformContentEvent: NostrEvent {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
@@ -21,6 +28,7 @@ public final class LongformContentEvent: NostrEvent {
         try super.init(kind: .longformContent, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
     
+    /// The date of the first time the article was published.
     var publishedAt: Date? {
         guard let unixTimeString = tags.first(where: { $0.name == .publishedAt })?.value,
               let unixSeconds = TimeInterval(unixTimeString) else {
@@ -29,18 +37,22 @@ public final class LongformContentEvent: NostrEvent {
         return Date(timeIntervalSince1970: unixSeconds)
     }
     
+    /// A unique identifier for the content. Can be reused in the future for replacing the event.
     var identifier: String? {
         tags.first(where: { $0.name == .identifier})?.value
     }
     
+    /// The article title.
     var title: String? {
         tags.first(where: { $0.name == .title })?.value
     }
     
+    /// A summary of the content.
     var summary: String? {
         tags.first(where: { $0.name == .summary })?.value
     }
     
+    /// A URL pointing to an image to be shown along with the title.
     var imageURL: URL? {
         guard let imageURLString = tags.first(where: { $0.name == .image })?.value else {
             return nil
@@ -48,6 +60,7 @@ public final class LongformContentEvent: NostrEvent {
         return URL(string: imageURLString)
     }
     
+    /// An list of topics about which the event might be of relevance.
     var hashtags: [String] {
         tags.filter { $0.name == .hashtag }.map { $0.value }
     }

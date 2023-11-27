@@ -226,7 +226,7 @@ public extension EventCreating {
         return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
     }
     
-    /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally refered to as "articles" or "blog posts".
+    /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".
     /// - Parameters:
     ///   - identifier: A unique identifier for the content. Can be reused in the future for replacing the event.
     ///   - title: The article title.
