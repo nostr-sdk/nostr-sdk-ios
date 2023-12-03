@@ -8,28 +8,28 @@
 import Foundation
 
 /// A constant that describes the type of a ``Tag``.
-public enum TagName {
+public enum TagName: String {
     
     /// a custom emoji that defines the shortcode name and image URL of the image file
     case emoji
     
     /// points to the id of an event this event is quoting, replying to or referring to somehow
-    case event
+    case event = "e"
     
     /// a hashtag to categorize events for easy searching
-    case hashtag
+    case hashtag = "t"
     
     /// points to a pubkey of someone that is referred to in the event
-    case pubkey
+    case pubkey = "p"
     
-    case publishedAt
+    case publishedAt = "published_at"
     
-    case identifier
+    case identifier = "d"
     
     case image
     
     /// a stringified kind number
-    case kind
+    case kind = "k"
     
     /// a short subject for a text note, similar to subjects in emails
     case subject
@@ -40,36 +40,7 @@ public enum TagName {
     case title
     
     /// a web URL the event is referring to in some way. See [NIP-24 - Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#tags).
-    case webURL
-    
-    var rawValue: String {
-        switch self {
-        case .emoji:
-            return "emoji"
-        case .event:
-            return "e"
-        case .hashtag:
-            return "t"
-        case .pubkey:
-            return "p"
-        case .publishedAt:
-            return "published_at"
-        case .identifier:
-            return "d"
-        case .image:
-            return "image"
-        case .kind:
-            return "k"
-        case .subject:
-            return "subject"
-        case .summary:
-            return "summary"
-        case .title:
-            return "title"
-        case .webURL:
-            return "r"
-        }
-    }
+    case webURL = "r"
 }
 
 /// A constant that describes a type of reference to an event.

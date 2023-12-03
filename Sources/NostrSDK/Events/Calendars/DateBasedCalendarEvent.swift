@@ -28,7 +28,7 @@ public final class DateBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// Start date is represented by ``TimeOmittedDate``.
     /// `nil` is returned if the backing `start` tag is malformed.
     public var startDate: TimeOmittedDate? {
-        guard let startString = tags.first(where: { $0.name == "start" })?.value else {
+        guard let startString = valueForRawTagName("start") else {
             return nil
         }
 
@@ -39,7 +39,7 @@ public final class DateBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// End date represented by ``TimeOmittedDate``.
     /// `nil` is returned if the backing `end` tag is malformed or if the calendar event ends on the same date as start.
     public var endDate: TimeOmittedDate? {
-        guard let endString = tags.first(where: { $0.name == "end" })?.value else {
+        guard let endString = valueForRawTagName("end") else {
             return nil
         }
 

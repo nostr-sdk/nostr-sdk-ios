@@ -89,4 +89,14 @@ public class NostrEvent: Codable {
                                            tags: tags,
                                            content: content)
     }
+    
+    /// the String value for the provided ``TagName``, if it exists
+    public func valueForTagName(_ tag: TagName) -> String? {
+        valueForRawTagName(tag.rawValue)
+    }
+    
+    /// the String value for the provided raw tag name, if it exists
+    public func valueForRawTagName(_ tagName: String) -> String? {
+        tags.first(where: { $0.name == tagName })?.value
+    }
 }
