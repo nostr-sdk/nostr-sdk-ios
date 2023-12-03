@@ -49,7 +49,7 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
     /// Initializes a calendar event participant from a ``Tag``.
     /// `nil` is returned if the tag is not a pubkey tag.
     public init?(pubkeyTag: Tag) {
-        guard pubkeyTag.name == .pubkey else {
+        guard pubkeyTag.name == TagName.pubkey.rawValue else {
             return nil
         }
 
@@ -75,6 +75,6 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
 public protocol CalendarEventParticipantInterpreting: NostrEvent {}
 public extension CalendarEventParticipantInterpreting {
     var participants: [CalendarEventParticipant] {
-        tags.filter { $0.name == .pubkey }.compactMap { CalendarEventParticipant(pubkeyTag: $0) }
+        tags.filter { $0.name == TagName.pubkey.rawValue }.compactMap { CalendarEventParticipant(pubkeyTag: $0) }
     }
 }

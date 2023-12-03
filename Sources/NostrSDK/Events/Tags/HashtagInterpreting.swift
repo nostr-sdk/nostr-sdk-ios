@@ -12,7 +12,7 @@ public protocol HashtagInterpreting: NostrEvent {}
 public extension HashtagInterpreting {
     /// The hashtags of the event.
     var hashtags: [String] {
-        tags.filter { $0.name == .hashtag }
+        tags.filter { $0.name == TagName.hashtag.rawValue }
             .map { $0.value }
     }
 }

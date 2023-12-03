@@ -49,7 +49,7 @@ public extension CustomEmojiInterpreting {
     /// It does not fetch images from the specified URLs to determine if they exist.
     var customEmojis: [CustomEmoji] {
         return tags.compactMap { tag in
-            guard tag.name == .emoji, !tag.otherParameters.isEmpty, let imageURLString = tag.otherParameters.first, let imageURL = URL(string: imageURLString) else {
+            guard tag.name == TagName.emoji.rawValue, !tag.otherParameters.isEmpty, let imageURLString = tag.otherParameters.first, let imageURL = URL(string: imageURLString) else {
                 return nil
             }
 

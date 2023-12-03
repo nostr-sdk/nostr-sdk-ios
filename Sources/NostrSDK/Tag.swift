@@ -8,7 +8,7 @@
 import Foundation
 
 /// A constant that describes the type of a ``Tag``.
-public enum TagName: Codable, Equatable, CaseIterable {
+public enum TagName {
     
     /// a custom emoji that defines the shortcode name and image URL of the image file
     case emoji
@@ -39,8 +39,8 @@ public enum TagName: Codable, Equatable, CaseIterable {
     /// a title for a long-form content event
     case title
     
-    /// a tag of unknown type
-    case unknown(String)
+    /// a web URL the event is referring to in some way. See [NIP-24 - Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#tags).
+    case webURL
     
     var rawValue: String {
         switch self {
@@ -66,49 +66,9 @@ public enum TagName: Codable, Equatable, CaseIterable {
             return "summary"
         case .title:
             return "title"
-        case .unknown(let id):
-            return id
+        case .webURL:
+            return "r"
         }
-    }
-    
-    public static func == (lhs: TagName, rhs: TagName) -> Bool {
-        switch (lhs, rhs) {
-        case (.emoji, .emoji),
-            (.event, .event),
-            (.hashtag, .hashtag),
-            (.pubkey, .pubkey),
-            (.publishedAt, .publishedAt),
-            (.identifier, .identifier),
-            (.image, .image),
-            (.kind, .kind),
-            (.subject, .subject),
-            (.summary, .summary),
-            (.title, .title): return true
-        case (.unknown(let id1), .unknown(let id2)): return id1 == id2
-        default: return false
-        }
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.unkeyedContainer()
-        try container.encode(rawValue)
-    }
-    
-    /// List of all known tag names.
-    public static var allCases: [TagName] {
-        [
-            .emoji,
-            .event,
-            .hashtag,
-            .pubkey,
-            .publishedAt,
-            .identifier,
-            .image,
-            .kind,
-            .subject,
-            .summary,
-            .title
-        ]
     }
 }
 
@@ -173,9 +133,9 @@ public class Tag: Codable, Equatable {
         lhs.isEqual(to: rhs)
     }
     
-    /// The name of the tag: event, pubkey, kind etc.
-    let name: TagName
-    
+    /// The name of the tag.
+    let name: String
+
     /// The main value associated with the tag. For example, for the
     /// pubkey name, the `value` is the 32-byte, hex-encoded pubkey.
     let value: String
@@ -185,21 +145,30 @@ public class Tag: Codable, Equatable {
     
     /// Creates and returns a ``Tag`` object that references some piece of content.
     /// - Parameters:
-    ///   - name: The name of the tag: event, pubkey, or other unknown type.
+    ///   - name: The name of the tag.
     ///   - value: The content identifier associated with the type. For example, for the
     ///                        pubkey type, the `value` is the 32-byte, hex-encoded pubkey.
     ///   - otherParameters: The remaining parameters in the array of strings the tag consists of.
-    init(name: TagName, value: String, otherParameters: [String] = []) {
+    init(name: String, value: String, otherParameters: [String] = []) {
         self.name = name
         self.value = value
         self.otherParameters = otherParameters
     }
-    
+
+    /// Creates and returns a ``Tag`` object that references some piece of content.
+    /// - Parameters:
+    ///   - name: The name of the tag: event, pubkey, kind etc.
+    ///   - value: The content identifier associated with the type. For example, for the
+    ///                        pubkey type, the `value` is the 32-byte, hex-encoded pubkey.
+    ///   - otherParameters: The remaining parameters in the array of strings the tag consists of.
+    convenience init(name: TagName, value: String, otherParameters: [String] = []) {
+        self.init(name: name.rawValue, value: value, otherParameters: otherParameters)
+    }
+
     required public init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         
-        let type = try container.decode(String.self)
-        name = TagName.allCases.first(where: { $0.rawValue == type }) ?? .unknown(type)
+        name = try container.decode(String.self)
         value = try container.decode(String.self)
         
         var otherParameters = [String]()
@@ -212,7 +181,7 @@ public class Tag: Codable, Equatable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
-        try container.encode(name.rawValue)
+        try container.encode(name)
         try container.encode(value)
         for value in otherParameters {
             try container.encode(value)

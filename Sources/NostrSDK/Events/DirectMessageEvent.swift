@@ -28,7 +28,7 @@ public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
     /// Returns decrypted content from Event given a `privateKey`
     public func decryptedContent(using privateKey: PrivateKey) throws -> String {
         let recipient = tags.first { tag in
-            tag.name == .pubkey
+            tag.name == TagName.pubkey.rawValue
         }
 
         guard let recipientPublicKeyHex = recipient?.value, let recipientPublicKey = PublicKey(hex: recipientPublicKeyHex) else {

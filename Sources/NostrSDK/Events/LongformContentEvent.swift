@@ -14,7 +14,7 @@ import Foundation
 ///              * MUST NOT support adding HTML to Markdown.
 ///
 /// > Note: [NIP-23 Specification](https://github.com/nostr-protocol/nips/blob/master/23.md)
-public final class LongformContentEvent: NostrEvent {
+public final class LongformContentEvent: NostrEvent, HashtagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -30,7 +30,7 @@ public final class LongformContentEvent: NostrEvent {
     
     /// The date of the first time the article was published.
     var publishedAt: Date? {
-        guard let unixTimeString = tags.first(where: { $0.name == .publishedAt })?.value,
+        guard let unixTimeString = tags.first(where: { $0.name == TagName.publishedAt.rawValue })?.value,
               let unixSeconds = TimeInterval(unixTimeString) else {
             return nil
         }
@@ -39,29 +39,24 @@ public final class LongformContentEvent: NostrEvent {
     
     /// A unique identifier for the content. Can be reused in the future for replacing the event.
     var identifier: String? {
-        tags.first(where: { $0.name == .identifier})?.value
+        tags.first(where: { $0.name == TagName.identifier.rawValue })?.value
     }
     
     /// The article title.
     var title: String? {
-        tags.first(where: { $0.name == .title })?.value
+        tags.first(where: { $0.name == TagName.title.rawValue })?.value
     }
     
     /// A summary of the content.
     var summary: String? {
-        tags.first(where: { $0.name == .summary })?.value
+        tags.first(where: { $0.name == TagName.summary.rawValue })?.value
     }
     
     /// A URL pointing to an image to be shown along with the title.
     var imageURL: URL? {
-        guard let imageURLString = tags.first(where: { $0.name == .image })?.value else {
+        guard let imageURLString = tags.first(where: { $0.name == TagName.image.rawValue })?.value else {
             return nil
         }
         return URL(string: imageURLString)
-    }
-    
-    /// An list of topics about which the event might be of relevance.
-    var hashtags: [String] {
-        tags.filter { $0.name == .hashtag }.map { $0.value }
     }
 }
