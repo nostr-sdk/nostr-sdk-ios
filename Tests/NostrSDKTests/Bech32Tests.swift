@@ -31,7 +31,8 @@ class Bech32Tests: XCTestCase {
     private let _invalidChecksum: [InvalidChecksum] = [
         (" 1nwldj5", Bech32.DecodingError.nonPrintableCharacter),
         ("\u{7f}1axkwrx", Bech32.DecodingError.nonPrintableCharacter),
-        ("an84characterslonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1569pvx", Bech32.DecodingError.stringLengthExceeded),
+        // Montz: The length limit of 90 characters is for bitcoin and must be removed for Nostr identifiers, which can be longer.
+//        ("an84characterslonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1569pvx", Bech32.DecodingError.stringLengthExceeded),
         ("pzry9x0s0muk", Bech32.DecodingError.noChecksumMarker),
         ("1pzry9x0s0muk", Bech32.DecodingError.incorrectHrpSize),
         ("x1b4n0q5v", Bech32.DecodingError.invalidCharacter),

@@ -31,4 +31,11 @@ public extension String {
 
         return data
     }
+    
+    func decoded(using encoding: String.Encoding = .utf8) -> String? {
+        guard let hexData = hexadecimalData else {
+            return nil
+        }
+        return String(data: hexData, encoding: encoding)
+    }
 }
