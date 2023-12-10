@@ -124,7 +124,7 @@ enum RelayResponse: Decodable {
         do {
             return try decoder.decode(Self.self, from: data)
         } catch {
-            print("decode \(Self.Type.self) failed")
+            Loggers.relayDecoding.error("decode \(Self.Type.self) failed: \(error)")
         }
         return nil
     }

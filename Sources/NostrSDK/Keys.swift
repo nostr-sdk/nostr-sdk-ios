@@ -14,12 +14,12 @@ public struct Keypair {
 
     public init?() {
         guard let key = try? secp256k1.Signing.PrivateKey() else {
-            print("Could not generate new secp256k1 private key.")
+            Loggers.keypairs.error("Could not generate new secp256k1 private key.")
             return nil
         }
 
         guard let privateKey = PrivateKey(dataRepresentation: key.dataRepresentation) else {
-            print("Could not create keypair from generated secp256k1 private key.")
+            Loggers.keypairs.error("Could not create keypair from generated secp256k1 private key.")
             return nil
         }
 
@@ -28,7 +28,7 @@ public struct Keypair {
 
     public init?(nsec: String) {
         guard let privateKey = PrivateKey(nsec: nsec) else {
-            print("Could not create keypair from private key nsec")
+            Loggers.keypairs.error("Could not create keypair from private key nsec")
             return nil
         }
 
@@ -39,13 +39,13 @@ public struct Keypair {
         self.privateKey = privateKey
 
         guard let secp256k1PrivateKey = try? secp256k1.Signing.PrivateKey(dataRepresentation: privateKey.dataRepresentation) else {
-            print("Could not create secp256k1 private key.")
+            Loggers.keypairs.error("Could not create secp256k1 private key.")
             return nil
         }
 
         let publicKeyDataRepresentation = Data(secp256k1PrivateKey.publicKey.xonly.bytes)
         guard let publicKey = PublicKey(dataRepresentation: publicKeyDataRepresentation) else {
-            print("Could not create secp256k1 public key from private key.")
+            Loggers.keypairs.error("Could not create secp256k1 public key from private key.")
             return nil
         }
 
@@ -70,12 +70,12 @@ public struct PublicKey: Equatable {
 
     public init?(hex: String) {
         guard hex.isEmpty == false else {
-            print("Trying to create public key with empty string")
+            Loggers.keypairs.error("Trying to create public key with empty string")
             return nil
         }
 
         guard let dataRepresentation = hex.hexDecoded else {
-            print("Could not decode hex representation of public key.")
+            Loggers.keypairs.error("Could not decode hex representation of public key.")
             return nil
         }
 
@@ -84,17 +84,17 @@ public struct PublicKey: Equatable {
 
     public init?(npub: String) {
         guard let (humanReadablePart, checksum) = try? Bech32.decode(npub) else {
-           print("Could not create public key because npub could not be bech32 decoded.")
+            Loggers.keypairs.error("Could not create public key because npub could not be bech32 decoded.")
            return nil
         }
 
         guard humanReadablePart == PublicKey.humanReadablePrefix else {
-            print("Could not create public key because the human readable part, \(humanReadablePart), is not equal to npub.")
+            Loggers.keypairs.error("Could not create public key because the human readable part, \(humanReadablePart), is not equal to npub.")
             return nil
         }
 
         guard let checksumBase8 = checksum.base8FromBase5 else {
-            print("Could not convert data representation of public key from base 5 encoding to base 8.")
+            Loggers.keypairs.error("Could not convert data representation of public key from base 5 encoding to base 8.")
             return nil
         }
 
@@ -117,12 +117,12 @@ public struct PrivateKey {
 
     public init?(hex: String) {
         guard hex.isEmpty == false else {
-            print("Trying to create private key with empty string")
+            Loggers.keypairs.error("Trying to create private key with empty string")
             return nil
         }
 
         guard let dataRepresentation = hex.hexDecoded else {
-            print("Could not decode hex representation of private key.")
+            Loggers.keypairs.error("Could not decode hex representation of private key.")
             return nil
         }
 
@@ -131,17 +131,17 @@ public struct PrivateKey {
 
     public init?(nsec: String) {
         guard let (humanReadablePart, checksum) = try? Bech32.decode(nsec) else {
-           print("Could not create private key because nsec could not be bech32 decoded.")
+            Loggers.keypairs.error("Could not create private key because nsec could not be bech32 decoded.")
            return nil
         }
 
         guard humanReadablePart == PrivateKey.humanReadablePrefix else {
-            print("Could not create private key because the human readable part, \(humanReadablePart), is not equal to nsec.")
+            Loggers.keypairs.error("Could not create private key because the human readable part, \(humanReadablePart), is not equal to nsec.")
             return nil
         }
 
         guard let checksumBase8 = checksum.base8FromBase5 else {
-            print("Could not convert data representation of private key from base 5 encoding to base 8.")
+            Loggers.keypairs.error("Could not convert data representation of private key from base 5 encoding to base 8.")
             return nil
         }
 
