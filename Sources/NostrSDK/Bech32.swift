@@ -106,9 +106,10 @@ class Bech32 {
         guard let strBytes = str.data(using: .utf8) else {
             throw DecodingError.nonUTF8String
         }
-        guard strBytes.count <= 90 else {
-            throw DecodingError.stringLengthExceeded
-        }
+        // Montz: The length limit of 90 characters is for bitcoin and must be removed for Nostr identifiers, which can be longer.
+//        guard strBytes.count <= 90 else {
+//            throw DecodingError.stringLengthExceeded
+//        }
         var lower: Bool = false
         var upper: Bool = false
         for c in strBytes {
