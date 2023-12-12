@@ -64,15 +64,21 @@ public extension MetadataCoding {
     ///
     /// Throws an error if the hrp (human-readable part) of the identifier is unknown or if the data is missing or malformed.
     func decodedMetadata(from identifier: String) throws -> Metadata {
+        // Here is an example identifier from NIP-19:
+        // "nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p"
         let (hrp, checksum) = try Bech32.decode(identifier)
         guard let identifierType = Bech32IdentifierType(rawValue: hrp) else {
             throw TLVCodingError.unknownPrefix
         }
         
+        // Given the example profile identifier, the `hrp` will be "nprofile", and we'll use the computed checksum to extract the raw TLV data:
         guard let tlvString = checksum.base8FromBase5?.hexString else {
             throw TLVCodingError.missingExpectedData
         }
         
+        // At this point, the `tlvString` looks like the following:
+        // "00203bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d010d7773733a2f2f722e782e636f6d01157773733a2f2f646a6261732e7361646b622e636f6d"
+        // We'll pass that into the next function for TLV decoding.
         return try decodedTLVString(tlvString, identifierType: identifierType)
     }
     
@@ -83,6 +89,33 @@ public extension MetadataCoding {
     /// - Returns: The metadata decoded from the identifier.
     ///
     /// > Note: This function is provided for debugging and testing, as it is an intermediate result.
+    ///
+    /// Given the example profile identifier from NIP-19:
+    /// "nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p"
+    /// 
+    /// which decodes into the TLV string:
+    /// "00203bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d010d7773733a2f2f722e782e636f6d01157773733a2f2f646a6261732e7361646b622e636f6d"
+    ///
+    /// we can now parse out the individual TLVs inside the string.
+    /// The first two characters are the type byte of the first TLV. Here it is "00" which indicates that it is the "special" type in NIP-19. Since we're decoding a profile identifier, we know the value will be a public key.
+    /// The next two characters "20" are the length byte, which indicates that the next 32 bytes (20 in hexadecimal to base 10 = 32) contain the value for this TLV.
+    ///
+    /// We pull the next 32 characters out, and this is the public key:
+    /// "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"
+    /// So in summary you can see here how the first TLV is extracted from the input string:
+    /// T  L  V
+    /// 00 20 3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d
+    ///
+    /// Now we can move on to the next TLV in the `tlvString`.
+    /// T  L  V
+    /// 01 0d 7773733a2f2f722e782e636f6d
+    /// We can see that this one has a type byte of "01" which indicates that this TLV will be a relay. The length byte indicates that the value will be 13 bytes long (0d in hexadecimal to base 10 = 13).
+    /// When we decode the value data using the ascii encoding (as per NIP-19), we get "wss://r.x.com" as expected.
+    ///
+    /// We'll repeat that one more time for the last TLV in this string.
+    /// T  L  V
+    /// 01 15 7773733a2f2f646a6261732e7361646b622e636f6d
+    /// This is also a relay, and it decodes to "wss://djbas.sadkb.com".
     func decodedTLVString(_ tlvString: String, identifierType: Bech32IdentifierType) throws -> Metadata {
         var pubkey: String?
         var relays = [String]()

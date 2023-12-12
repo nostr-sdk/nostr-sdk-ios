@@ -1,12 +1,12 @@
 disabled_rules:
   - cyclomatic_complexity
   - file_length
+  - function_body_length
   - identifier_name
   - line_length
   - nesting
   - trailing_whitespace
   - type_body_length
-  - function_body_length
 
 excluded:
   - .build
