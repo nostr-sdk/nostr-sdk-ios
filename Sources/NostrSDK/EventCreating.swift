@@ -56,8 +56,7 @@ public extension EventCreating {
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
     func recommendServerEvent(withRelayURL relayURL: URL, signedBy keypair: Keypair) throws -> RecommendServerEvent {
-        let components = URLComponents(url: relayURL, resolvingAgainstBaseURL: false)
-        guard components?.scheme == "wss" || components?.scheme == "ws" else {
+        guard let components = URLComponents(url: relayURL, resolvingAgainstBaseURL: false), components.isValidRelay else {
             throw EventCreatingError.invalidInput
         }
         return try RecommendServerEvent(content: relayURL.absoluteString, signedBy: keypair)

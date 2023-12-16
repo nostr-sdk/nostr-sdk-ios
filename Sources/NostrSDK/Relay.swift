@@ -111,7 +111,7 @@ public final class Relay: ObservableObject, EventVerifying {
             throw URLError(.badURL)
         }
         
-        guard components.scheme == "wss" || components.scheme == "ws" else {
+        guard components.isValidRelay else {
             throw RelayURLError.invalidScheme
         }
         

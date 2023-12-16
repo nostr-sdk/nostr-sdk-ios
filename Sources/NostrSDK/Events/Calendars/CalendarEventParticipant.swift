@@ -26,15 +26,8 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
         guard let relayString = tag.otherParameters.first else {
             return nil
         }
-        guard !relayString.isEmpty else {
-            return nil
-        }
 
-        let components = URLComponents(string: relayString)
-        guard components?.scheme == "wss" || components?.scheme == "ws" else {
-            return nil
-        }
-        return components?.url
+        return relayString.relayURL
     }
 
     /// The role of the participant in the meeting.

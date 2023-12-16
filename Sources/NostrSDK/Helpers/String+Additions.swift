@@ -8,7 +8,19 @@
 import Foundation
 
 public extension String {
-    
+
+    /// Transforms a string into a Nostr relay ``URL`` if the URL format appears valid.
+    var relayURL: URL? {
+        guard !isEmpty else {
+            return nil
+        }
+
+        guard let components = URLComponents(string: self), components.isValidRelay else {
+            return nil
+        }
+        return components.url
+    }
+
     /// The hexadecimal data representation of the `String`.
     ///
     /// For example, given a `String` "8F31", the result would be a `Data` of `0x8F31.` It does not convert each character to its Unicode representation.

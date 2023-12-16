@@ -14,7 +14,7 @@ import Foundation
 ///              * MUST NOT support adding HTML to Markdown.
 ///
 /// > Note: [NIP-23 Specification](https://github.com/nostr-protocol/nips/blob/master/23.md)
-public final class LongformContentEvent: NostrEvent, HashtagInterpreting {
+public final class LongformContentEvent: NostrEvent, HashtagInterpreting, TitleTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -41,12 +41,7 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting {
     var identifier: String? {
         firstValueForTagName(.identifier)
     }
-    
-    /// The article title.
-    var title: String? {
-        firstValueForTagName(.title)
-    }
-    
+
     /// A summary of the content.
     var summary: String? {
         firstValueForTagName(.summary)

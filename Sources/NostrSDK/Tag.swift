@@ -15,7 +15,10 @@ public enum TagName: String {
     
     /// points to the id of an event this event is quoting, replying to or referring to somehow
     case event = "e"
-    
+
+    /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is parameterized)
+    case replaceableEvent = "a"
+
     /// a hashtag to categorize events for easy searching
     case hashtag = "t"
     
@@ -36,7 +39,7 @@ public enum TagName: String {
     
     case summary
     
-    /// a title for a long-form content event
+    /// a title for an event
     case title
     
     /// a web URL the event is referring to in some way. See [NIP-24 - Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#tags).

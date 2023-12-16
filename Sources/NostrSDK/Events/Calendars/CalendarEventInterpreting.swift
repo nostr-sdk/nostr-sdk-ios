@@ -7,13 +7,8 @@
 
 import Foundation
 
-public protocol CalendarEventInterpreting: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, ReferenceTagInterpreting {}
+public protocol CalendarEventInterpreting: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, IdentifierTagInterpreting, ReferenceTagInterpreting {}
 public extension CalendarEventInterpreting {
-    /// Universally unique identifier (UUID).
-    var uuid: String? {
-        tags.first { $0.name == TagName.identifier.rawValue }?.value
-    }
-
     /// The name of the calendar event.
     var name: String? {
         tags.first { $0.name == "name" }?.value

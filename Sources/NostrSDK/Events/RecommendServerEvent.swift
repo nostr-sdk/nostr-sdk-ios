@@ -26,10 +26,6 @@ public final class RecommendServerEvent: NostrEvent, RelayProviding {
     }
     
     public var relayURL: URL? {
-        let components = URLComponents(string: content)
-        guard components?.scheme == "wss" || components?.scheme == "ws" else {
-            return nil
-        }
-        return components?.url
+        content.relayURL
     }
 }
