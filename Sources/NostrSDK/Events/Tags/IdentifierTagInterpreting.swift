@@ -14,4 +14,16 @@ public extension IdentifierTagInterpreting {
     var identifier: String? {
         firstValueForTagName(.identifier)
     }
+
+    /// The event coordinates that can be used to fetch this replaceable event's kind, pubkey, and identifier from a relay.
+    ///
+    /// - Parameters:
+    ///   - relayURL: A relay URL that this replaceable event could be found.
+    func identifierEventCoordinates(_ relayURL: URL? = nil) -> EventCoordinates? {
+        guard let identifier, let publicKey = PublicKey(hex: pubkey) else {
+            return nil
+        }
+
+        return EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
+    }
 }

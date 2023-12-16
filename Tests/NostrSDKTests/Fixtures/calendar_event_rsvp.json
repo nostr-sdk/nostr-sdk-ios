@@ -1,0 +1,36 @@
+{
+  "id": "1ec761bbeacd17f4ca961668725ea85a9001a0f56da37eb424856a9de1188a2d",
+  "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+  "created_at": 1703052002,
+  "kind": 31925,
+  "tags": [
+    [
+      "a",
+      "31922:9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340:D1D48740-2CF8-4483-B5F0-1E83F6D7EC50"
+    ],
+    [
+      "d",
+      "hockey-practice-rsvp"
+    ],
+    [
+      "L",
+      "hockey-practice-rsvp"
+    ],
+    [
+      "l",
+      "accepted",
+      "status"
+    ],
+    [
+      "L",
+      "freebusy"
+    ],
+    [
+      "l",
+      "busy",
+      "freebusy"
+    ]
+  ],
+  "content": "Don't forget your skates!",
+  "sig": "21c58b1d759c6470cbb1931653d3c44cbc24c87be9632b794b2c4bb3a0abd27117dd9e3c8c90cf669a6f0d8204f20f92c2a20ed832a54d999d010402d2b1aa9a"
+}
