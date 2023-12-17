@@ -50,11 +50,8 @@ public class GenericRepostEvent: NostrEvent {
     
     /// The relay URL at which to fetch the reposted event.
     var repostedEventRelayURL: URL? {
-        guard let eventTag = tags.first(where: { $0.name == TagName.event.rawValue }) else {
-            return nil
-        }
-
-        guard let relayString = eventTag.otherParameters.first else {
+        guard let eventTag = tags.first(where: { $0.name == TagName.event.rawValue }),
+              let relayString = eventTag.otherParameters.first else {
             return nil
         }
 

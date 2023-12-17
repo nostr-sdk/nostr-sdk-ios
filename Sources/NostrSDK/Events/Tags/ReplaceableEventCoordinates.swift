@@ -62,7 +62,7 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
     /// For a parameterized replaceable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:<d tag value>` is expected.
     /// For a non-parameterized replaceable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:` is expected.
     ///
-    /// Returns `nil` if the tag is not a replaceable event tag  or if the tag value does not have at least two ":" colon separators.
+    /// Returns `nil` if the tag is not a replaceable event tag or if the tag value does not have at least two ":" colon separators.
     ///
     /// - Parameters:
     ///   - pubkey: The public key of the participant.
@@ -82,7 +82,7 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
 
     /// Initializes coordinates to a replaceable event.
     /// - Parameters:
-    ///   - kind: The kind integer of the referenced replaceable event.
+    ///   - kind: The ``EventKind`` of the referenced replaceable event.
     ///   - pubkey: The pubkey that signed the referenced replaceable event.
     ///   - identifier: The identifier of the referenced replaceable event.
     ///   - relayURL: A relay in which the referenced replaceable event could be found.
