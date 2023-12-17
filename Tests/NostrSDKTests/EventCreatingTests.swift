@@ -292,7 +292,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             "72341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
         ]
         
-        let secretlyMutedPubkeys = [
+        let privatelyMutedPubkeys = [
             "52341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2",
             "42341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
         ]
@@ -302,7 +302,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             "05759f0b085181cce6f9784125ca46b71cebbfb6963f029c45e679c9eff6e46f"
         ]
         
-        let secretlyMutedEventIds = [
+        let privatelyMutedEventIds = [
             "761563ea69f4f07539d06a9f78c31c910e82044db8707dab5b8c7ab3b2d00153",
             "7c77d79c2780a074aa26891faf44d9bc1d61fb75813bb2ee9b71d787f34d6a1a"
         ]
@@ -312,7 +312,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             "religion"
         ]
         
-        let secretlyMutedHashtags = [
+        let privatelyMutedHashtags = [
             "left",
             "right"
         ]
@@ -322,19 +322,19 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             "pokemon"
         ]
         
-        let secretlyMutedKeywords = [
+        let privatelyMutedKeywords = [
             "up",
             "down"
         ]
         
         let event = try muteList(withPubliclyMutedPubkeys: mutedPubkeys,
-                                 secretlyMutedPubkeys: secretlyMutedPubkeys,
+                                 privatelyMutedPubkeys: privatelyMutedPubkeys,
                                  publiclyMutedEventIds: mutedEventIds,
-                                 secretlyMutedEventIds: secretlyMutedEventIds,
+                                 privatelyMutedEventIds: privatelyMutedEventIds,
                                  publiclyMutedHashtags: mutedHashtags,
-                                 secretlyMutedHashtags: secretlyMutedHashtags,
+                                 privatelyMutedHashtags: privatelyMutedHashtags,
                                  publiclyMutedKeywords: mutedKeywords,
-                                 secretlyMutedKeywords: secretlyMutedKeywords,
+                                 privatelyMutedKeywords: privatelyMutedKeywords,
                                  signedBy: Keypair.test)
         
         // check public tags
@@ -356,8 +356,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.hashtags, mutedHashtags)
         XCTAssertEqual(event.keywords, mutedKeywords)
         
-        // check secret tags
-        let expectedSecretTags = [
+        // check private tags
+        let expectedPrivateTags = [
             Tag(name: .pubkey, value: "52341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
             Tag(name: .pubkey, value: "42341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
             Tag(name: .event, value: "761563ea69f4f07539d06a9f78c31c910e82044db8707dab5b8c7ab3b2d00153"),
@@ -368,9 +368,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             Tag(name: .word, value: "down")
         ]
         
-        let secretTags = event.secretTags(using: Keypair.test)
+        let privateTags = event.privateTags(using: Keypair.test)
         
-        XCTAssertEqual(secretTags, expectedSecretTags)
+        XCTAssertEqual(privateTags, expectedPrivateTags)
         
         try verifyEvent(event)
     }

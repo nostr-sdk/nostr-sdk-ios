@@ -229,23 +229,23 @@ public extension EventCreating {
     /// Creates a ``MuteListEvent`` (kind 10000) containing things the user doesn't want to see in their feeds. Mute list items be publicly visible or private.
     /// - Parameters:
     ///   - publiclyMutedPubkeys: Pubkeys to mute.
-    ///   - secretlyMutedPubkeys: Pubkeys to secretly mute.
+    ///   - privatelyMutedPubkeys: Pubkeys to secretly mute.
     ///   - publiclyMutedEventIds: Event ids to mute.
-    ///   - secretlyMutedEventIds: Event ids to secretly mute.
+    ///   - privatelyMutedEventIds: Event ids to secretly mute.
     ///   - publiclyMutedHashtags: Hashtags to mute.
-    ///   - secretlyMutedHashtags: Hashtags to secretly mute.
+    ///   - privatelyMutedHashtags: Hashtags to secretly mute.
     ///   - publiclyMutedKeywords: Keywords to mute.
-    ///   - secretlyMutedKeywords: Keywords to secretly mute.
+    ///   - privatelyMutedKeywords: Keywords to secretly mute.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``MuteListEvent``.
     func muteList(withPubliclyMutedPubkeys publiclyMutedPubkeys: [String] = [],
-                  secretlyMutedPubkeys: [String] = [],
+                  privatelyMutedPubkeys: [String] = [],
                   publiclyMutedEventIds: [String] = [],
-                  secretlyMutedEventIds: [String] = [],
+                  privatelyMutedEventIds: [String] = [],
                   publiclyMutedHashtags: [String] = [],
-                  secretlyMutedHashtags: [String] = [],
+                  privatelyMutedHashtags: [String] = [],
                   publiclyMutedKeywords: [String] = [],
-                  secretlyMutedKeywords: [String] = [],
+                  privatelyMutedKeywords: [String] = [],
                   signedBy keypair: Keypair) throws -> MuteListEvent {
         var publicTags = [Tag]()
         
@@ -263,16 +263,16 @@ public extension EventCreating {
         }
         
         var secretTags = [[String]]()
-        for pubkey in secretlyMutedPubkeys {
+        for pubkey in privatelyMutedPubkeys {
             secretTags.append([TagName.pubkey.rawValue, pubkey])
         }
-        for eventId in secretlyMutedEventIds {
+        for eventId in privatelyMutedEventIds {
             secretTags.append([TagName.event.rawValue, eventId])
         }
-        for hashtag in secretlyMutedHashtags {
+        for hashtag in privatelyMutedHashtags {
             secretTags.append([TagName.hashtag.rawValue, hashtag])
         }
-        for keyword in secretlyMutedKeywords {
+        for keyword in privatelyMutedKeywords {
             secretTags.append([TagName.word.rawValue, keyword])
         }
         

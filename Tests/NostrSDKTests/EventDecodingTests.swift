@@ -409,11 +409,11 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertTrue(event.tags.contains(Tag(name: .hashtag, value: "testing")))
         XCTAssertTrue(event.tags.contains(Tag(name: .hashtag, value: "test2")))
         
-        let secretTags = event.secretTags(using: .test)
+        let secretTags = event.privateTags(using: .test)
         XCTAssertTrue(secretTags.contains(Tag(name: .pubkey, value: "6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93")))
         XCTAssertTrue(secretTags.contains(Tag(name: .hashtag, value: "sportsball")))
         XCTAssertTrue(secretTags.contains(Tag(name: .hashtag, value: "footstr")))
         
-        XCTAssertEqual(event.secretHashtags(using: .test), ["sportsball", "footstr"])
+        XCTAssertEqual(event.privateHashtags(using: .test), ["sportsball", "footstr"])
     }
 }

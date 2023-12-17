@@ -26,7 +26,7 @@ public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// The start timestamp is represented by ``Date``.
     /// `nil` is returned if the backing `start` tag is malformed.
     public var startTimestamp: Date? {
-        guard let startString = valueForRawTagName("start"), let startSeconds = Int(startString) else {
+        guard let startString = firstValueForRawTagName("start"), let startSeconds = Int(startString) else {
             return nil
         }
 
@@ -37,7 +37,7 @@ public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// End timestamp represented by ``Date``.
     /// `nil` is returned if the backing `end` tag is malformed or if the calendar event ends instanteously.
     public var endTimestamp: Date? {
-        guard let endString = valueForRawTagName("end"), let endSeconds = Int(endString) else {
+        guard let endString = firstValueForRawTagName("end"), let endSeconds = Int(endString) else {
             return nil
         }
 
@@ -46,7 +46,7 @@ public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
 
     /// The time zone of the start timestamp.
     public var startTimeZone: TimeZone? {
-        guard let timeZoneIdentifier = valueForRawTagName("start_tzid") else {
+        guard let timeZoneIdentifier = firstValueForRawTagName("start_tzid") else {
             return nil
         }
 
@@ -56,7 +56,7 @@ public final class TimeBasedCalendarEvent: NostrEvent, CalendarEventInterpreting
     /// The time zone of the end timestamp.
     /// `nil` can be returned if the time zone identifier is malformed or if the time zone of the end timestamp is the same as the start timestamp.
     public var endTimeZone: TimeZone? {
-        guard let timeZoneIdentifier = valueForRawTagName("end_tzid") else {
+        guard let timeZoneIdentifier = firstValueForRawTagName("end_tzid") else {
             return nil
         }
 

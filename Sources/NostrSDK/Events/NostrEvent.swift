@@ -90,13 +90,13 @@ public class NostrEvent: Codable {
                                            content: content)
     }
     
-    /// the String value for the provided ``TagName``, if it exists
-    public func valueForTagName(_ tag: TagName) -> String? {
-        valueForRawTagName(tag.rawValue)
+    /// the first String value for the provided ``TagName``, if it exists
+    public func firstValueForTagName(_ tag: TagName) -> String? {
+        firstValueForRawTagName(tag.rawValue)
     }
     
-    /// the String value for the provided raw tag name, if it exists
-    public func valueForRawTagName(_ tagName: String) -> String? {
+    /// the first String value for the provided raw tag name, if it exists
+    public func firstValueForRawTagName(_ tagName: String) -> String? {
         tags.first(where: { $0.name == tagName })?.value
     }
     

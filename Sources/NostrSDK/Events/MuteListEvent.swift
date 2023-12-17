@@ -34,44 +34,39 @@ public final class MuteListEvent: NostrEvent, HashtagInterpreting, DirectMessage
         allValues(forTagName: .event) ?? []
     }
     
-    /// The publicly muted hashtags.
-    public var hashtags: [String] {
-        allValues(forTagName: .hashtag) ?? []
-    }
-    
     /// The publicly muted keywords.
     public var keywords: [String] {
         allValues(forTagName: .word) ?? []
     }
     
-    /// The secretly muted public keys (authors).
-    public func secretPubkeys(using keypair: Keypair) -> [String] {
-        secretTags(withName: .pubkey, using: keypair)
+    /// The privately muted public keys (authors).
+    public func privatePubkeys(using keypair: Keypair) -> [String] {
+        privateTags(withName: .pubkey, using: keypair)
     }
     
-    /// The secretly muted event ids (threads).
-    public func secretEventIds(using keypair: Keypair) -> [String] {
-        secretTags(withName: .event, using: keypair)
+    /// The privately muted event ids (threads).
+    public func privateEventIds(using keypair: Keypair) -> [String] {
+        privateTags(withName: .event, using: keypair)
     }
     
-    /// The secretly muted hashtags.
-    public func secretHashtags(using keypair: Keypair) -> [String] {
-        secretTags(withName: .hashtag, using: keypair)
+    /// The privately muted hashtags.
+    public func privateHashtags(using keypair: Keypair) -> [String] {
+        privateTags(withName: .hashtag, using: keypair)
     }
     
-    /// The secretly muted keywords.
-    public func secretKeywords(using keypair: Keypair) -> [String] {
-        secretTags(withName: .word, using: keypair)
+    /// The privately muted keywords.
+    public func privateKeywords(using keypair: Keypair) -> [String] {
+        privateTags(withName: .word, using: keypair)
     }
     
-    private func secretTags(withName tagName: TagName, using keypair: Keypair) -> [String] {
-        secretTags(using: keypair).filter { $0.name == tagName.rawValue }.map { $0.value }
+    private func privateTags(withName tagName: TagName, using keypair: Keypair) -> [String] {
+        privateTags(using: keypair).filter { $0.name == tagName.rawValue }.map { $0.value }
     }
     
-    /// The secret tags encrypted in the content of the event.
+    /// The private tags encrypted in the content of the event.
     /// - Parameter keypair: The keypair to use to decrypt the content.
-    /// - Returns: The secret tags.
-    func secretTags(using keypair: Keypair) -> [Tag] {
+    /// - Returns: The private tags.
+    func privateTags(using keypair: Keypair) -> [Tag] {
         guard let decryptedContent = try? decrypt(encryptedContent: content, privateKey: keypair.privateKey, publicKey: keypair.publicKey),
               let jsonData = decryptedContent.data(using: .utf8) else {
             return []
