@@ -226,6 +226,69 @@ public extension EventCreating {
         return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
     }
     
+    /// Creates a ``MuteListEvent`` (kind 10000) containing things the user doesn't want to see in their feeds. Mute list items be publicly visible or private.
+    /// - Parameters:
+    ///   - publiclyMutedPubkeys: Pubkeys to mute.
+    ///   - secretlyMutedPubkeys: Pubkeys to secretly mute.
+    ///   - publiclyMutedEventIds: Event ids to mute.
+    ///   - secretlyMutedEventIds: Event ids to secretly mute.
+    ///   - publiclyMutedHashtags: Hashtags to mute.
+    ///   - secretlyMutedHashtags: Hashtags to secretly mute.
+    ///   - publiclyMutedKeywords: Keywords to mute.
+    ///   - secretlyMutedKeywords: Keywords to secretly mute.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``MuteListEvent``.
+    func muteList(withPubliclyMutedPubkeys publiclyMutedPubkeys: [String] = [],
+                  secretlyMutedPubkeys: [String] = [],
+                  publiclyMutedEventIds: [String] = [],
+                  secretlyMutedEventIds: [String] = [],
+                  publiclyMutedHashtags: [String] = [],
+                  secretlyMutedHashtags: [String] = [],
+                  publiclyMutedKeywords: [String] = [],
+                  secretlyMutedKeywords: [String] = [],
+                  signedBy keypair: Keypair) throws -> MuteListEvent {
+        var publicTags = [Tag]()
+        
+        for pubkey in publiclyMutedPubkeys {
+            publicTags.append(Tag(name: .pubkey, value: pubkey))
+        }
+        for eventId in publiclyMutedEventIds {
+            publicTags.append(Tag(name: .event, value: eventId))
+        }
+        for hashtag in publiclyMutedHashtags {
+            publicTags.append(Tag(name: .hashtag, value: hashtag))
+        }
+        for keyword in publiclyMutedKeywords {
+            publicTags.append(Tag(name: .word, value: keyword))
+        }
+        
+        var secretTags = [[String]]()
+        for pubkey in secretlyMutedPubkeys {
+            secretTags.append([TagName.pubkey.rawValue, pubkey])
+        }
+        for eventId in secretlyMutedEventIds {
+            secretTags.append([TagName.event.rawValue, eventId])
+        }
+        for hashtag in secretlyMutedHashtags {
+            secretTags.append([TagName.hashtag.rawValue, hashtag])
+        }
+        for keyword in secretlyMutedKeywords {
+            secretTags.append([TagName.word.rawValue, keyword])
+        }
+        
+        var encryptedContent: String?
+        if !secretTags.isEmpty {
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: secretTags),
+               let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
+                encryptedContent = try encrypt(content: unencryptedContent,
+                                               privateKey: keypair.privateKey,
+                                               publicKey: keypair.publicKey)
+            }
+        }
+        
+        return try MuteListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
+    }
+    
     /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".
     /// - Parameters:
     ///   - identifier: A unique identifier for the content. Can be reused in the future for replacing the event.

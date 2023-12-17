@@ -397,4 +397,23 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.content, "Flight to Nostrica")
         XCTAssertEqual(event.signature, "57cdb0735645a7ff7112c2d863c425a75e82b540412117609c1c32bee833622a82acacd836b2790f0f08082e2700cdf1ac363c2aae1db87e613824fea2907845")
     }
+    
+    func testDecodeMuteListEvent() throws {
+        let event: MuteListEvent = try decodeFixture(filename: "mute_list")
+        
+        XCTAssertEqual(event.id, "acfc1402d926b88a26dffc94162e399f2b35d7c7503a1fde2f2cc6d11d33ad88")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.kind, .muteList)
+        
+        XCTAssertTrue(event.tags.contains(Tag(name: .pubkey, value: "07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f")))
+        XCTAssertTrue(event.tags.contains(Tag(name: .hashtag, value: "testing")))
+        XCTAssertTrue(event.tags.contains(Tag(name: .hashtag, value: "test2")))
+        
+        let secretTags = event.secretTags(using: .test)
+        XCTAssertTrue(secretTags.contains(Tag(name: .pubkey, value: "6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93")))
+        XCTAssertTrue(secretTags.contains(Tag(name: .hashtag, value: "sportsball")))
+        XCTAssertTrue(secretTags.contains(Tag(name: .hashtag, value: "footstr")))
+        
+        XCTAssertEqual(event.secretHashtags(using: .test), ["sportsball", "footstr"])
+    }
 }
