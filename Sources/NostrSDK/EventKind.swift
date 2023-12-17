@@ -68,6 +68,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// See [NIP-56](https://github.com/nostr-protocol/nips/blob/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c/56.md#nip-56).
     case report
     
+    /// This kind of event contains a list of things the user does not want to see, such as pubkeys, hashtags, words, and event ids (threads).
+    ///
+    /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
+    case muteList
+    
     /// This kind of event is for long-form texxt content, generally referred to as "articles" or "blog posts".
     ///
     /// See [NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md).
@@ -96,6 +101,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .reaction,
         .genericRepost,
         .report,
+        .muteList,
         .longformContent,
         .dateBasedCalendarEvent,
         .timeBasedCalendarEvent
@@ -118,6 +124,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .reaction: return 7
         case .genericRepost: return 16
         case .report: return 1984
+        case .muteList: return 10000
         case .longformContent: return 30023
         case .dateBasedCalendarEvent: return 31922
         case .timeBasedCalendarEvent: return 31923

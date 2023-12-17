@@ -1,0 +1,26 @@
+{
+  "created_at": 1702745356,
+  "content": "wKJz27MlbU3E/T0rVWac+yUn2kiUOyppR3cK+JGTAPyG2+LoheLrtHgspl4oDFqKLs7cIg0fdX/RP06At2Ms7PpEABFZu0G/RupuJSghPel380978OJCd0lX5+8U8SX8T4JdLjZJ3OeRGpjilDafmg==?iv=5t0jLTyHSTmXITrTRB0qNA==",
+  "tags": [
+    [
+      "t",
+      "testing"
+    ],
+    [
+      "t",
+      "test2"
+    ],
+    [
+      "p",
+      "07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f"
+    ],
+    [
+      "title",
+      "Mute"
+    ]
+  ],
+  "kind": 10000,
+  "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+  "id": "acfc1402d926b88a26dffc94162e399f2b35d7c7503a1fde2f2cc6d11d33ad88",
+  "sig": "test"
+}

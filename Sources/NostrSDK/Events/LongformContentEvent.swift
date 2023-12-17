@@ -30,7 +30,7 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting {
     
     /// The date of the first time the article was published.
     var publishedAt: Date? {
-        guard let unixTimeString = valueForTagName(.publishedAt),
+        guard let unixTimeString = firstValueForTagName(.publishedAt),
               let unixSeconds = TimeInterval(unixTimeString) else {
             return nil
         }
@@ -39,22 +39,22 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting {
     
     /// A unique identifier for the content. Can be reused in the future for replacing the event.
     var identifier: String? {
-        valueForTagName(.identifier)
+        firstValueForTagName(.identifier)
     }
     
     /// The article title.
     var title: String? {
-        valueForTagName(.title)
+        firstValueForTagName(.title)
     }
     
     /// A summary of the content.
     var summary: String? {
-        valueForTagName(.summary)
+        firstValueForTagName(.summary)
     }
     
     /// A URL pointing to an image to be shown along with the title.
     var imageURL: URL? {
-        guard let imageURLString = valueForTagName(.image) else {
+        guard let imageURLString = firstValueForTagName(.image) else {
             return nil
         }
         return URL(string: imageURLString)

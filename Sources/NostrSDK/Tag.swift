@@ -41,6 +41,9 @@ public enum TagName: String {
     
     /// a web URL the event is referring to in some way. See [NIP-24 - Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#tags).
     case webURL = "r"
+    
+    /// a keyword to mute
+    case word
 }
 
 /// A constant that describes a type of reference to an event.
@@ -163,5 +166,11 @@ public class Tag: Codable, Equatable {
         name == tag.name &&
         value == tag.value &&
         otherParameters == tag.otherParameters
+    }
+}
+
+extension Tag: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "Tag(name: \"\(name)\", value: \"\(value)\")"
     }
 }

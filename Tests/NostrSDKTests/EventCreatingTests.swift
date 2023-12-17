@@ -286,6 +286,95 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertThrowsError(try reportNote(noteToReport, reportType: .impersonation, additionalInformation: "mean words", signedBy: Keypair.test))
     }
     
+    func testMuteListEvent() throws {
+        let mutedPubkeys = [
+            "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2",
+            "72341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
+        ]
+        
+        let privatelyMutedPubkeys = [
+            "52341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2",
+            "42341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
+        ]
+        
+        let mutedEventIds = [
+            "964880cab60cab8e510b21714f93b45a288261c49b9a5413f18f69105824410a",
+            "05759f0b085181cce6f9784125ca46b71cebbfb6963f029c45e679c9eff6e46f"
+        ]
+        
+        let privatelyMutedEventIds = [
+            "761563ea69f4f07539d06a9f78c31c910e82044db8707dab5b8c7ab3b2d00153",
+            "7c77d79c2780a074aa26891faf44d9bc1d61fb75813bb2ee9b71d787f34d6a1a"
+        ]
+        
+        let mutedHashtags = [
+            "politics",
+            "religion"
+        ]
+        
+        let privatelyMutedHashtags = [
+            "left",
+            "right"
+        ]
+        
+        let mutedKeywords = [
+            "sportsball",
+            "pokemon"
+        ]
+        
+        let privatelyMutedKeywords = [
+            "up",
+            "down"
+        ]
+        
+        let event = try muteList(withPubliclyMutedPubkeys: mutedPubkeys,
+                                 privatelyMutedPubkeys: privatelyMutedPubkeys,
+                                 publiclyMutedEventIds: mutedEventIds,
+                                 privatelyMutedEventIds: privatelyMutedEventIds,
+                                 publiclyMutedHashtags: mutedHashtags,
+                                 privatelyMutedHashtags: privatelyMutedHashtags,
+                                 publiclyMutedKeywords: mutedKeywords,
+                                 privatelyMutedKeywords: privatelyMutedKeywords,
+                                 signedBy: Keypair.test)
+        
+        // check public tags
+        let expectedTags = [
+            Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            Tag(name: .pubkey, value: "72341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            Tag(name: .event, value: "964880cab60cab8e510b21714f93b45a288261c49b9a5413f18f69105824410a"),
+            Tag(name: .event, value: "05759f0b085181cce6f9784125ca46b71cebbfb6963f029c45e679c9eff6e46f"),
+            Tag(name: .hashtag, value: "politics"),
+            Tag(name: .hashtag, value: "religion"),
+            Tag(name: .word, value: "sportsball"),
+            Tag(name: .word, value: "pokemon")
+        ]
+        
+        XCTAssertEqual(event.tags, expectedTags)
+        
+        XCTAssertEqual(event.pubkeys, mutedPubkeys)
+        XCTAssertEqual(event.eventIds, mutedEventIds)
+        XCTAssertEqual(event.hashtags, mutedHashtags)
+        XCTAssertEqual(event.keywords, mutedKeywords)
+        
+        // check private tags
+        let expectedPrivateTags = [
+            Tag(name: .pubkey, value: "52341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            Tag(name: .pubkey, value: "42341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            Tag(name: .event, value: "761563ea69f4f07539d06a9f78c31c910e82044db8707dab5b8c7ab3b2d00153"),
+            Tag(name: .event, value: "7c77d79c2780a074aa26891faf44d9bc1d61fb75813bb2ee9b71d787f34d6a1a"),
+            Tag(name: .hashtag, value: "left"),
+            Tag(name: .hashtag, value: "right"),
+            Tag(name: .word, value: "up"),
+            Tag(name: .word, value: "down")
+        ]
+        
+        let privateTags = event.privateTags(using: Keypair.test)
+        
+        XCTAssertEqual(privateTags, expectedPrivateTags)
+        
+        try verifyEvent(event)
+    }
+    
     func testLongformContentEvent() throws {
         let identifier = "my-blog-post"
         let title = "My Blog Post"

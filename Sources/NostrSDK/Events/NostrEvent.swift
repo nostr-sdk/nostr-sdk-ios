@@ -90,13 +90,20 @@ public class NostrEvent: Codable {
                                            content: content)
     }
     
-    /// the String value for the provided ``TagName``, if it exists
-    public func valueForTagName(_ tag: TagName) -> String? {
-        valueForRawTagName(tag.rawValue)
+    /// the first String value for the provided ``TagName``, if it exists
+    public func firstValueForTagName(_ tag: TagName) -> String? {
+        firstValueForRawTagName(tag.rawValue)
     }
     
-    /// the String value for the provided raw tag name, if it exists
-    public func valueForRawTagName(_ tagName: String) -> String? {
+    /// the first String value for the provided raw tag name, if it exists
+    public func firstValueForRawTagName(_ tagName: String) -> String? {
         tags.first(where: { $0.name == tagName })?.value
+    }
+    
+    /// All tags with the provided name.
+    /// - Parameter tag: The tag name to filter.
+    /// - Returns: The values associated with the tags of the provided name.
+    public func allValues(forTagName tag: TagName) -> [String]? {
+        tags.filter { $0.name == tag.rawValue }.map { $0.value }
     }
 }
