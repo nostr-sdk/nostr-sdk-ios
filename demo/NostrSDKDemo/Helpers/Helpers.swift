@@ -26,12 +26,16 @@ struct DemoHelper {
     static var validNpub: Binding<String> {
         Binding.constant("npub1n9rljevamqxrdqjq9dsj74z8u2pynxtlkdcf2qxr9fv9avyhwdqqf6w3at")
     }
+    /// The Nostr SDK project and its maintainers take no responsibility of events signed with this private key which has been open sourced.
+    /// Its purpose is for only testing and demos.
     static var validNsec: Binding<String> {
         Binding.constant("nsec163p74rxf58ndvav7ck8axx39qmt6dvwjgm8z98ckanenzf3mpjyq6875fz")
     }
     static var validHexPublicKey: Binding<String> {
         Binding.constant("9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
     }
+    /// The Nostr SDK project and its maintainers take no responsibility of events signed with this private key which has been open sourced.
+    /// Its purpose is for only testing and demos.
     static var validHexPrivateKey: Binding<String> {
         Binding.constant("d443ea8cc9a1e6d6759ec58fd31a2506d7a6b1d246ce229f16ecf331263b0c88")
     }
