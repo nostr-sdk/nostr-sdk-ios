@@ -107,13 +107,7 @@ public final class Relay: ObservableObject, EventVerifying {
     ///
     /// > Important: The url must have a websocket scheme (e.g. "wss" or "ws").
     public init(url: URL) throws {
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            throw URLError(.badURL)
-        }
-        
-        guard components.isValidRelay else {
-            throw RelayURLError.invalidScheme
-        }
+        try RelayURLValidator.shared.validateRelayURL(url)
         
         socket = WebSocket(url)
         socketSubscription = socket.subject

@@ -9,7 +9,7 @@ import Foundation
 
 /// Coordinates to a (maybe parameterized) replaceable event.
 /// See [NIP-01 Tags](https://github.com/nostr-protocol/nips/blob/master/01.md#tags).
-public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equatable {
+public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag
     }
@@ -63,7 +63,7 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
             return nil
         }
 
-        return relayString.relayURL
+        return try? validateRelayURLString(relayString)
     }
 
     /// Initializes coordinates to a replaceable event from a ``Tag``.
@@ -94,7 +94,7 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
     public init?(kind: EventKind, pubkey: PublicKey, identifier: String?, relayURL: URL? = nil) {
         let otherParameters: [String]
         if let relayURL {
-            guard let components = URLComponents(url: relayURL, resolvingAgainstBaseURL: false), components.isValidRelay else {
+            guard (try? RelayURLValidator.shared.validateRelayURL(relayURL)) != nil else {
                 return nil
             }
 
