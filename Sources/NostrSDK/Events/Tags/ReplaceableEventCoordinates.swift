@@ -17,14 +17,14 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
     /// The tag representation of these replaceable event coordinates.
     public let tag: Tag
 
-    private var tagValueSplit: [Substring] {
+    private var tagComponents: [Substring] {
         tag.value.split(separator: ":", omittingEmptySubsequences: false)
     }
 
     /// The kind integer of the referenced replaceable event.
     /// Returns `nil` if the kind integer part of the tag value is malformed.
     public var kind: EventKind? {
-        guard let kindInt = Int(String(tagValueSplit[0])) else {
+        guard 0 < tagComponents.count, let kindInt = Int(String(tagComponents[0])) else {
             return nil
         }
 
@@ -34,13 +34,21 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
     /// The pubkey that signed the referenced replaceable event.
     /// Returns `nil` if the pubkey part of the tag value is malformed.
     public var pubkey: PublicKey? {
-        PublicKey(hex: String(tagValueSplit[1]))
+        guard 1 < tagComponents.count else {
+            return nil
+        }
+
+        return PublicKey(hex: String(tagComponents[1]))
     }
 
     /// The identifier of the referenced replaceable event.
     /// Returns `nil` if the returned event is not a parameterized replaceable event.
     public var identifier: String? {
-        let identifierParameter = tagValueSplit[2]
+        guard 1 < tagComponents.count else {
+            return nil
+        }
+
+        let identifierParameter = tagComponents[2]
         guard !identifierParameter.isEmpty else {
             return nil
         }
@@ -63,9 +71,6 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
     /// For a non-parameterized replaceable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:` is expected.
     ///
     /// Returns `nil` if the tag is not a replaceable event tag or if the tag value does not have at least two ":" colon separators.
-    ///
-    /// - Parameters:
-    ///   - pubkey: The public key of the participant.
     public init?(eventCoordinatesTag: Tag) {
         guard eventCoordinatesTag.name == TagName.eventCoordinates.rawValue else {
             return nil
