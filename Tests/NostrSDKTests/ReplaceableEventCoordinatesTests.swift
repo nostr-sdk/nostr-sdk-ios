@@ -32,10 +32,10 @@ final class ReplaceableEventCoordinatesTests: XCTestCase {
     }
 
     func testInitFromTag() throws {
-        let tag = Tag(name: .replaceableEvent, value: "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum", otherParameters: ["wss://relay.nostr.org"])
+        let tag = Tag(name: .eventCoordinates, value: "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum", otherParameters: ["wss://relay.nostr.org"])
 
         let replaceableEventCoordinates = try XCTUnwrap(
-            ReplaceableEventCoordinates(replaceableEventTag: tag)
+            ReplaceableEventCoordinates(eventCoordinatesTag: tag)
         )
 
         XCTAssertEqual(replaceableEventCoordinates.kind?.rawValue, 30023)
@@ -45,10 +45,10 @@ final class ReplaceableEventCoordinatesTests: XCTestCase {
     }
 
     func testInitFromTagAndInvalidRelayURL() throws {
-        let tag = Tag(name: .replaceableEvent, value: "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum", otherParameters: ["https://relay.nostr.org"])
+        let tag = Tag(name: .eventCoordinates, value: "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum", otherParameters: ["https://relay.nostr.org"])
 
         let replaceableEventCoordinates = try XCTUnwrap(
-            ReplaceableEventCoordinates(replaceableEventTag: tag)
+            ReplaceableEventCoordinates(eventCoordinatesTag: tag)
         )
 
         XCTAssertEqual(replaceableEventCoordinates.kind?.rawValue, 30023)

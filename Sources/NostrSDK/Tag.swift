@@ -17,7 +17,7 @@ public enum TagName: String {
     case event = "e"
 
     /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is parameterized)
-    case replaceableEvent = "a"
+    case eventCoordinates = "a"
 
     /// a hashtag to categorize events for easy searching
     case hashtag = "t"

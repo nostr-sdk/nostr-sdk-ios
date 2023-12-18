@@ -66,18 +66,18 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
     ///
     /// - Parameters:
     ///   - pubkey: The public key of the participant.
-    public init?(replaceableEventTag: Tag) {
-        guard replaceableEventTag.name == TagName.replaceableEvent.rawValue else {
+    public init?(eventCoordinatesTag: Tag) {
+        guard eventCoordinatesTag.name == TagName.eventCoordinates.rawValue else {
             return nil
         }
 
-        let split = replaceableEventTag.value.split(separator: ":", omittingEmptySubsequences: false)
+        let split = eventCoordinatesTag.value.split(separator: ":", omittingEmptySubsequences: false)
 
         guard split.count >= 3 else {
             return nil
         }
 
-        self.tag = replaceableEventTag
+        self.tag = eventCoordinatesTag
     }
 
     /// Initializes coordinates to a replaceable event.
@@ -99,8 +99,8 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Equa
         }
 
         self.init(
-            replaceableEventTag: Tag(
-                name: .replaceableEvent,
+            eventCoordinatesTag: Tag(
+                name: .eventCoordinates,
                 value: "\(kind.rawValue):\(pubkey.hex):\(identifier ?? "")",
                 otherParameters: otherParameters
             )
@@ -112,7 +112,7 @@ public protocol ReplaceableEventCoordinatesInterpreting: NostrEvent {}
 public extension ReplaceableEventCoordinatesInterpreting {
     /// The referenced replaceable event tags of the event.
     var eventCoordinates: [ReplaceableEventCoordinates] {
-        tags.filter { $0.name == TagName.replaceableEvent.rawValue }
-            .compactMap { ReplaceableEventCoordinates(replaceableEventTag: $0) }
+        tags.filter { $0.name == TagName.eventCoordinates.rawValue }
+            .compactMap { ReplaceableEventCoordinates(eventCoordinatesTag: $0) }
     }
 }
