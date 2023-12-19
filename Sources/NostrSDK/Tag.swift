@@ -172,6 +172,42 @@ public class Tag: Codable, Equatable {
     }
 }
 
+/// Shortcuts for creating common tags
+extension Tag {
+    
+    /// An event ``Tag`` with the provided id and other parameters.
+    /// - Parameters:
+    ///   - eventId: The event id.
+    ///   - otherParameters: The other parameters.
+    /// - Returns: The event ``Tag``.
+    static func event(_ eventId: String, otherParameters: [String] = []) -> Tag {
+        Tag(name: .event, value: eventId, otherParameters: otherParameters)
+    }
+    
+    /// A hashtag ``Tag`` with the provided value.
+    /// - Parameter hashtag: The hashtag.
+    /// - Returns: The hashtag ``Tag``.
+    static func hashtag(_ hashtag: String) -> Tag {
+        Tag(name: .hashtag, value: hashtag)
+    }
+    
+    /// A kind ``Tag`` with the provided value.
+    /// - Parameter kind: The kind (``EventKind``).
+    /// - Returns: The kind ``Tag``.
+    static func kind(_ kind: EventKind) -> Tag {
+        Tag(name: .kind, value: String(kind.rawValue))
+    }
+    
+    /// A pubkey ``Tag`` with the provided pubkey.
+    /// - Parameters:
+    ///   - pubkey: The pubkey.
+    ///   - otherParameters: The other parameters.
+    /// - Returns: The pubkey ``Tag``.
+    static func pubkey(_ pubkey: String, otherParameters: [String] = []) -> Tag {
+        Tag(name: .pubkey, value: pubkey, otherParameters: otherParameters)
+    }
+}
+
 extension Tag: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Tag(name: \"\(name)\", value: \"\(value)\")"

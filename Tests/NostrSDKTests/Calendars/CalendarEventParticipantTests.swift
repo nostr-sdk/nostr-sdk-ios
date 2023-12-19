@@ -14,7 +14,7 @@ final class CalendarEventParticipantTests: XCTestCase {
         let pubkey = Keypair.test.publicKey
         let relay = "wss://relay.nostrsdk.com"
         let role = "organizer"
-        let tag = Tag(name: .pubkey, value: pubkey.hex, otherParameters: [relay, role])
+        let tag = Tag.pubkey(pubkey.hex, otherParameters: [relay, role])
         let calendarEventParticipant = try XCTUnwrap(CalendarEventParticipant(pubkeyTag: tag))
 
         XCTAssertEqual(calendarEventParticipant.pubkey, pubkey)

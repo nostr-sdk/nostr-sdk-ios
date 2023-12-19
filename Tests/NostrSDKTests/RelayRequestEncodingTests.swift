@@ -18,8 +18,8 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
     }
 
     func testEncodeEvent() throws {
-        let eventTag = Tag(name: .event, value: "93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63")
-        let pubkeyTag = Tag(name: .pubkey, value: "f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9")
+        let eventTag = Tag.event("93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63")
+        let pubkeyTag = Tag.pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9")
         let event = NostrEvent(id: "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b",
                                pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2",
                                createdAt: 1682080184,

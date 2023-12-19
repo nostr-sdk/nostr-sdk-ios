@@ -47,7 +47,7 @@ public final class ContactListEvent: NostrEvent {
     
     /// Pubkeys for followed/known profiles.
     public var contactPubkeys: [String] {
-        tags.filter({ $0.name == TagName.pubkey.rawValue }).map { $0.value }
+        allValues(forTagName: .pubkey) ?? []
     }
     
     /// Pubkey tags for followed/known profiles.

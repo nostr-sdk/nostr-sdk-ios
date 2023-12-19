@@ -12,7 +12,6 @@ public protocol ReferenceTagInterpreting: NostrEvent {}
 public extension ReferenceTagInterpreting {
     /// The reference URLs of the event.
     var references: [URL] {
-        tags.filter { $0.name == TagName.webURL.rawValue }
-            .compactMap { URL(string: $0.value) }
+        allValues(forTagName: .webURL)?.compactMap { URL(string: $0) } ?? []
     }
 }

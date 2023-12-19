@@ -59,8 +59,8 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, RelayUR
         if let role, !role.isEmpty {
             otherParameters.append(role)
         }
-
-        tag = Tag(name: .pubkey, value: pubkey.hex, otherParameters: otherParameters)
+        
+        tag = Tag.pubkey(pubkey.hex, otherParameters: otherParameters)
     }
 }
 

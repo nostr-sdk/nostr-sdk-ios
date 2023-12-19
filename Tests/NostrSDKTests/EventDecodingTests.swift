@@ -106,9 +106,9 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.createdAt, 1682080184)
         XCTAssertEqual(event.kind, .textNote)
 
-        let expectedTags = [
-            Tag(name: .event, value: "93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"),
-            Tag(name: .pubkey, value: "f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9")
+        let expectedTags: [Tag] = [
+            .event("93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"),
+            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9")
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.content, "I think it stays persistent on your profile, but interface setting doesn’t persist. Bug.  ")
@@ -126,9 +126,9 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.createdAt, 1682080184)
         XCTAssertEqual(event.kind, .textNote)
 
-        let expectedTags = [
-            Tag(name: .event, value: "93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"),
-            Tag(name: .pubkey, value: "f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
+        let expectedTags: [Tag] = [
+            .event("93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"),
+            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
             Tag(name: .subject, value: "test-subject")
         ]
         XCTAssertEqual(event.tags, expectedTags)
@@ -172,8 +172,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.createdAt, 1691768179)
         XCTAssertEqual(event.kind, .directMessage)
 
-        let expectedTags = [
-            Tag(name: .pubkey, value: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        let expectedTags: [Tag] = [
+            .pubkey("9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
         ]
         XCTAssertEqual(expectedTags, event.tags)
 
@@ -205,8 +205,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.kind, .contactList)
         
         let expectedTags: [Tag] = [
-            Tag(name: .pubkey, value: "pubkey1", otherParameters: ["wss://relay1.com", "alice"]),
-            Tag(name: .pubkey, value: "pubkey2", otherParameters: ["wss://relay2.com", "bob"])
+            .pubkey("pubkey1", otherParameters: ["wss://relay1.com", "alice"]),
+            .pubkey("pubkey2", otherParameters: ["wss://relay2.com", "bob"])
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.signature, "hex-signature")
@@ -225,7 +225,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
 
         XCTAssertEqual(event.contactPubkeys, expectedPubkeys)
 
-        let firstTag = Tag(name: .pubkey, value: "3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681")
+        let firstTag = Tag.pubkey("3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681")
         XCTAssertEqual(event.contactPubkeyTags.first, firstTag)
 
         let expectedRelays = [
@@ -248,9 +248,9 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.createdAt, 1684817569)
         XCTAssertEqual(event.kind, .repost)
 
-        let expectedTags = [
-            Tag(name: .event, value: "6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34"),
-            Tag(name: .pubkey, value: "33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689")
+        let expectedTags: [Tag] = [
+            .event("6663efd8ffb35325af90a84cb223dc388e9d355abf7319fe5c4c5ca7f37e9a34"),
+            .pubkey("33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689")
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertTrue(event.content.hasPrefix("{\"pubkey\":\"33eecd2e2fae31f36c0bdb843d43611426ee5c023889f0401c1b8f5008e59689\""))
@@ -286,9 +286,9 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.createdAt, 1689029084)
         XCTAssertEqual(event.kind, .reaction)
 
-        let expectedTags = [
-            Tag(name: .event, value: "62dcc905c282dd712bbe6b47d2e40feb333f8a0c39899617f4ca37337199ede0"),
-            Tag(name: .pubkey, value: "e1ff3bfdd4e40315959b08b4fcc8245eaa514637e1d4ec2ae166b743341be1af")
+        let expectedTags: [Tag] = [
+            .event("62dcc905c282dd712bbe6b47d2e40feb333f8a0c39899617f4ca37337199ede0"),
+            .pubkey("e1ff3bfdd4e40315959b08b4fcc8245eaa514637e1d4ec2ae166b743341be1af")
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.reactedEventId, "62dcc905c282dd712bbe6b47d2e40feb333f8a0c39899617f4ca37337199ede0")
@@ -305,9 +305,9 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.createdAt, 1699768152)
         XCTAssertEqual(event.kind, .reaction)
 
-        let expectedTags = [
-            Tag(name: .event, value: "dc0e8b27b37ec7854ec0d5b24c39901a8cf933be3b420ca3cee6242279f54a48"),
-            Tag(name: .pubkey, value: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"),
+        let expectedTags: [Tag] = [
+            .event("dc0e8b27b37ec7854ec0d5b24c39901a8cf933be3b420ca3cee6242279f54a48"),
+            .pubkey("9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"),
             Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"])
         ]
         let imageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
@@ -405,14 +405,14 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
         XCTAssertEqual(event.kind, .muteList)
         
-        XCTAssertTrue(event.tags.contains(Tag(name: .pubkey, value: "07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f")))
-        XCTAssertTrue(event.tags.contains(Tag(name: .hashtag, value: "testing")))
-        XCTAssertTrue(event.tags.contains(Tag(name: .hashtag, value: "test2")))
+        XCTAssertTrue(event.tags.contains(.pubkey("07ecf9838136fe430fac43fa0860dbc62a0aac0729c5a33df1192ce75e330c9f")))
+        XCTAssertTrue(event.tags.contains(.hashtag("testing")))
+        XCTAssertTrue(event.tags.contains(.hashtag("test2")))
         
         let secretTags = event.privateTags(using: .test)
-        XCTAssertTrue(secretTags.contains(Tag(name: .pubkey, value: "6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93")))
-        XCTAssertTrue(secretTags.contains(Tag(name: .hashtag, value: "sportsball")))
-        XCTAssertTrue(secretTags.contains(Tag(name: .hashtag, value: "footstr")))
+        XCTAssertTrue(secretTags.contains(.pubkey("6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93")))
+        XCTAssertTrue(secretTags.contains(.hashtag("sportsball")))
+        XCTAssertTrue(secretTags.contains(.hashtag("footstr")))
         
         XCTAssertEqual(event.privateHashtags(using: .test), ["sportsball", "footstr"])
     }
