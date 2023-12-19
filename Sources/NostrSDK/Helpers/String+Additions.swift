@@ -8,7 +8,7 @@
 import Foundation
 
 public extension String {
-    
+
     /// The hexadecimal data representation of the `String`.
     ///
     /// For example, given a `String` "8F31", the result would be a `Data` of `0x8F31.` It does not convert each character to its Unicode representation.

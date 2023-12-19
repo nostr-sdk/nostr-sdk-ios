@@ -11,9 +11,9 @@ enum EventCreatingError: Error {
     case invalidInput
 }
 
-public protocol EventCreating: DirectMessageEncrypting {}
+public protocol EventCreating: DirectMessageEncrypting, RelayURLValidating {}
 public extension EventCreating {
-    
+
     /// Creates a ``SetMetadataEvent`` (kind 0) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - userMetadata: The metadata to set.
@@ -56,10 +56,12 @@ public extension EventCreating {
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
     func recommendServerEvent(withRelayURL relayURL: URL, signedBy keypair: Keypair) throws -> RecommendServerEvent {
-        let components = URLComponents(url: relayURL, resolvingAgainstBaseURL: false)
-        guard components?.scheme == "wss" || components?.scheme == "ws" else {
+        do {
+            try validateRelayURL(relayURL)
+        } catch {
             throw EventCreatingError.invalidInput
         }
+
         return try RecommendServerEvent(content: relayURL.absoluteString, signedBy: keypair)
     }
     

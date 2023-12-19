@@ -270,8 +270,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         
         XCTAssertEqual(event.repostedEventPubkey, "reposted-event-pubkey")
         XCTAssertEqual(event.repostedEventId, "test-id")
-        XCTAssertEqual(event.repostedEventRelayURL, "wss://reposted.relay")
-        
+        XCTAssertEqual(event.repostedEventRelayURL?.absoluteString, "wss://reposted.relay")
+
         let repostedEvent = try XCTUnwrap(event.repostedEvent)
         
         XCTAssertEqual(repostedEvent.id, "test-id")
@@ -343,7 +343,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
         XCTAssertEqual(event.createdAt, 1700320160)
         XCTAssertEqual(event.kind, .dateBasedCalendarEvent)
-        XCTAssertEqual(event.uuid, "6E28808F-43FD-49FE-8B31-350066FD3886")
+        XCTAssertEqual(event.identifier, "6E28808F-43FD-49FE-8B31-350066FD3886")
         XCTAssertEqual(event.name, "Nostrica")
         XCTAssertEqual(event.startDate, TimeOmittedDate(year: 2023, month: 3, day: 19))
         XCTAssertEqual(event.endDate, TimeOmittedDate(year: 2023, month: 3, day: 21))
@@ -373,7 +373,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
         XCTAssertEqual(event.createdAt, 1700320270)
         XCTAssertEqual(event.kind, .timeBasedCalendarEvent)
-        XCTAssertEqual(event.uuid, "9CD6DE6C-F8D9-44FB-B948-CB5A42434F8F")
+        XCTAssertEqual(event.identifier, "9CD6DE6C-F8D9-44FB-B948-CB5A42434F8F")
         XCTAssertEqual(event.name, "Flight from New York (JFK) to San José, Costa Rica (SJO)")
         XCTAssertEqual(event.startTimestamp, Date(timeIntervalSince1970: 1679062500))
         XCTAssertEqual(event.endTimestamp, Date(timeIntervalSince1970: 1679067720))

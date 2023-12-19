@@ -8,7 +8,7 @@
 import Foundation
 
 /// A participant in a calendar event.
-public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatable {
+public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag
     }
@@ -26,15 +26,8 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, Equatab
         guard let relayString = tag.otherParameters.first else {
             return nil
         }
-        guard !relayString.isEmpty else {
-            return nil
-        }
 
-        let components = URLComponents(string: relayString)
-        guard components?.scheme == "wss" || components?.scheme == "ws" else {
-            return nil
-        }
-        return components?.url
+        return try? validateRelayURLString(relayString)
     }
 
     /// The role of the participant in the meeting.
