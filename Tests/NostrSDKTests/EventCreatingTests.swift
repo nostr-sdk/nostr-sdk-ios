@@ -97,9 +97,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
                                     signedBy: Keypair.test)
         
         let expectedTags: [Tag] = [
-            Tag(name: .pubkey, value: "83y9iuhw9u0t8thw8w80u"),
-            Tag(name: .pubkey, value: "19048ut34h23y89jio3r8"),
-            Tag(name: .pubkey, value: "5r623gyewfbh8uuiq83rd")
+            .pubkey("83y9iuhw9u0t8thw8w80u"),
+            .pubkey("19048ut34h23y89jio3r8"),
+            .pubkey("5r623gyewfbh8uuiq83rd")
         ]
         
         XCTAssertEqual(event.tags, expectedTags)
@@ -109,9 +109,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     
     func testCreateContactListEventWithPetnames() throws {
         let tags: [Tag] = [
-            Tag(name: .pubkey, value: "83y9iuhw9u0t8thw8w80u", otherParameters: ["bob"]),
-            Tag(name: .pubkey, value: "19048ut34h23y89jio3r8", otherParameters: ["alice"]),
-            Tag(name: .pubkey, value: "5r623gyewfbh8uuiq83rd", otherParameters: ["steve"])
+            .pubkey("83y9iuhw9u0t8thw8w80u", otherParameters: ["bob"]),
+            .pubkey("19048ut34h23y89jio3r8", otherParameters: ["alice"]),
+            .pubkey("5r623gyewfbh8uuiq83rd", otherParameters: ["steve"])
         ]
         
         let event = try contactList(withPubkeyTags: tags,
@@ -125,7 +125,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     func testDirectMessageEvent() throws {
         let content = "Secret message."
         let recipientPubKey = Keypair.test.publicKey
-        let recipientTag = Tag(name: .pubkey, value: recipientPubKey.hex)
+        let recipientTag = Tag.pubkey(recipientPubKey.hex)
 
         let event = try directMessage(withContent: content, toRecipient: recipientPubKey, signedBy: Keypair.test)
 
@@ -171,8 +171,8 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         
         XCTAssertEqual(repostEvent.kind, .repost)
         
-        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")))
-        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .event, value: "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")))
+        XCTAssertTrue(repostEvent.tags.contains(.pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")))
+        XCTAssertTrue(repostEvent.tags.contains(.event("fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")))
         
         let repostedNote = try XCTUnwrap(repostEvent.repostedNote)
         XCTAssertEqual(repostedNote.id, "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")
@@ -195,9 +195,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.reactedEventPubkey, reactedEvent.pubkey)
         XCTAssertEqual(event.content, "🤙")
 
-        let expectedTags = [
-            Tag(name: .event, value: reactedEvent.id),
-            Tag(name: .pubkey, value: reactedEvent.pubkey)
+        let expectedTags: [Tag] = [
+            .event(reactedEvent.id),
+            .pubkey(reactedEvent.pubkey)
         ]
         XCTAssertEqual(event.tags, expectedTags)
 
@@ -222,9 +222,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.content, ":ostrich:")
         XCTAssertEqual(event.customEmojis, [customEmoji])
 
-        let expectedTags = [
-            Tag(name: .event, value: reactedEvent.id),
-            Tag(name: .pubkey, value: reactedEvent.pubkey),
+        let expectedTags: [Tag] = [
+            .event(reactedEvent.id),
+            .pubkey(reactedEvent.pubkey),
             Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString])
         ]
         XCTAssertEqual(event.tags, expectedTags)
@@ -239,9 +239,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertFalse(repostEvent is TextNoteRepostEvent)
         XCTAssertEqual(repostEvent.kind, .genericRepost)
         
-        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .pubkey, value: "test-pubkey")))
-        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .event, value: "test-id")))
-        XCTAssertTrue(repostEvent.tags.contains(Tag(name: .kind, value: "2")))
+        XCTAssertTrue(repostEvent.tags.contains(.pubkey("test-pubkey")))
+        XCTAssertTrue(repostEvent.tags.contains(.event("test-id")))
+        XCTAssertTrue(repostEvent.tags.contains(.kind(.recommendServer)))
         
         let repostedEvent = try XCTUnwrap(repostEvent.repostedEvent)
         XCTAssertEqual(repostedEvent.id, "test-id")
@@ -257,7 +257,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(report.kind, .report)
         XCTAssertEqual(report.content, "he's lying!")
         
-        let expectedTag = Tag(name: .pubkey, value: Keypair.test.publicKey.hex, otherParameters: ["impersonation"])
+        let expectedTag = Tag.pubkey(Keypair.test.publicKey.hex, otherParameters: ["impersonation"])
         XCTAssertTrue(report.tags.contains(expectedTag))
         
         try verifyEvent(report)
@@ -271,10 +271,10 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(report.kind, .report)
         XCTAssertEqual(report.content, "mean words")
         
-        let expectedPubkeyTag = Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
+        let expectedPubkeyTag = Tag.pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
         XCTAssertTrue(report.tags.contains(expectedPubkeyTag))
         
-        let expectedEventTag = Tag(name: .event, value: noteToReport.id, otherParameters: ["profanity"])
+        let expectedEventTag = Tag.event(noteToReport.id, otherParameters: ["profanity"])
         XCTAssertTrue(report.tags.contains(expectedEventTag))
         
         try verifyEvent(report)
@@ -338,13 +338,13 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
                                  signedBy: Keypair.test)
         
         // check public tags
-        let expectedTags = [
-            Tag(name: .pubkey, value: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
-            Tag(name: .pubkey, value: "72341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
-            Tag(name: .event, value: "964880cab60cab8e510b21714f93b45a288261c49b9a5413f18f69105824410a"),
-            Tag(name: .event, value: "05759f0b085181cce6f9784125ca46b71cebbfb6963f029c45e679c9eff6e46f"),
-            Tag(name: .hashtag, value: "politics"),
-            Tag(name: .hashtag, value: "religion"),
+        let expectedTags: [Tag] = [
+            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            .pubkey("72341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            .event("964880cab60cab8e510b21714f93b45a288261c49b9a5413f18f69105824410a"),
+            .event("05759f0b085181cce6f9784125ca46b71cebbfb6963f029c45e679c9eff6e46f"),
+            .hashtag("politics"),
+            .hashtag("religion"),
             Tag(name: .word, value: "sportsball"),
             Tag(name: .word, value: "pokemon")
         ]
@@ -357,13 +357,13 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.keywords, mutedKeywords)
         
         // check private tags
-        let expectedPrivateTags = [
-            Tag(name: .pubkey, value: "52341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
-            Tag(name: .pubkey, value: "42341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
-            Tag(name: .event, value: "761563ea69f4f07539d06a9f78c31c910e82044db8707dab5b8c7ab3b2d00153"),
-            Tag(name: .event, value: "7c77d79c2780a074aa26891faf44d9bc1d61fb75813bb2ee9b71d787f34d6a1a"),
-            Tag(name: .hashtag, value: "left"),
-            Tag(name: .hashtag, value: "right"),
+        let expectedPrivateTags: [Tag] = [
+            .pubkey("52341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            .pubkey("42341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"),
+            .event("761563ea69f4f07539d06a9f78c31c910e82044db8707dab5b8c7ab3b2d00153"),
+            .event("7c77d79c2780a074aa26891faf44d9bc1d61fb75813bb2ee9b71d787f34d6a1a"),
+            .hashtag("left"),
+            .hashtag("right"),
             Tag(name: .word, value: "up"),
             Tag(name: .word, value: "down")
         ]

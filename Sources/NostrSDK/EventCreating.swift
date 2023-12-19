@@ -75,7 +75,7 @@ public extension EventCreating {
     ///
     /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
     func contactList(withPubkeys pubkeys: [String], signedBy keypair: Keypair) throws -> ContactListEvent {
-        try contactList(withPubkeyTags: pubkeys.map { Tag(name: .pubkey, value: $0) },
+        try contactList(withPubkeyTags: pubkeys.map { .pubkey($0) },
                         signedBy: keypair)
     }
     
@@ -109,7 +109,7 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
 
-        let recipientTag = Tag(name: .pubkey, value: pubkey.hex)
+        let recipientTag = Tag.pubkey(pubkey.hex)
         return try DirectMessageEvent(content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
     }
     
@@ -129,7 +129,7 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
         
-        let tags = creatorValidatedEvents.map { Tag(name: .event, value: $0.id) }
+        let tags: [Tag] = creatorValidatedEvents.map { .event($0.id) }
         return try DeletionEvent(content: reason ?? "", tags: tags, signedBy: keypair)
     }
     
@@ -145,14 +145,14 @@ public extension EventCreating {
         guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
             throw EventCreatingError.invalidInput
         }
-        var tags = [
-            Tag(name: .event, value: event.id),
-            Tag(name: .pubkey, value: event.pubkey)
+        var tags: [Tag] = [
+            .event(event.id),
+            .pubkey(event.pubkey)
         ]
         if event.kind == .textNote {
             return try TextNoteRepostEvent(content: stringifiedJSON, tags: tags, signedBy: keypair)
         } else {
-            tags.append(Tag(name: .kind, value: String(event.kind.rawValue)))
+            tags.append(.kind(event.kind))
             
             return try GenericRepostEvent(content: stringifiedJSON, tags: tags, signedBy: keypair)
         }
@@ -167,8 +167,8 @@ public extension EventCreating {
     ///
     /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
     func reaction(withContent content: String, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
-        let eventTag = Tag(name: .event, value: reactedEvent.id)
-        let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
+        let eventTag = Tag.event(reactedEvent.id)
+        let pubkeyTag = Tag.pubkey(reactedEvent.pubkey)
 
         var tags = reactedEvent.tags.filter { $0.name == TagName.event.rawValue || $0.name == TagName.pubkey.rawValue }
         tags.append(eventTag)
@@ -186,8 +186,8 @@ public extension EventCreating {
     ///
     /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
     func reaction(withCustomEmoji customEmoji: CustomEmoji, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
-        let eventTag = Tag(name: .event, value: reactedEvent.id)
-        let pubkeyTag = Tag(name: .pubkey, value: reactedEvent.pubkey)
+        let eventTag = Tag.event(reactedEvent.id)
+        let pubkeyTag = Tag.pubkey(reactedEvent.pubkey)
 
         var tags = reactedEvent.tags.filter { $0.name == TagName.event.rawValue || $0.name == TagName.pubkey.rawValue }
         tags.append(eventTag)
@@ -206,7 +206,7 @@ public extension EventCreating {
     /// - Returns: The signed ``ReportEvent``.
     func reportUser(withPublicKey pubkey: PublicKey, reportType: ReportType, additionalInformation: String = "", signedBy keypair: Keypair) throws -> ReportEvent {
         try ReportEvent(content: additionalInformation,
-                        tags: [Tag(name: .pubkey, value: pubkey.hex, otherParameters: [reportType.rawValue])],
+                        tags: [.pubkey(pubkey.hex, otherParameters: [reportType.rawValue])],
                         signedBy: keypair)
     }
     
@@ -221,9 +221,9 @@ public extension EventCreating {
         guard reportType != .impersonation else {
             throw EventCreatingError.invalidInput
         }
-        let tags = [
-            Tag(name: .event, value: note.id, otherParameters: [reportType.rawValue]),
-            Tag(name: .pubkey, value: note.pubkey)
+        let tags: [Tag] = [
+            .event(note.id, otherParameters: [reportType.rawValue]),
+            .pubkey(note.pubkey)
         ]
         return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
     }
@@ -252,13 +252,13 @@ public extension EventCreating {
         var publicTags = [Tag]()
         
         for pubkey in publiclyMutedPubkeys {
-            publicTags.append(Tag(name: .pubkey, value: pubkey))
+            publicTags.append(.pubkey(pubkey))
         }
         for eventId in publiclyMutedEventIds {
-            publicTags.append(Tag(name: .event, value: eventId))
+            publicTags.append(.event(eventId))
         }
         for hashtag in publiclyMutedHashtags {
-            publicTags.append(Tag(name: .hashtag, value: hashtag))
+            publicTags.append(.hashtag(hashtag))
         }
         for keyword in publiclyMutedKeywords {
             publicTags.append(Tag(name: .word, value: keyword))
@@ -328,7 +328,7 @@ public extension EventCreating {
         
         if let hashtags {
             for hashtag in hashtags {
-                tags.append(Tag(name: .hashtag, value: hashtag))
+                tags.append(.hashtag(hashtag))
             }
         }
         
@@ -388,7 +388,7 @@ public extension EventCreating {
         }
 
         if let hashtags, !hashtags.isEmpty {
-            tags += hashtags.map { Tag(name: .hashtag, value: $0) }
+            tags += hashtags.map { .hashtag($0) }
         }
 
         if let references, !references.isEmpty {
@@ -457,7 +457,7 @@ public extension EventCreating {
         }
 
         if let hashtags {
-            tags += hashtags.map { Tag(name: .hashtag, value: $0) }
+            tags += hashtags.map { .hashtag($0) }
         }
 
         if let references {
