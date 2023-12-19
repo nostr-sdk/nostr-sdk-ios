@@ -33,6 +33,6 @@ public final class DeletionEvent: NostrEvent {
     
     /// The event ids that the creator requests deletion for.
     public var deletedEventIds: [String] {
-        tags.filter { $0.name == TagName.event.rawValue }.map { $0.value }
+        allValues(forTagName: .event) ?? []
     }
 }

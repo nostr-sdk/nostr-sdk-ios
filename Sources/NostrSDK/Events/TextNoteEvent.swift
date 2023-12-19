@@ -27,20 +27,18 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     
     /// Pubkeys mentioned in the note content.
     public var mentionedPubkeys: [String] {
-        let pubkeyTags = tags.filter { $0.name == TagName.pubkey.rawValue }
-        return pubkeyTags.map { $0.value }
+        allValues(forTagName: .pubkey) ?? []
     }
     
     /// Events mentioned in the note content.
     public var mentionedEventIds: [String] {
-        let eventTags = tags.filter { $0.name == TagName.event.rawValue }
-        return eventTags.map { $0.value }
+        allValues(forTagName: .event) ?? []
     }
     
     /// a short subject for a text note, similar to subjects in emails.
     ///
     /// See [NIP-14 - Subject tag in Text events](https://github.com/nostr-protocol/nips/blob/master/14.md).
     public var subject: String? {
-        tags.first(where: { $0.name == TagName.subject.rawValue })?.value
+        firstValueForTagName(.subject)
     }
 }
