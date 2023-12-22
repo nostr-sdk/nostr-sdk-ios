@@ -335,9 +335,39 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         let publishedAt = try XCTUnwrap(event.publishedAt?.timeIntervalSince1970)
         XCTAssertEqual(Int64(publishedAt), 1700532108)
     }
-    
+
     func testDecodeDateBasedCalendarEvent() throws {
         let event: DateBasedCalendarEvent = try decodeFixture(filename: "date_based_calendar_event")
+
+        XCTAssertEqual(event.id, "a87228880982599ed0f83411e8ea4f6714f35961f32b2274994897c218ad171d")
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.createdAt, 1702832309)
+        XCTAssertEqual(event.kind, .dateBasedCalendarEvent)
+        XCTAssertEqual(event.identifier, "06E43CF4-D253-4AF9-807A-96FDA4763FF4")
+        XCTAssertEqual(event.title, "Nostrica")
+        XCTAssertEqual(event.startDate, TimeOmittedDate(year: 2023, month: 3, day: 19))
+        XCTAssertEqual(event.endDate, TimeOmittedDate(year: 2023, month: 3, day: 21))
+        XCTAssertEqual(event.locations, ["Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica", "YouTube"])
+        XCTAssertEqual(event.geohash, "d1sknt77t3xn")
+
+        let participants = event.participants
+        let expectedParticipantPublicKey = Keypair.test.publicKey
+        let relayURL = URL(string: "wss://relay.nostrsdk.com")
+        XCTAssertEqual(participants.count, 2)
+        XCTAssertEqual(participants,
+                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "organizer"),
+                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "attendee")])
+
+        XCTAssertEqual(event.hashtags, ["nostr", "unconference", "nostrica"])
+
+        XCTAssertEqual(event.references, [URL(string: "https://nostrica.com/"), URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit")])
+
+        XCTAssertEqual(event.content, "First Nostr unconference")
+        XCTAssertEqual(event.signature, "b1f04510811195f69552dc1aff5033f306b4fdf9e6e7c1ac265438b457932266414bdf1ed9ec0c2c2f22d56bef7e519af5c3bfb974c933fd20037918b95dc65a")
+    }
+
+    func testDecodeDeprecatedDateBasedCalendarEvent() throws {
+        let event: DateBasedCalendarEvent = try decodeFixture(filename: "date_based_calendar_event_deprecated")
 
         XCTAssertEqual(event.id, "14ff9ea332268384f9f72e2623371dd8edf8dd6b8f8b7f0b3d3df29317148d95")
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
@@ -347,7 +377,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.name, "Nostrica")
         XCTAssertEqual(event.startDate, TimeOmittedDate(year: 2023, month: 3, day: 19))
         XCTAssertEqual(event.endDate, TimeOmittedDate(year: 2023, month: 3, day: 21))
-        XCTAssertEqual(event.location, "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica")
+        XCTAssertEqual(event.locations, ["Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica"])
         XCTAssertEqual(event.geohash, "d1sknt77t3xn")
 
         let participants = event.participants
@@ -369,6 +399,38 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     func testDecodeTimeBasedCalendarEvent() throws {
         let event: TimeBasedCalendarEvent = try decodeFixture(filename: "time_based_calendar_event")
 
+        XCTAssertEqual(event.id, "818854c3ff09ac5a2c538cba81d911e59f929dcc5531f61ac92278093d101f1b")
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.createdAt, 1702833417)
+        XCTAssertEqual(event.kind, .timeBasedCalendarEvent)
+        XCTAssertEqual(event.identifier, "798F1F69-1DE3-4623-8DCC-FAF9B773E72B")
+        XCTAssertEqual(event.title, "Flight from New York (JFK) to San José, Costa Rica (SJO)")
+        XCTAssertEqual(event.startTimestamp, Date(timeIntervalSince1970: 1679062500))
+        XCTAssertEqual(event.endTimestamp, Date(timeIntervalSince1970: 1679067720))
+        XCTAssertEqual(event.startTimeZone, TimeZone(identifier: "America/New_York"))
+        XCTAssertEqual(event.endTimeZone, TimeZone(identifier: "America/Costa_Rica"))
+        XCTAssertEqual(event.locations, ["John F. Kennedy International Airport, Queens, NY 11430, USA"])
+        XCTAssertEqual(event.geohash, "dr5x1p57bg9e")
+
+        let participants = event.participants
+        let expectedParticipantPublicKey = Keypair.test.publicKey
+        let relayURL = URL(string: "wss://relay.nostrsdk.com")
+        XCTAssertEqual(participants.count, 2)
+        XCTAssertEqual(participants,
+                       [CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "organizer"),
+                        CalendarEventParticipant(pubkey: expectedParticipantPublicKey, relayURL: relayURL, role: "attendee")])
+
+        XCTAssertEqual(event.hashtags, ["flights", "costarica"])
+
+        XCTAssertEqual(event.references, [URL(string: "https://nostrica.com/"), URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit")])
+
+        XCTAssertEqual(event.content, "Flight to Nostrica")
+        XCTAssertEqual(event.signature, "c2aa36b07c4df050d637dd2be770767c67621e7d87179f9f1e5ef118543328ed238afbd6b33317a61178205b75e6ecb0a61ea4cf6c657a7da0e4cea4842d4c01")
+    }
+
+    func testDecodeDeprecatedTimeBasedCalendarEvent() throws {
+        let event: TimeBasedCalendarEvent = try decodeFixture(filename: "time_based_calendar_event_deprecated")
+
         XCTAssertEqual(event.id, "091455f5c9509655e3a4f68f98e807349ac0b5525506b22978566a0bb0f3ced1")
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
         XCTAssertEqual(event.createdAt, 1700320270)
@@ -379,7 +441,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.endTimestamp, Date(timeIntervalSince1970: 1679067720))
         XCTAssertEqual(event.startTimeZone, TimeZone(identifier: "America/New_York"))
         XCTAssertEqual(event.endTimeZone, TimeZone(identifier: "America/Costa_Rica"))
-        XCTAssertEqual(event.location, "John F. Kennedy International Airport, Queens, NY 11430, USA")
+        XCTAssertEqual(event.locations, ["John F. Kennedy International Airport, Queens, NY 11430, USA"])
         XCTAssertEqual(event.geohash, "dr5x1p57bg9e")
 
         let participants = event.participants
@@ -397,7 +459,46 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.content, "Flight to Nostrica")
         XCTAssertEqual(event.signature, "57cdb0735645a7ff7112c2d863c425a75e82b540412117609c1c32bee833622a82acacd836b2790f0f08082e2700cdf1ac363c2aae1db87e613824fea2907845")
     }
-    
+
+    func testDecodeCalendar() throws {
+        let event: CalendarListEvent = try decodeFixture(filename: "calendar")
+
+        XCTAssertEqual(event.id, "1dc8b913d9d4f50a71182dc9232996d6fbc69e8c955866e43ef2c2e35185bbfa")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.kind, .calendar)
+        XCTAssertEqual(event.signature, "24c397594fe6d8b5590ce4e7163990f4269bc515d1181487d722730144ac32e8439954d66e88f3232ad807e8d06f01791b5856ae249b139b1469df58045252a9")
+        XCTAssertEqual(event.createdAt, 1703052671)
+        XCTAssertEqual(event.identifier, "family-calendar")
+        XCTAssertEqual(event.title, "Family Calendar")
+        XCTAssertEqual(event.content, "All family events.")
+
+        let pubkey = try XCTUnwrap(PublicKey(hex: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"))
+        XCTAssertEqual(
+            event.calendarEventCoordinateList,
+            [
+                EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D5EB0A5A-0B36-44DB-95C3-DB51799894E6"),
+                EventCoordinates(kind: .timeBasedCalendarEvent, pubkey: pubkey, identifier: "1D355ED3-A45D-41A9-B3A5-709211794EFB")
+            ]
+        )
+    }
+
+    func testDecodeCalendarEventRSVP() throws {
+        let event: CalendarEventRSVP = try decodeFixture(filename: "calendar_event_rsvp")
+
+        XCTAssertEqual(event.id, "1ec761bbeacd17f4ca961668725ea85a9001a0f56da37eb424856a9de1188a2d")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.kind, .calendarEventRSVP)
+        XCTAssertEqual(event.signature, "21c58b1d759c6470cbb1931653d3c44cbc24c87be9632b794b2c4bb3a0abd27117dd9e3c8c90cf669a6f0d8204f20f92c2a20ed832a54d999d010402d2b1aa9a")
+        XCTAssertEqual(event.createdAt, 1703052002)
+        XCTAssertEqual(event.content, "Don't forget your skates!")
+        XCTAssertEqual(event.identifier, "hockey-practice-rsvp")
+        XCTAssertEqual(event.status, .accepted)
+        XCTAssertEqual(event.freebusy, .busy)
+
+        let pubkey = try XCTUnwrap(PublicKey(hex: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"))
+        XCTAssertEqual(event.calendarEventCoordinates, EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D1D48740-2CF8-4483-B5F0-1E83F6D7EC50"))
+    }
+
     func testDecodeMuteListEvent() throws {
         let event: MuteListEvent = try decodeFixture(filename: "mute_list")
         

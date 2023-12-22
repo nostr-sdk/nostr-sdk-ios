@@ -33,7 +33,13 @@ public enum TagName: String {
     
     /// a stringified kind number
     case kind = "k"
-    
+
+    /// labels other entities
+    case label = "l"
+
+    /// namespace for a label
+    case labelNamespace = "L"
+
     /// a short subject for a text note, similar to subjects in emails
     case subject
     

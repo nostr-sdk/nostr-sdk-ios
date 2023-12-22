@@ -1,5 +1,5 @@
 //
-//  ReplaceableEventCoordinates.swift
+//  EventCoordinates.swift
 //
 //
 //  Created by Terry Yiu on 12/16/23.
@@ -9,7 +9,7 @@ import Foundation
 
 /// Coordinates to a (maybe parameterized) replaceable event.
 /// See [NIP-01 Tags](https://github.com/nostr-protocol/nips/blob/master/01.md#tags).
-public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
+public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag
     }
@@ -113,11 +113,11 @@ public struct ReplaceableEventCoordinates: PubkeyProviding, RelayProviding, Rela
     }
 }
 
-public protocol ReplaceableEventCoordinatesInterpreting: NostrEvent {}
-public extension ReplaceableEventCoordinatesInterpreting {
+public protocol EventCoordinatesInterpreting: NostrEvent {}
+public extension EventCoordinatesInterpreting {
     /// The referenced replaceable event tags of the event.
-    var eventCoordinates: [ReplaceableEventCoordinates] {
+    var eventCoordinates: [EventCoordinates] {
         tags.filter { $0.name == TagName.eventCoordinates.rawValue }
-            .compactMap { ReplaceableEventCoordinates(eventCoordinatesTag: $0) }
+            .compactMap { EventCoordinates(eventCoordinatesTag: $0) }
     }
 }

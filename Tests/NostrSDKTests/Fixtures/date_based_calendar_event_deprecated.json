@@ -1,15 +1,15 @@
 {
-  "id": "a87228880982599ed0f83411e8ea4f6714f35961f32b2274994897c218ad171d",
+  "id": "14ff9ea332268384f9f72e2623371dd8edf8dd6b8f8b7f0b3d3df29317148d95",
   "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
-  "created_at": 1702832309,
+  "created_at": 1700320160,
   "kind": 31922,
   "tags": [
     [
       "d",
-      "06E43CF4-D253-4AF9-807A-96FDA4763FF4"
+      "6E28808F-43FD-49FE-8B31-350066FD3886"
     ],
     [
-      "title",
+      "name",
       "Nostrica"
     ],
     [
@@ -23,10 +23,6 @@
     [
       "location",
       "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica"
-    ],
-    [
-      "location",
-      "YouTube"
     ],
     [
       "g",
@@ -66,5 +62,5 @@
     ]
   ],
   "content": "First Nostr unconference",
-  "sig": "b1f04510811195f69552dc1aff5033f306b4fdf9e6e7c1ac265438b457932266414bdf1ed9ec0c2c2f22d56bef7e519af5c3bfb974c933fd20037918b95dc65a"
+  "sig": "5cd7174dff637af03b66f46a6ccc19b526d1fdc987583e6c6ced8fd7b2ce56f37510e989b7037dbf75d84cdac5256275e255e97c6ef42534613f2af78f5925dd"
 }

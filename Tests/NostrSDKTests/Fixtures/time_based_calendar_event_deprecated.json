@@ -1,36 +1,40 @@
 {
-  "id": "a87228880982599ed0f83411e8ea4f6714f35961f32b2274994897c218ad171d",
+  "id": "091455f5c9509655e3a4f68f98e807349ac0b5525506b22978566a0bb0f3ced1",
   "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
-  "created_at": 1702832309,
-  "kind": 31922,
+  "created_at": 1700320270,
+  "kind": 31923,
   "tags": [
     [
       "d",
-      "06E43CF4-D253-4AF9-807A-96FDA4763FF4"
+      "9CD6DE6C-F8D9-44FB-B948-CB5A42434F8F"
     ],
     [
-      "title",
-      "Nostrica"
+      "name",
+      "Flight from New York (JFK) to San José, Costa Rica (SJO)"
     ],
     [
       "start",
-      "2023-03-19"
+      "1679062500"
     ],
     [
       "end",
-      "2023-03-21"
+      "1679067720"
+    ],
+    [
+      "start_tzid",
+      "America/New_York"
+    ],
+    [
+      "end_tzid",
+      "America/Costa_Rica"
     ],
     [
       "location",
-      "Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica"
-    ],
-    [
-      "location",
-      "YouTube"
+      "John F. Kennedy International Airport, Queens, NY 11430, USA"
     ],
     [
       "g",
-      "d1sknt77t3xn"
+      "dr5x1p57bg9e"
     ],
     [
       "p",
@@ -46,15 +50,11 @@
     ],
     [
       "t",
-      "nostr"
+      "flights"
     ],
     [
       "t",
-      "unconference"
-    ],
-    [
-      "t",
-      "nostrica"
+      "costarica"
     ],
     [
       "r",
@@ -65,6 +65,6 @@
       "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit"
     ]
   ],
-  "content": "First Nostr unconference",
-  "sig": "b1f04510811195f69552dc1aff5033f306b4fdf9e6e7c1ac265438b457932266414bdf1ed9ec0c2c2f22d56bef7e519af5c3bfb974c933fd20037918b95dc65a"
+  "content": "Flight to Nostrica",
+  "sig": "57cdb0735645a7ff7112c2d863c425a75e82b540412117609c1c32bee833622a82acacd836b2790f0f08082e2700cdf1ac363c2aae1db87e613824fea2907845"
 }

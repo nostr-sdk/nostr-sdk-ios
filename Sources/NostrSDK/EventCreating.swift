@@ -293,7 +293,7 @@ public extension EventCreating {
     
     /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".
     /// - Parameters:
-    ///   - identifier: A unique identifier for the content. Can be reused in the future for replacing the event.
+    ///   - identifier: A unique identifier for the content. Can be reused in the future for replacing the event. If an identifier is not provided, a ``UUID`` string is used.
     ///   - title: The article title.
     ///   - markdownContent: A string text in Markdown syntax.
     ///   - summary: A summary of the content.
@@ -302,7 +302,7 @@ public extension EventCreating {
     ///   - publishedAt: The date of the first time the article was published.
     ///   - keypair: The ``Keypair`` to sign with.
     /// - Returns: The signed ``LongformContentEvent``.
-    func longformContentEvent(withIdentifier identifier: String,
+    func longformContentEvent(withIdentifier identifier: String = UUID().uuidString,
                               title: String? = nil,
                               markdownContent: String,
                               summary: String? = nil,
@@ -340,11 +340,12 @@ public extension EventCreating {
     /// Creates a ``DateBasedCalendarEvent`` (kind 31922) which starts on a date and ends before a different date in the future.
     /// Its use is appropriate for all-day or multi-day events where time and time zone hold no significance. e.g., anniversary, public holidays, vacation days.
     /// - Parameters:
-    ///   - name: The name of the calendar event.
+    ///   - identifier: A unique identifier for the calendar event. Can be reused in the future for replacing the calendar event. If an identifier is not provided, a ``UUID`` string is used.
+    ///   - title: The title of the calendar event.
     ///   - description: A detailed description of the calendar event.
     ///   - startDate: An inclusive start date. Must be less than end, if it exists. If there are any components other than year, month,
     ///   - endDate: An exclusive end date. If omitted, the calendar event ends on the same date as start.
-    ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
+    ///   - locations: The locations of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
     ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
     ///   - participants: The participants of the calendar event.
     ///   - hashtags: Hashtags to categorize the calendar event.
@@ -353,7 +354,7 @@ public extension EventCreating {
     /// - Returns: The signed ``DateBasedCalendarEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func dateBasedCalendarEvent(withName name: String, description: String = "", startDate: TimeOmittedDate, endDate: TimeOmittedDate? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEvent {
+    func dateBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", startDate: TimeOmittedDate, endDate: TimeOmittedDate? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEvent {
 
         var tags: [Tag] = []
 
@@ -370,13 +371,13 @@ public extension EventCreating {
         // Re-arrange tags so that it's easier to read with the identifier and name appearing first in the list of tags,
         // and the end date being placed next to the start date.
         tags = [
-            Tag(name: .identifier, value: UUID().uuidString),
-            Tag(name: "name", value: name),
+            Tag(name: .identifier, value: identifier),
+            Tag(name: .title, value: title),
             Tag(name: "start", value: startDate.dateString)
         ] + tags
 
-        if let location {
-            tags.append(Tag(name: "location", value: location))
+        if let locations, !locations.isEmpty {
+            tags += locations.map { Tag(name: "location", value: $0) }
         }
 
         if let geohash {
@@ -400,13 +401,14 @@ public extension EventCreating {
 
     /// Creates a ``TimeBasedCalendarEvent`` (kind 31923) which spans between a start time and end time.
     /// - Parameters:
-    ///   - name: The name of the calendar event.
+    ///   - identifier: A unique identifier for the calendar event. Can be reused in the future for replacing the calendar event. If an identifier is not provided, a ``UUID`` string is used.
+    ///   - title: The title of the calendar event.
     ///   - description: A detailed description of the calendar event.
     ///   - startTimestamp: An inclusive start timestamp.
     ///   - endTimestamp: An exclusive end timestamp. If omitted, the calendar event ends instantaneously.
     ///   - startTimeZone: The time zone of the start timestamp.
     ///   - endTimeZone: The time zone of the end timestamp. If omitted and startTimeZone is provided, the time zone of the end timestamp is the same as the start timestamp.
-    ///   - location: The location of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
+    ///   - locations: The locations of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
     ///   - geohash: The [geohash](https://en.wikipedia.org/wiki/Geohash) to associate calendar event with a searchable physical location.
     ///   - participants: The participants of the calendar event.
     ///   - hashtags: Hashtags to categorize the calendar event.
@@ -415,7 +417,7 @@ public extension EventCreating {
     /// - Returns: The signed ``TimeBasedCalendarEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func timeBasedCalendarEvent(withName name: String, description: String = "", startTimestamp: Date, endTimestamp: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, location: String? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEvent {
+    func timeBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", startTimestamp: Date, endTimestamp: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEvent {
 
         // If the end timestamp is omitted, the calendar event ends instantaneously.
         if let endTimestamp {
@@ -426,8 +428,8 @@ public extension EventCreating {
         }
 
         var tags: [Tag] = [
-            Tag(name: .identifier, value: UUID().uuidString),
-            Tag(name: "name", value: name),
+            Tag(name: .identifier, value: identifier),
+            Tag(name: .title, value: title),
             Tag(name: "start", value: String(Int64(startTimestamp.timeIntervalSince1970)))
         ]
 
@@ -444,8 +446,8 @@ public extension EventCreating {
             tags.append(Tag(name: "end_tzid", value: endTimeZone.identifier))
         }
 
-        if let location {
-            tags.append(Tag(name: "location", value: location))
+        if let locations, !locations.isEmpty {
+            tags += locations.map { Tag(name: "location", value: $0) }
         }
 
         if let geohash {
@@ -465,5 +467,65 @@ public extension EventCreating {
         }
 
         return try TimeBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
+    }
+
+    /// Creates a ``CalendarListEvent`` (kind 31924), which is a collection of date-based and time-based calendar events.
+    /// - Parameters:
+    ///   - identifier: A unique identifier for the calendar. Can be reused in the future for replacing the calendar. If an identifier is not provided, a ``UUID`` string is used.
+    ///   - title: The title of the calendar.
+    ///   - description: A detailed description of the calendar.
+    ///   - calendarEventsCoordinates: The coordinates to date-based or time-based calendar events that belong to this calendar.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``CalendarListEvent``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func calendarListEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarListEvent {
+        guard calendarEventsCoordinates.allSatisfy({ $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        var tags: [Tag] = [
+            Tag(name: .identifier, value: identifier),
+            Tag(name: .title, value: title)
+        ]
+
+        calendarEventsCoordinates
+            .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
+            .forEach { tags.append($0.tag) }
+
+        return try CalendarListEvent(content: description, tags: tags, signedBy: keypair)
+    }
+
+    /// Creates a ``CalendarEventRSVP`` (kind 31925), which is a response to a calendar event to indicate a user's attendance intention.
+    /// - Parameters:
+    ///   - identifier: A unique identifier for the calendar event RSVP. Can be reused in the future for replacing the calendar event RSVP. If an identifier is not provided, a ``UUID`` string is used.
+    ///   - calendarEventCoordinates: The coordinates to date-based or time-based calendar event being responded to.
+    ///   - status: The attendance status to the referenced calendar event. Mimics the Participation Status type in the [RFC 5545 iCalendar spec](https://datatracker.ietf.org/doc/html/rfc5545#section-3.2.12).
+    ///   - freebusy: Whether the user would be free or busy for the duration of the calendar event. This tag must be omitted or ignored if the status label is set to declined. Mimics the Free/Busy Time Type in the [RFC 5545 iCalendar spec](https://datatracker.ietf.org/doc/html/rfc5545#section-3.2.9).
+    ///   - note: A free-form note that adds more context to this calendar event response.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``CalendarEventRSVP``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func calendarEventRSVP(withIdentifier identifier: String = UUID().uuidString, calendarEventCoordinates: EventCoordinates, status: CalendarEventRSVPStatus, freebusy: CalendarEventRSVPFreebusy? = nil, note: String = "", signedBy keypair: Keypair) throws -> CalendarEventRSVP {
+        guard calendarEventCoordinates.kind == .dateBasedCalendarEvent || calendarEventCoordinates.kind == .timeBasedCalendarEvent,
+              // Status must not be unknown, and freebusy must be omitted if status is declined.
+              status == .accepted || status == .tentative || (status == .declined && freebusy == nil) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        var tags: [Tag] = [
+            calendarEventCoordinates.tag,
+            Tag(name: .identifier, value: identifier),
+            Tag(name: .labelNamespace, value: "status"),
+            Tag(name: .label, value: status.rawValue, otherParameters: ["status"])
+        ]
+
+        if let freebusy {
+            tags.append(Tag(name: .labelNamespace, value: "freebusy"))
+            tags.append(Tag(name: .label, value: freebusy.rawValue, otherParameters: ["freebusy"]))
+        }
+
+        return try CalendarEventRSVP(content: note, tags: tags, signedBy: keypair)
     }
 }

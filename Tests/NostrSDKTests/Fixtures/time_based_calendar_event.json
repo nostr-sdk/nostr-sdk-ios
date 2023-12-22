@@ -1,15 +1,15 @@
 {
-  "id": "091455f5c9509655e3a4f68f98e807349ac0b5525506b22978566a0bb0f3ced1",
+  "id": "818854c3ff09ac5a2c538cba81d911e59f929dcc5531f61ac92278093d101f1b",
   "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
-  "created_at": 1700320270,
+  "created_at": 1702833417,
   "kind": 31923,
   "tags": [
     [
       "d",
-      "9CD6DE6C-F8D9-44FB-B948-CB5A42434F8F"
+      "798F1F69-1DE3-4623-8DCC-FAF9B773E72B"
     ],
     [
-      "name",
+      "title",
       "Flight from New York (JFK) to San José, Costa Rica (SJO)"
     ],
     [
@@ -66,5 +66,5 @@
     ]
   ],
   "content": "Flight to Nostrica",
-  "sig": "57cdb0735645a7ff7112c2d863c425a75e82b540412117609c1c32bee833622a82acacd836b2790f0f08082e2700cdf1ac363c2aae1db87e613824fea2907845"
+  "sig": "c2aa36b07c4df050d637dd2be770767c67621e7d87179f9f1e5ef118543328ed238afbd6b33317a61178205b75e6ecb0a61ea4cf6c657a7da0e4cea4842d4c01"
 }

@@ -79,12 +79,22 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     case longformContent
     
     /// This kind of event represents an occurrence that spans between a start date and end date.
-    /// See [NIP-52 - Date-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-events-1)
+    /// See [NIP-52 - Date-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-events-1).
     case dateBasedCalendarEvent
 
     /// This kind of event represents an occurrence between moments in time.
-    /// See [NIP-52 - Time-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#time-based-calendar-event)
+    /// See [NIP-52 - Time-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#time-based-calendar-event).
     case timeBasedCalendarEvent
+
+    /// This kind of event represents a calendar, which is a collection of calendar events.
+    /// It is represented as a custom replaceable list event. A user can have multiple calendars.
+    /// One may create a calendar to segment calendar events for specific purposes. e.g., personal, work, travel, meetups, and conferences.
+    /// See [NIP-52 - Calendar](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar).
+    case calendar
+
+    /// This kind of event represents a calendar event RSVP, which is a response to a calendar event to indicate a user's attendance intention.
+    /// See [NIP-52 - Calendar Event RSVP](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-event-rsvp).
+    case calendarEventRSVP
 
     /// Any other event kind number that isn't supported by this enum yet will be represented by `unknown` so that `NostrEvent`s of those event kinds can still be encoded and decoded.
     case unknown(RawValue)
@@ -104,7 +114,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .muteList,
         .longformContent,
         .dateBasedCalendarEvent,
-        .timeBasedCalendarEvent
+        .timeBasedCalendarEvent,
+        .calendar,
+        .calendarEventRSVP
     ]
 
     public init(rawValue: Int) {
@@ -128,6 +140,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .longformContent: return 30023
         case .dateBasedCalendarEvent: return 31922
         case .timeBasedCalendarEvent: return 31923
+        case .calendar: return 31924
+        case .calendarEventRSVP: return 31925
         case let .unknown(value): return value
         }
     }
