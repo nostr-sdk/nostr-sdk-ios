@@ -27,7 +27,7 @@ public final class CalendarListEvent: NostrEvent, IdentifierTagInterpreting, Tit
     }
 
     /// The event coordinates of the calendar events that belong to this calendar.
-    public var calendarEventsCoordinates: [EventCoordinates] {
+    public var calendarEventCoordinateList: [EventCoordinates] {
         tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
             .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
     }
