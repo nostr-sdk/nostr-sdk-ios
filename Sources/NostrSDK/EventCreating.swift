@@ -500,8 +500,8 @@ public extension EventCreating {
     /// - Parameters:
     ///   - identifier: A unique identifier for the calendar event RSVP. Can be reused in the future for replacing the calendar event RSVP. If an identifier is not provided, a ``UUID`` string is used.
     ///   - calendarEventCoordinates: The coordinates to date-based or time-based calendar event being responded to.
-    ///   - status: The attendance status to the referenced calendar event.
-    ///   - freebusy: Determines if the user would be free or busy for the duration of the calendar event. This tag must be omitted or ignored if the status label is set to declined.
+    ///   - status: The attendance status to the referenced calendar event. Mimics the Participation Status type in the [RFC 5545 iCalendar spec](https://datatracker.ietf.org/doc/html/rfc5545#section-3.2.12).
+    ///   - freebusy: Whether the user would be free or busy for the duration of the calendar event. This tag must be omitted or ignored if the status label is set to declined. Mimics the Free/Busy Time Type in the [RFC 5545 iCalendar spec](https://datatracker.ietf.org/doc/html/rfc5545#section-3.2.9).
     ///   - note: A free-form note that adds more context to this calendar event response.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``CalendarEventRSVP``.
