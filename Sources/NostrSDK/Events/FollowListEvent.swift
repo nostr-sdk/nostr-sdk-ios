@@ -1,6 +1,6 @@
 //
-//  ContactListEvent.swift
-//  
+//  FollowListEvent.swift
+//
 //
 //  Created by Bryan Montz on 8/3/23.
 //
@@ -27,10 +27,10 @@ public struct RelayPermissions: Equatable {
     }
 }
 
-/// A special event with kind 3, meaning "contact list" is defined as having a list of p tags, one for each of the followed/known profiles one is following.
+/// A special event with kind 3, meaning "follow list" is defined as having a list of p tags, one for each of the followed/known profiles one is following.
 ///
-/// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
-public final class ContactListEvent: NostrEvent {
+/// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md)
+public final class FollowListEvent: NostrEvent {
     
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
@@ -42,16 +42,16 @@ public final class ContactListEvent: NostrEvent {
     }
     
     init(tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
-        try super.init(kind: .contactList, content: "", tags: tags, createdAt: createdAt, signedBy: keypair)
+        try super.init(kind: .followList, content: "", tags: tags, createdAt: createdAt, signedBy: keypair)
     }
     
     /// Pubkeys for followed/known profiles.
-    public var contactPubkeys: [String] {
+    public var followedPubkeys: [String] {
         allValues(forTagName: .pubkey) ?? []
     }
     
     /// Pubkey tags for followed/known profiles.
-    public var contactPubkeyTags: [Tag] {
+    public var followedPubkeyTags: [Tag] {
         tags.filter({ $0.name == TagName.pubkey.rawValue })
     }
     

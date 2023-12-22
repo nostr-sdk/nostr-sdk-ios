@@ -195,15 +195,15 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.relayURL, URL(string: "wss://nostr.relay"))
     }
     
-    func testDecodeContactList() throws {
+    func testDecodeFollowList() throws {
 
-        let event: ContactListEvent = try decodeFixture(filename: "contact_list")
-        
+        let event: FollowListEvent = try decodeFixture(filename: "follow_list")
+
         XCTAssertEqual(event.id, "test-id")
         XCTAssertEqual(event.pubkey, "test-pubkey")
         XCTAssertEqual(event.createdAt, 1684817569)
-        XCTAssertEqual(event.kind, .contactList)
-        
+        XCTAssertEqual(event.kind, .followList)
+
         let expectedTags: [Tag] = [
             .pubkey("pubkey1", otherParameters: ["wss://relay1.com", "alice"]),
             .pubkey("pubkey2", otherParameters: ["wss://relay2.com", "bob"])
@@ -212,8 +212,8 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.signature, "hex-signature")
     }
     
-    func testDecodeContactListWithRelays() throws {
-        let event: ContactListEvent = try decodeFixture(filename: "contact_list_with_relays")
+    func testDecodeFollowListWithRelays() throws {
+        let event: FollowListEvent = try decodeFixture(filename: "follow_list_with_relays")
 
         let expectedPubkeys = [
             "3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681",
@@ -223,10 +223,10 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
             "59fbee7369df7713dbbfa9bbdb0892c62eba929232615c6ff2787da384cb770f"
         ]
 
-        XCTAssertEqual(event.contactPubkeys, expectedPubkeys)
+        XCTAssertEqual(event.followedPubkeys, expectedPubkeys)
 
         let firstTag = Tag.pubkey("3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681")
-        XCTAssertEqual(event.contactPubkeyTags.first, firstTag)
+        XCTAssertEqual(event.followedPubkeyTags.first, firstTag)
 
         let expectedRelays = [
             "wss://relay.damus.io": RelayPermissions(read: true, write: true),
