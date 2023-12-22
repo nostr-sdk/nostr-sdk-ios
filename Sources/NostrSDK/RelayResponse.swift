@@ -21,7 +21,7 @@ fileprivate struct EventKindMapper: Decodable {     // swiftlint:disable:this pr
         case .setMetadata:      return SetMetadataEvent.self
         case .textNote:         return TextNoteEvent.self
         case .recommendServer:  return RecommendServerEvent.self
-        case .contactList:      return ContactListEvent.self
+        case .followList:      return FollowListEvent.self
         case .directMessage:    return DirectMessageEvent.self
         case .repost:           return TextNoteRepostEvent.self
         case .genericRepost:    return GenericRepostEvent.self

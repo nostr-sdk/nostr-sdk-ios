@@ -65,34 +65,34 @@ public extension EventCreating {
         return try RecommendServerEvent(content: relayURL.absoluteString, signedBy: keypair)
     }
     
-    /// Creates a ``ContactListEvent`` (kind 3) following the provided pubkeys and signs it with the provided ``Keypair``.
+    /// Creates a ``FollowListEvent`` (kind 3) following the provided pubkeys and signs it with the provided ``Keypair``.
     /// - Parameters:
-    ///   - pubkeys: The pubkeys of followed/known profiles to add to the contact list, in hex format.
+    ///   - pubkeys: The pubkeys of followed/known profiles to add to the follow list, in hex format.
     ///   - keypair: The Keypair to sign with.
-    /// - Returns: The signed ``ContactListEvent``.
+    /// - Returns: The signed ``FollowListEvent``.
     ///
-    /// Use this initializer if you do not intend to include petnames as part of the contact list.
+    /// Use this initializer if you do not intend to include petnames as part of the follow list.
     ///
-    /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
-    func contactList(withPubkeys pubkeys: [String], signedBy keypair: Keypair) throws -> ContactListEvent {
-        try contactList(withPubkeyTags: pubkeys.map { .pubkey($0) },
+    /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md)
+    func followList(withPubkeys pubkeys: [String], signedBy keypair: Keypair) throws -> FollowListEvent {
+        try followList(withPubkeyTags: pubkeys.map { .pubkey($0) },
                         signedBy: keypair)
     }
     
-    /// Creates a ``ContactListEvent`` (kind 3) with the provided pubkey tags and signs it with the provided ``Keypair``.
+    /// Creates a ``FollowListEvent`` (kind 3) with the provided pubkey tags and signs it with the provided ``Keypair``.
     /// - Parameters:
-    ///   - pubkeyTags: The pubkey tags of followed/known profiles to add to the contact list, which may include petnames.
+    ///   - pubkeyTags: The pubkey tags of followed/known profiles to add to the follow list, which may include petnames.
     ///   - keypair: The Keypair to sign with.
-    /// - Returns: The signed ``ContactListEvent``.
+    /// - Returns: The signed ``FollowListEvent``.
     ///
-    /// Use this initializer if you intend to include petnames as part of the contact list.
+    /// Use this initializer if you intend to include petnames as part of the follow list.
     ///
-    /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
-    func contactList(withPubkeyTags pubkeyTags: [Tag], signedBy keypair: Keypair) throws -> ContactListEvent {
+    /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md)
+    func followList(withPubkeyTags pubkeyTags: [Tag], signedBy keypair: Keypair) throws -> FollowListEvent {
         guard !pubkeyTags.contains(where: { $0.name != TagName.pubkey.rawValue }) else {
             throw EventCreatingError.invalidInput
         }
-        return try ContactListEvent(tags: pubkeyTags,
+        return try FollowListEvent(tags: pubkeyTags,
                                     signedBy: keypair)
     }
 

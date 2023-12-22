@@ -86,14 +86,14 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
                                                       signedBy: Keypair.test))
     }
     
-    func testCreateContactListEvent() throws {
+    func testCreateFollowListEvent() throws {
         let pubkeys = [
             "83y9iuhw9u0t8thw8w80u",
             "19048ut34h23y89jio3r8",
             "5r623gyewfbh8uuiq83rd"
         ]
         
-        let event = try contactList(withPubkeys: pubkeys,
+        let event = try followList(withPubkeys: pubkeys,
                                     signedBy: Keypair.test)
         
         let expectedTags: [Tag] = [
@@ -107,14 +107,14 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         try verifyEvent(event)
     }
     
-    func testCreateContactListEventWithPetnames() throws {
+    func testCreateFollowListEventWithPetnames() throws {
         let tags: [Tag] = [
             .pubkey("83y9iuhw9u0t8thw8w80u", otherParameters: ["bob"]),
             .pubkey("19048ut34h23y89jio3r8", otherParameters: ["alice"]),
             .pubkey("5r623gyewfbh8uuiq83rd", otherParameters: ["steve"])
         ]
         
-        let event = try contactList(withPubkeyTags: tags,
+        let event = try followList(withPubkeyTags: tags,
                                     signedBy: Keypair.test)
         
         XCTAssertEqual(event.tags, tags)

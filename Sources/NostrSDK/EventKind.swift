@@ -30,8 +30,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// This kind of event should have a list of p tags, one for each of the followed/known profiles one is following.
     /// > Note: The `content` can be anything and should be ignored.
     ///
-    /// See [NIP-02 - Contact List and Petnames](https://github.com/nostr-protocol/nips/blob/master/02.md#contact-list-and-petnames)
-    case contactList
+    /// See [NIP-02 - Follow List](https://github.com/nostr-protocol/nips/blob/master/02.md)
+    case followList
 
     /// This kind of event should have a recipient pubkey tag.
     ///
@@ -104,7 +104,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .setMetadata,
         .textNote,
         .recommendServer,
-        .contactList,
+        .followList,
         .directMessage,
         .deletion,
         .repost,
@@ -129,7 +129,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .setMetadata: return 0
         case .textNote: return 1
         case .recommendServer: return 2
-        case .contactList: return 3
+        case .followList: return 3
         case .directMessage: return 4
         case .deletion: return 5
         case .repost: return 6
