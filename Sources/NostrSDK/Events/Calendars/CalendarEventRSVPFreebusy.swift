@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Determines if the user would be free or busy for the duration of the calendar event.
+/// A type for describing whether the user is free or busy for the duration of the calendar event.
 public enum CalendarEventRSVPFreebusy: RawRepresentable, CaseIterable, Codable, Equatable {
 
     public typealias RawValue = String

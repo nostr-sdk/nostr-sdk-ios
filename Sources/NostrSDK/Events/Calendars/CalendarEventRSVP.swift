@@ -30,18 +30,18 @@ public final class CalendarEventRSVP: NostrEvent, IdentifierTagInterpreting {
             .first { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
     }
 
-    /// Determines attendance status to the referenced calendar event.
+    /// The attendance status to the referenced calendar event.
     public var status: CalendarEventRSVPStatus? {
-        guard let statusTag = tags.first(where: { $0.name == "l" && $0.otherParameters.first == "status" }) else {
+        guard let statusTag = tags.first(where: { $0.name == TagName.label.rawValue && $0.otherParameters.first == "status" }) else {
             return nil
         }
 
         return CalendarEventRSVPStatus(rawValue: statusTag.value)
     }
 
-    /// Determines if the user would be free or busy for the duration of the calendar event.
+    /// Whether the user is free or busy for the duration of the calendar event.
     public var freebusy: CalendarEventRSVPFreebusy? {
-        guard let freebusyTag = tags.first(where: { $0.name == "l" && $0.otherParameters.first == "freebusy" }) else {
+        guard let freebusyTag = tags.first(where: { $0.name == TagName.label.rawValue && $0.otherParameters.first == "freebusy" }) else {
             return nil
         }
 
