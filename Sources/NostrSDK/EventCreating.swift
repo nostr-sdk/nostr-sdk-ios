@@ -469,17 +469,17 @@ public extension EventCreating {
         return try TimeBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
     }
 
-    /// Creates a ``CalendarNostrEvent`` (kind 31924), which is a collection of date-based and time-based calendar events.
+    /// Creates a ``CalendarListEvent`` (kind 31924), which is a collection of date-based and time-based calendar events.
     /// - Parameters:
     ///   - identifier: A unique identifier for the calendar. Can be reused in the future for replacing the calendar. If an identifier is not provided, a ``UUID`` string is used.
     ///   - title: The title of the calendar.
     ///   - description: A detailed description of the calendar.
     ///   - calendarEventsCoordinates: The coordinates to date-based or time-based calendar events that belong to this calendar.
     ///   - keypair: The Keypair to sign with.
-    /// - Returns: The signed ``CalendarNostrEvent``.
+    /// - Returns: The signed ``CalendarListEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func calendarNostrEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarListEvent {
+    func calendarListEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarListEvent {
         guard calendarEventsCoordinates.allSatisfy({ $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }) else {
             throw EventCreatingError.invalidInput
         }

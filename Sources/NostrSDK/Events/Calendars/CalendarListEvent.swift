@@ -1,5 +1,5 @@
 //
-//  CalendarNostrEvent.swift
+//  CalendarListEvent.swift
 //
 //
 //  Created by Terry Yiu on 12/1/23.

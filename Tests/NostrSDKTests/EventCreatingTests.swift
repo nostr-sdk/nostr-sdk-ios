@@ -570,7 +570,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let identifier = "family-calendar"
         let title = "Family Calendar"
         let description = "All family events."
-        let calendar = try calendarNostrEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates], signedBy: Keypair.test)
+        let calendar = try calendarListEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates], signedBy: Keypair.test)
 
         XCTAssertEqual(calendar.identifier, identifier)
         XCTAssertEqual(calendar.title, title)
@@ -584,7 +584,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let identifier = "family-calendar"
         let title = "Family Calendar"
         let description = "All family events."
-        let calendar = try calendarNostrEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [], signedBy: Keypair.test)
+        let calendar = try calendarListEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [], signedBy: Keypair.test)
 
         XCTAssertEqual(calendar.identifier, identifier)
         XCTAssertEqual(calendar.title, title)
@@ -600,7 +600,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let description = "All family events."
         let eventCoordinates = try XCTUnwrap(EventCoordinates(kind: EventKind.textNote, pubkey: Keypair.test.publicKey, identifier: "abc"))
 
-        XCTAssertThrowsError(try calendarNostrEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [eventCoordinates], signedBy: Keypair.test))
+        XCTAssertThrowsError(try calendarListEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [eventCoordinates], signedBy: Keypair.test))
     }
 
     func testDateBasedCalendarEventRSVP() throws {
