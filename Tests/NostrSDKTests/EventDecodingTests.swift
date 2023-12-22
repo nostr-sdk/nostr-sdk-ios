@@ -474,7 +474,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
 
         let pubkey = try XCTUnwrap(PublicKey(hex: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"))
         XCTAssertEqual(
-            event.calendarEvents,
+            event.calendarEventCoordinateList,
             [
                 EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D5EB0A5A-0B36-44DB-95C3-DB51799894E6"),
                 EventCoordinates(kind: .timeBasedCalendarEvent, pubkey: pubkey, identifier: "1D355ED3-A45D-41A9-B3A5-709211794EFB")

@@ -575,7 +575,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(calendar.identifier, identifier)
         XCTAssertEqual(calendar.title, title)
         XCTAssertEqual(calendar.content, description)
-        XCTAssertEqual(calendar.calendarEvents, [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates])
+        XCTAssertEqual(calendar.calendarEventCoordinateList, [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates])
 
         try verifyEvent(calendar)   
     }
@@ -589,7 +589,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(calendar.identifier, identifier)
         XCTAssertEqual(calendar.title, title)
         XCTAssertEqual(calendar.content, description)
-        XCTAssertEqual(calendar.calendarEvents, [])
+        XCTAssertEqual(calendar.calendarEventCoordinateList, [])
 
         try verifyEvent(calendar)
     }
