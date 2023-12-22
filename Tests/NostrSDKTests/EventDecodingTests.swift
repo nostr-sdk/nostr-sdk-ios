@@ -461,7 +461,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     }
 
     func testDecodeCalendar() throws {
-        let event: CalendarNostrEvent = try decodeFixture(filename: "calendar")
+        let event: CalendarListEvent = try decodeFixture(filename: "calendar")
 
         XCTAssertEqual(event.id, "1dc8b913d9d4f50a71182dc9232996d6fbc69e8c955866e43ef2c2e35185bbfa")
         XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")

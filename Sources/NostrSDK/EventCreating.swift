@@ -479,7 +479,7 @@ public extension EventCreating {
     /// - Returns: The signed ``CalendarNostrEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func calendarNostrEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarNostrEvent {
+    func calendarNostrEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarListEvent {
         guard calendarEventsCoordinates.allSatisfy({ $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }) else {
             throw EventCreatingError.invalidInput
         }
@@ -493,7 +493,7 @@ public extension EventCreating {
             .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
             .forEach { tags.append($0.tag) }
 
-        return try CalendarNostrEvent(content: description, tags: tags, signedBy: keypair)
+        return try CalendarListEvent(content: description, tags: tags, signedBy: keypair)
     }
 
     /// Creates a ``CalendarEventRSVP`` (kind 31925), which is a response to a calendar event to indicate a user's attendance intention.

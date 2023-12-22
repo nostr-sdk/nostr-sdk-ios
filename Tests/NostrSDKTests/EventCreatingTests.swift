@@ -577,11 +577,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(calendar.content, description)
         XCTAssertEqual(calendar.calendarEventsCoordinates, [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates])
 
-        try verifyEvent(calendar)
-
-        print(calendar.signature)
-        print(calendar.calculatedId)
-        print(calendar.serialized)
+        try verifyEvent(calendar)   
     }
 
     func testCalendarWithNoCalendarEventCoordinates() throws {
