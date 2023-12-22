@@ -1,8 +1,14 @@
 [![Unit Tests](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml) [![SwiftLint](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml) [![Docs](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml)
 
-# Nostr SDK iOS
+# Nostr SDK for Apple Platforms
 
-[Nostr](https://github.com/nostr-protocol/nostr) SDK library for iOS applications.
+[Nostr](https://github.com/nostr-protocol/nostr) SDK library for Apple Platforms.
+
+## Minimum Requirements
+
+- Swift 5.7.1
+- iOS 15
+- macOS 12
 
 ## Features
 
@@ -13,9 +19,9 @@ TBD
 Nostr SDK iOS implements the following NIPs:
 
 - [x] [NIP-01: Basic protocol flow description](https://github.com/nostr-protocol/nips/blob/master/01.md)
-- [x] [NIP-02: Contact List and Petnames](https://github.com/nostr-protocol/nips/blob/master/02.md)
+- [x] [NIP-02: Follow List](https://github.com/nostr-protocol/nips/blob/master/02.md)
 - [ ] [NIP-03: OpenTimestamps Attestations for Events](https://github.com/nostr-protocol/nips/blob/master/03.md)
-- [x] [NIP-04: Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
+- [x] [NIP-04: Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md) --- **unrecommended**: deprecated in favor of [NIP-44](https://github.com/nostr-protocol/nips/blob/master/44.md)
 - [x] [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](https://github.com/nostr-protocol/nips/blob/master/05.md)
 - [ ] [NIP-06: Basic key derivation from mnemonic seed phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)
 - [ ] [NIP-07: `window.nostr` capability for web browsers](https://github.com/nostr-protocol/nips/blob/master/07.md)
@@ -29,7 +35,6 @@ Nostr SDK iOS implements the following NIPs:
 - [x] [NIP-18: Reposts](https://github.com/nostr-protocol/nips/blob/master/18.md)
 - [ ] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
 - [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
-- [ ] [NIP-22: Event `created_at` Limits](https://github.com/nostr-protocol/nips/blob/master/22.md)
 - [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
 - [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
@@ -44,6 +49,7 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-39: External Identities in Profiles](https://github.com/nostr-protocol/nips/blob/master/39.md)
 - [ ] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [ ] [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
+- [ ] [NIP-44: Versioned Encryption](https://github.com/nostr-protocol/nips/blob/master/44.md)
 - [ ] [NIP-45: Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
 - [ ] [NIP-46: Nostr Connect](https://github.com/nostr-protocol/nips/blob/master/46.md)
 - [ ] [NIP-47: Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md)
@@ -78,6 +84,6 @@ If you would like to contribute to this library, please see [CONTRIBUTING.md](CO
 
 These are the core maintainers of this library and their Nostr public keys.
 
-- [Bryan Montz](https://github.com/bryanmontz) (npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc)
-- [Joel Klabo](https://github.com/joelklabo) (npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt)
-- [Terry Yiu](https://github.com/tyiu) (npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf)
+- [Bryan Montz](https://github.com/bryanmontz) ([npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc](https://njump.me/npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc))
+- [Joel Klabo](https://github.com/joelklabo) ([npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt](https://njump.me/npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt))
+- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
