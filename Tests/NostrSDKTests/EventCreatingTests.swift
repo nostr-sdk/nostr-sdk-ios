@@ -43,7 +43,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.userMetadata?.pictureURL, URL(string: "https://nostrsdk.com/picture.png"))
         XCTAssertEqual(event.userMetadata?.bannerPictureURL, URL(string: "https://nostrsdk.com/banner.png"))
         XCTAssertEqual(event.customEmojis, customEmojis)
-        XCTAssertEqual(event.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
         XCTAssertEqual(event.tags, customEmojiTags)
 
         try verifyEvent(event)
@@ -107,7 +107,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.tags, expectedTags)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .followList, pubkey: Keypair.test.publicKey))
-        XCTAssertEqual(event.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(event)
     }
@@ -125,7 +125,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.tags, tags)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .followList, pubkey: Keypair.test.publicKey))
-        XCTAssertEqual(event.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(event)
     }
@@ -175,7 +175,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
     func testDeletionEventForParameterizedReplaceableEvent() throws {
         let longformNoteToDelete: LongformContentEvent = try decodeFixture(filename: "longform_deletable")
-        let longformNoteEventCoordinates = try XCTUnwrap(longformNoteToDelete.replaceableEventCoordinates)
+        let longformNoteEventCoordinates = try XCTUnwrap(longformNoteToDelete.replaceableEventCoordinates(relayURL: nil))
         let reason = "Didn't mean to post"
 
         let event = try delete(replaceableEvents: [longformNoteToDelete], reason: reason, signedBy: Keypair.test)
@@ -406,7 +406,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(privateTags, expectedPrivateTags)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .muteList, pubkey: Keypair.test.publicKey))
-        XCTAssertEqual(event.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(event)
     }
@@ -440,7 +440,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.publishedAt, publishedDate)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .longformContent, pubkey: Keypair.test.publicKey, identifier: identifier))
-        XCTAssertEqual(event.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(event)
     }
@@ -492,7 +492,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(dateBasedCalendarEvent.references, references)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: Keypair.test.publicKey, identifier: identifier))
-        XCTAssertEqual(dateBasedCalendarEvent.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(dateBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(dateBasedCalendarEvent)
     }
@@ -571,7 +571,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(timeBasedCalendarEvent.references, references)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .timeBasedCalendarEvent, pubkey: Keypair.test.publicKey, identifier: identifier))
-        XCTAssertEqual(timeBasedCalendarEvent.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(timeBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(timeBasedCalendarEvent)
     }
@@ -604,13 +604,13 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     func testCalendar() throws {
         let timeOmittedStartDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 12, day: 31))
         let dateBasedCalendarEvent = try XCTUnwrap(dateBasedCalendarEvent(title: "New Year's Eve", startDate: timeOmittedStartDate, signedBy: Keypair.test))
-        let dateBasedCalendarEventCoordinates = try XCTUnwrap(dateBasedCalendarEvent.replaceableEventCoordinates)
+        let dateBasedCalendarEventCoordinates = try XCTUnwrap(dateBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil))
 
         let startTimeZone = TimeZone(identifier: "America/New_York")
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 12, day: 20, hour: 8, minute: 0)
         let startDate = try XCTUnwrap(startComponents.date)
         let timeBasedCalendarEvent = try timeBasedCalendarEvent(title: "Hockey Practice", startTimestamp: startDate, signedBy: Keypair.test)
-        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates)
+        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil))
 
         let identifier = "family-calendar"
         let title = "Family Calendar"
@@ -623,7 +623,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(calendar.calendarEventCoordinateList, [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates])
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .calendar, pubkey: Keypair.test.publicKey, identifier: identifier))
-        XCTAssertEqual(calendar.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(calendar.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(calendar)   
     }
@@ -654,7 +654,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     func testDateBasedCalendarEventRSVP() throws {
         let timeOmittedStartDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 12, day: 31))
         let dateBasedCalendarEvent = try XCTUnwrap(dateBasedCalendarEvent(title: "New Year's Eve", startDate: timeOmittedStartDate, signedBy: Keypair.test))
-        let dateBasedCalendarEventCoordinates = try XCTUnwrap(dateBasedCalendarEvent.replaceableEventCoordinates)
+        let dateBasedCalendarEventCoordinates = try XCTUnwrap(dateBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil))
 
         let identifier = "hockey-practice-rsvp"
         let note = "Don't forget your skates!"
@@ -667,7 +667,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(calendarEventRSVP.content, note)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .calendarEventRSVP, pubkey: Keypair.test.publicKey, identifier: identifier))
-        XCTAssertEqual(calendarEventRSVP.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(calendarEventRSVP.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(calendarEventRSVP)
     }
@@ -677,7 +677,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 12, day: 20, hour: 8, minute: 0)
         let startDate = try XCTUnwrap(startComponents.date)
         let timeBasedCalendarEvent = try timeBasedCalendarEvent(title: "Hockey Practice", startTimestamp: startDate, signedBy: Keypair.test)
-        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates)
+        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil))
 
         let identifier = "hockey-practice-rsvp"
         let note = "Don't forget your skates!"
@@ -690,7 +690,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(calendarEventRSVP.content, note)
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .calendarEventRSVP, pubkey: Keypair.test.publicKey, identifier: identifier))
-        XCTAssertEqual(calendarEventRSVP.replaceableEventCoordinates, expectedReplaceableEventCoordinates)
+        XCTAssertEqual(calendarEventRSVP.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
 
         try verifyEvent(calendarEventRSVP)
     }
@@ -708,7 +708,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 12, day: 20, hour: 8, minute: 0)
         let startDate = try XCTUnwrap(startComponents.date)
         let timeBasedCalendarEvent = try timeBasedCalendarEvent(title: "Hockey Practice", startTimestamp: startDate, signedBy: Keypair.test)
-        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates)
+        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil))
 
         let identifier = "hockey-practice-rsvp"
         let calendarEventRSVP = try calendarEventRSVP(withIdentifier: identifier, calendarEventCoordinates: timeBasedCalendarEventCoordinates, status: .declined, signedBy: Keypair.test)
@@ -726,7 +726,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 12, day: 20, hour: 8, minute: 0)
         let startDate = try XCTUnwrap(startComponents.date)
         let timeBasedCalendarEvent = try timeBasedCalendarEvent(title: "Hockey Practice", startTimestamp: startDate, signedBy: Keypair.test)
-        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates)
+        let timeBasedCalendarEventCoordinates = try XCTUnwrap(timeBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil))
 
         let identifier = "hockey-practice-rsvp"
         XCTAssertThrowsError(try calendarEventRSVP(withIdentifier: identifier, calendarEventCoordinates: timeBasedCalendarEventCoordinates, status: .declined, freebusy: .busy, signedBy: Keypair.test))

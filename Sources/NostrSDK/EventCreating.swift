@@ -135,7 +135,7 @@ public extension EventCreating {
             throw EventCreatingError.invalidInput
         }
         
-        let tags: [Tag] = creatorValidatedEvents.map { .event($0.id) } + creatorValidatedReplaceableEvents.compactMap { $0.replaceableEventCoordinates?.tag }
+        let tags: [Tag] = creatorValidatedEvents.map { .event($0.id) } + creatorValidatedReplaceableEvents.compactMap { $0.replaceableEventCoordinates(relayURL: nil)?.tag }
         return try DeletionEvent(content: reason ?? "", tags: tags, signedBy: keypair)
     }
 

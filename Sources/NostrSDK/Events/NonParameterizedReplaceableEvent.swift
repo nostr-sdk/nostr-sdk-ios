@@ -9,19 +9,7 @@ import Foundation
 
 public protocol NonParameterizedReplaceableEvent: ReplaceableEvent {}
 public extension NonParameterizedReplaceableEvent {
-    var replaceableEventCoordinates: EventCoordinates? {
-        guard kind.isNonParameterizedReplaceable, let publicKey = PublicKey(hex: pubkey) else {
-            return nil
-        }
-
-        do {
-            return try EventCoordinates(kind: kind, pubkey: publicKey)
-        } catch {
-            return nil
-        }
-    }
-
-    func replaceableEventCoordinates(relayURL: URL) -> EventCoordinates? {
+    func replaceableEventCoordinates(relayURL: URL? = nil) -> EventCoordinates? {
         guard kind.isNonParameterizedReplaceable, let publicKey = PublicKey(hex: pubkey) else {
             return nil
         }

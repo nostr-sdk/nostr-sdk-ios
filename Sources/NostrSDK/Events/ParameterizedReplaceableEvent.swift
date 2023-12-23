@@ -15,19 +15,7 @@ public extension ParameterizedReplaceableEvent {
         firstValueForTagName(.identifier)
     }
 
-    var replaceableEventCoordinates: EventCoordinates? {
-        guard kind.isParameterizedReplaceable, let identifier, let publicKey = PublicKey(hex: pubkey) else {
-            return nil
-        }
-
-        do {
-            return try EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier)
-        } catch {
-            return nil
-        }
-    }
-
-    func replaceableEventCoordinates(relayURL: URL) -> EventCoordinates? {
+    func replaceableEventCoordinates(relayURL: URL? = nil) -> EventCoordinates? {
         guard kind.isParameterizedReplaceable, let identifier, let publicKey = PublicKey(hex: pubkey) else {
             return nil
         }
