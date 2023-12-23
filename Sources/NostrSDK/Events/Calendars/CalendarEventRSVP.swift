@@ -10,7 +10,7 @@ import Foundation
 /// A calendar event RSVP is a response to a calendar event to indicate a user's attendance intention.
 /// 
 /// See [NIP-52 - Calendar Event RSVP](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-event-rsvp).
-public final class CalendarEventRSVP: NostrEvent, IdentifierTagInterpreting {
+public final class CalendarEventRSVP: NostrEvent, ParameterizedReplaceableEvent {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
