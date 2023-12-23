@@ -56,7 +56,7 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-48: Proxy Tags](https://github.com/nostr-protocol/nips/blob/master/48.md)
 - [ ] [NIP-50: Search Capability](https://github.com/nostr-protocol/nips/blob/master/50.md)
 - [ ] [NIP-51: Lists](https://github.com/nostr-protocol/nips/blob/master/51.md)
-- [ ] [NIP-52: Calendar Events](https://github.com/nostr-protocol/nips/blob/master/52.md)
+- [x] [NIP-52: Calendar Events](https://github.com/nostr-protocol/nips/blob/master/52.md)
 - [ ] [NIP-53: Live Activities](https://github.com/nostr-protocol/nips/blob/master/53.md)
 - [x] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
