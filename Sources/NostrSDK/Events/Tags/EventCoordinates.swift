@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum EventCoordinatesError: Error {
+    case invalidInput
+}
+
 /// Coordinates to a (maybe parameterized) replaceable event.
 /// See [NIP-01 Tags](https://github.com/nostr-protocol/nips/blob/master/01.md#tags).
 public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
@@ -85,21 +89,22 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
         self.tag = eventCoordinatesTag
     }
 
-    /// Initializes coordinates to a non-parameterized replaceable event.
-    /// Returns nil if the kind is not a non-parameterized replaceable event kind.
+    /// Initializes coordinates to a replaceable event.
+    /// Returns nil if the kind is not a replaceable event kind.
     /// - Parameters:
-    ///   - kind: The ``EventKind`` of the referenced non-parameterized replaceable event.
-    ///   - pubkey: The pubkey that signed the referenced non-parameterized replaceable event.
-    ///   - relayURL: A relay in which the referenced non-parameterized replaceable event could be found.
-    public init?(kind: EventKind, pubkey: PublicKey, relayURL: URL? = nil) {
-        guard kind.isNonParameterizedReplaceable else {
-            return nil
+    ///   - kind: The ``EventKind`` of the referenced replaceable event.
+    ///   - pubkey: The pubkey that signed the referenced replaceable event.
+    ///   - identifier: The identifier of the referenced replaceable event. Must be `nil` if `kind.isNonParameterizedReplaceable` is `true`. Must not be `nil` if `kind.isParameterizedReplaceable` is `true`.
+    ///   - relayURL: A relay in which the referenced replaceable event could be found.
+    public init?(kind: EventKind, pubkey: PublicKey, identifier: String? = nil, relayURL: URL? = nil) throws {
+        guard (kind.isParameterizedReplaceable && identifier != nil) || (kind.isNonParameterizedReplaceable && identifier == nil) else {
+            throw EventCoordinatesError.invalidInput
         }
 
         let otherParameters: [String]
         if let relayURL {
             guard (try? RelayURLValidator.shared.validateRelayURL(relayURL)) != nil else {
-                return nil
+                throw EventCoordinatesError.invalidInput
             }
 
             otherParameters = [relayURL.absoluteString]
@@ -110,39 +115,7 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
         self.init(
             eventCoordinatesTag: Tag(
                 name: .eventCoordinates,
-                value: "\(kind.rawValue):\(pubkey.hex):",
-                otherParameters: otherParameters
-            )
-        )
-    }
-
-    /// Initializes coordinates to a parameterized replaceable event.
-    /// Returns nil if the kind is not a parameterized replaceable event kind.
-    /// - Parameters:
-    ///   - kind: The ``EventKind`` of the referenced parameterized replaceable event.
-    ///   - pubkey: The pubkey that signed the referenced parameterized replaceable event.
-    ///   - identifier: The identifier of the referenced parameterized replaceable event.
-    ///   - relayURL: A relay in which the referenced parameterized replaceable event could be found.
-    public init?(kind: EventKind, pubkey: PublicKey, identifier: String, relayURL: URL? = nil) {
-        guard kind.isParameterizedReplaceable else {
-            return nil
-        }
-
-        let otherParameters: [String]
-        if let relayURL {
-            guard (try? RelayURLValidator.shared.validateRelayURL(relayURL)) != nil else {
-                return nil
-            }
-
-            otherParameters = [relayURL.absoluteString]
-        } else {
-            otherParameters = []
-        }
-
-        self.init(
-            eventCoordinatesTag: Tag(
-                name: .eventCoordinates,
-                value: "\(kind.rawValue):\(pubkey.hex):\(identifier)",
+                value: "\(kind.rawValue):\(pubkey.hex):\(identifier ?? "")",
                 otherParameters: otherParameters
             )
         )

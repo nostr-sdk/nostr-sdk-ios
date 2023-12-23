@@ -20,7 +20,11 @@ public extension ParameterizedReplaceableEvent {
             return nil
         }
 
-        return EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: nil)
+        do {
+            return try EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier)
+        } catch {
+            return nil
+        }
     }
 
     func replaceableEventCoordinates(relayURL: URL) -> EventCoordinates? {
@@ -28,6 +32,10 @@ public extension ParameterizedReplaceableEvent {
             return nil
         }
 
-        return EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
+        do {
+            return try EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
+        } catch {
+            return nil
+        }
     }
 }

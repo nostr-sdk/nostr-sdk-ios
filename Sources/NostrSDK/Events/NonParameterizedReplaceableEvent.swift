@@ -14,7 +14,11 @@ public extension NonParameterizedReplaceableEvent {
             return nil
         }
 
-        return EventCoordinates(kind: kind, pubkey: publicKey, relayURL: nil)
+        do {
+            return try EventCoordinates(kind: kind, pubkey: publicKey)
+        } catch {
+            return nil
+        }
     }
 
     func replaceableEventCoordinates(relayURL: URL) -> EventCoordinates? {
@@ -22,6 +26,10 @@ public extension NonParameterizedReplaceableEvent {
             return nil
         }
 
-        return EventCoordinates(kind: kind, pubkey: publicKey, relayURL: relayURL)
+        do {
+            return try EventCoordinates(kind: kind, pubkey: publicKey, relayURL: relayURL)
+        } catch {
+            return nil
+        }
     }
 }
