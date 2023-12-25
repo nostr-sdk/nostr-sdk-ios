@@ -231,13 +231,13 @@ public extension EventCreating {
     /// Creates a ``MuteListEvent`` (kind 10000) containing things the user doesn't want to see in their feeds. Mute list items be publicly visible or private.
     /// - Parameters:
     ///   - publiclyMutedPubkeys: Pubkeys to mute.
-    ///   - privatelyMutedPubkeys: Pubkeys to secretly mute.
+    ///   - privatelyMutedPubkeys: Pubkeys to privately mute.
     ///   - publiclyMutedEventIds: Event ids to mute.
-    ///   - privatelyMutedEventIds: Event ids to secretly mute.
+    ///   - privatelyMutedEventIds: Event ids to privately mute.
     ///   - publiclyMutedHashtags: Hashtags to mute.
-    ///   - privatelyMutedHashtags: Hashtags to secretly mute.
+    ///   - privatelyMutedHashtags: Hashtags to privately mute.
     ///   - publiclyMutedKeywords: Keywords to mute.
-    ///   - privatelyMutedKeywords: Keywords to secretly mute.
+    ///   - privatelyMutedKeywords: Keywords to privately mute.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``MuteListEvent``.
     func muteList(withPubliclyMutedPubkeys publiclyMutedPubkeys: [String] = [],
@@ -289,6 +289,67 @@ public extension EventCreating {
         }
         
         return try MuteListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
+    }
+    
+    /// Creates a ``BookmarksListEvent`` (kind 10003) containing an uncategorized, "global" list of things a user wants to save.
+    /// - Parameters:
+    ///   - publiclyBookmarkedEventIds: Event ids to bookmark.
+    ///   - privatelyBookmarkedEventIds: Event ids to privately bookmark.
+    ///   - publiclyBookmarkedArticlesCoordinates: Articles coordinates to bookmark.
+    ///   - privatelyBookmarkedArticlesCoordinates: Articles coordinates to privately bookmark.
+    ///   - publiclyBookmarkedHashtags: Hashtags to bookmark.
+    ///   - privatelyBookmarkedHashtags: Hashtags to privately bookmark.
+    ///   - publiclyBookmarkedLinks: Links to bookmark.
+    ///   - privatelyBookmarkedLinks: Links to privately bookmark.
+    func bookmarksList(withPubliclyBookmarksEventIds publiclyBookmarkedEventIds: [String] = [],
+                       privatelyBookmarkedEventIds: [String] = [],
+                       publiclyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
+                       privatelyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
+                       publiclyBookmarkedHashtags: [String] = [],
+                       privatelyBookmarkedHashtags: [String] = [],
+                       publiclyBookmarkedLinks: [URL] = [],
+                       privatelyBookmarkedLinks: [URL] = [],
+                       signedBy keypair: Keypair) throws -> BookmarksListEvent {
+        var publicTags = [Tag]()
+        
+        for eventId in publiclyBookmarkedEventIds {
+            publicTags.append(.event(eventId))
+        }
+        for coordinates in publiclyBookmarkedArticlesCoordinates {
+            publicTags.append(coordinates.tag)
+        }
+        for hashtag in publiclyBookmarkedHashtags {
+            publicTags.append(.hashtag(hashtag))
+        }
+        for link in publiclyBookmarkedLinks {
+            publicTags.append(Tag(name: .webURL, value: link.absoluteString))
+        }
+        
+        var secretTags = [[String]]()
+        for eventId in privatelyBookmarkedEventIds {
+            secretTags.append([TagName.event.rawValue, eventId])
+        }
+        for coordinates in privatelyBookmarkedArticlesCoordinates {
+            secretTags.append([TagName.eventCoordinates.rawValue, coordinates.tag.value])
+        }
+        for hashtag in privatelyBookmarkedHashtags {
+            secretTags.append([TagName.hashtag.rawValue, hashtag])
+        }
+        for link in privatelyBookmarkedLinks {
+            secretTags.append([TagName.webURL.rawValue, link.absoluteString])
+        }
+        
+        var encryptedContent: String?
+        if !secretTags.isEmpty {
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: secretTags),
+               let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
+                encryptedContent = try encrypt(content: unencryptedContent,
+                                               privateKey: keypair.privateKey,
+                                               publicKey: keypair.publicKey)
+            }
+        }
+        
+        return try BookmarksListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
     }
     
     /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".

@@ -73,6 +73,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
     case muteList
     
+    /// This kind of event contains an uncategorized, "global" list of things a user wants to save.
+    ///
+    /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
+    case bookmarksList
+    
     /// This kind of event is for long-form texxt content, generally referred to as "articles" or "blog posts".
     ///
     /// See [NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md).
@@ -112,6 +117,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         .genericRepost,
         .report,
         .muteList,
+        .bookmarksList,
         .longformContent,
         .dateBasedCalendarEvent,
         .timeBasedCalendarEvent,
@@ -137,6 +143,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         case .genericRepost: return 16
         case .report: return 1984
         case .muteList: return 10000
+        case .bookmarksList: return 10003
         case .longformContent: return 30023
         case .dateBasedCalendarEvent: return 31922
         case .timeBasedCalendarEvent: return 31923

@@ -8,9 +8,9 @@
 import Foundation
 
 /// An event that contains various things the user doesn't want to see in their feeds.
-///
+/// 
 /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists).
-public final class MuteListEvent: NostrEvent, HashtagInterpreting, DirectMessageEncrypting {
+public final class MuteListEvent: NostrEvent, HashtagInterpreting, PrivateTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -41,38 +41,23 @@ public final class MuteListEvent: NostrEvent, HashtagInterpreting, DirectMessage
     
     /// The privately muted public keys (authors).
     public func privatePubkeys(using keypair: Keypair) -> [String] {
-        privateTags(withName: .pubkey, using: keypair)
+        valuesForPrivateTags(from: content, withName: .pubkey, using: keypair)
     }
     
     /// The privately muted event ids (threads).
+    /// - Parameter keypair: The keypair with which to decrypt the content.
+    /// - Returns: The event ids.
     public func privateEventIds(using keypair: Keypair) -> [String] {
-        privateTags(withName: .event, using: keypair)
+        valuesForPrivateTags(from: content, withName: .event, using: keypair)
     }
     
     /// The privately muted hashtags.
     public func privateHashtags(using keypair: Keypair) -> [String] {
-        privateTags(withName: .hashtag, using: keypair)
+        valuesForPrivateTags(from: content, withName: .hashtag, using: keypair)
     }
     
     /// The privately muted keywords.
     public func privateKeywords(using keypair: Keypair) -> [String] {
-        privateTags(withName: .word, using: keypair)
-    }
-    
-    private func privateTags(withName tagName: TagName, using keypair: Keypair) -> [String] {
-        privateTags(using: keypair).filter { $0.name == tagName.rawValue }.map { $0.value }
-    }
-    
-    /// The private tags encrypted in the content of the event.
-    /// - Parameter keypair: The keypair to use to decrypt the content.
-    /// - Returns: The private tags.
-    func privateTags(using keypair: Keypair) -> [Tag] {
-        guard let decryptedContent = try? decrypt(encryptedContent: content, privateKey: keypair.privateKey, publicKey: keypair.publicKey),
-              let jsonData = decryptedContent.data(using: .utf8) else {
-            return []
-        }
-        
-        let tags = try? JSONDecoder().decode([Tag].self, from: jsonData)
-        return tags ?? []
+        valuesForPrivateTags(from: content, withName: .word, using: keypair)
     }
 }

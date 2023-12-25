@@ -212,6 +212,10 @@ extension Tag {
     static func pubkey(_ pubkey: String, otherParameters: [String] = []) -> Tag {
         Tag(name: .pubkey, value: pubkey, otherParameters: otherParameters)
     }
+    
+    static func link(_ url: URL) -> Tag {
+        Tag(name: .webURL, value: url.absoluteString)
+    }
 }
 
 extension Tag: CustomDebugStringConvertible {
