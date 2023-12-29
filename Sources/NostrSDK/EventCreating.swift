@@ -56,13 +56,8 @@ public extension EventCreating {
     ///
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
     func recommendServerEvent(withRelayURL relayURL: URL, signedBy keypair: Keypair) throws -> RecommendServerEvent {
-        do {
-            try validateRelayURL(relayURL)
-        } catch {
-            throw EventCreatingError.invalidInput
-        }
-
-        return try RecommendServerEvent(content: relayURL.absoluteString, signedBy: keypair)
+        let validatedRelayURL = try validateRelayURL(relayURL)
+        return try RecommendServerEvent(content: validatedRelayURL.absoluteString, signedBy: keypair)
     }
     
     /// Creates a ``FollowListEvent`` (kind 3) following the provided pubkeys and signs it with the provided ``Keypair``.

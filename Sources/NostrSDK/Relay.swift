@@ -107,8 +107,8 @@ public final class Relay: ObservableObject, EventVerifying {
     ///
     /// > Important: The url must have a websocket scheme (e.g. "wss" or "ws").
     public init(url: URL) throws {
-        try RelayURLValidator.shared.validateRelayURL(url)
-        
+        let _ = try RelayURLValidator.shared.validateRelayURL(url)
+
         socket = WebSocket(url)
         socketSubscription = socket.subject
             .sink { [weak self] event in
