@@ -103,11 +103,8 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
 
         let otherParameters: [String]
         if let relayURL {
-            guard (try? RelayURLValidator.shared.validateRelayURL(relayURL)) != nil else {
-                throw EventCoordinatesError.invalidInput
-            }
-
-            otherParameters = [relayURL.absoluteString]
+            let validatedURL = try RelayURLValidator.shared.validateRelayURL(relayURL)
+            otherParameters = [validatedURL.absoluteString]
         } else {
             otherParameters = []
         }
