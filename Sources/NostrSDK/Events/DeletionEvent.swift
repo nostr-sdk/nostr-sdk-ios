@@ -33,6 +33,6 @@ public final class DeletionEvent: NostrEvent, EventCoordinatesTagInterpreting {
     
     /// The event ids that the creator requests deletion for.
     public var deletedEventIds: [String] {
-        allValues(forTagName: .event) ?? []
+        allValues(forTagName: .event)
     }
 }

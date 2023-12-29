@@ -26,7 +26,7 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
     
     /// Ids of bookmarked kind-1 notes.
     public var noteIds: [String] {
-        allValues(forTagName: .event) ?? []
+        allValues(forTagName: .event)
     }
     
     /// Tags with bookmarked kind-1 notes. The returned ``Tag`` objects may contain relay information.

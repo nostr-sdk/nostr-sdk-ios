@@ -55,57 +55,6 @@ public enum TagName: String {
     case word
 }
 
-/// A constant that describes a type of reference to an event.
-///
-/// See [NIP-10](https://github.com/nostr-protocol/nips/blob/master/10.md#marked-e-tags-preferred) for a description of marked "e" tags.
-public enum EventTagMarker: Codable, Equatable {
-    /// Denotes the root id of the reply thread being responded to.
-    case root
-    
-    /// Denotes the id of the reply event being responded to.
-    case reply
-    
-    /// Denotes a quoted or reposted event id.
-    case mention
-    
-    /// Denotes an unknown marker type.
-    case unknown(String)
-    
-    init(rawValue: String) {
-        switch rawValue {
-        case "root":
-            self = .root
-        case "reply":
-            self = .reply
-        case "mention":
-            self = .mention
-        default:
-            self = .unknown(rawValue)
-        }
-    }
-    
-    var rawValue: String {
-        switch self {
-        case .root:
-            return "root"
-        case .reply:
-            return "reply"
-        case .mention:
-            return "mention"
-        case .unknown(let id):
-            return id
-        }
-    }
-    
-    public static func == (lhs: EventTagMarker, rhs: EventTagMarker) -> Bool {
-        switch (lhs, rhs) {
-        case (.root, .root), (.reply, .reply), (.mention, .mention): return true
-        case (.unknown(let id1), .unknown(let id2)): return id1 == id2
-        default: return false
-        }
-    }
-}
-
 /// A reference to an event, pubkey, or other content.
 ///
 /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md) for an initial definition of tags.

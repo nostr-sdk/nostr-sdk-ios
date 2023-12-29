@@ -68,7 +68,36 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         try verifyEvent(note)
     }
-    
+
+    func testTextNoteReply() throws {
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
+        let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
+        let mentionedEventTag2 = try XCTUnwrap(EventTag(eventId: "mentionednote2", relayURL: relayURL, marker: .mention))
+        let note = try textNote(withContent: "This is a reply to a note in a thread.", replyTo: noteToReply, mentionedEvents: [mentionedEventTag1, mentionedEventTag2], signedBy: Keypair.test)
+
+        XCTAssertEqual(note.kind, .textNote)
+        XCTAssertEqual(note.content, "This is a reply to a note in a thread.")
+        XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
+
+        let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
+        let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply))
+        let expectedTags: [Tag] = [
+            expectedRootEventTag.tag,
+            mentionedEventTag1.tag,
+            mentionedEventTag2.tag,
+            replyEventTag.tag,
+            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
+            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
+
+        ]
+        XCTAssertEqual(note.tags, expectedTags)
+
+        try verifyEvent(note)
+    }
+
     func testCreateFollowListEvent() throws {
         let pubkeys = [
             "83y9iuhw9u0t8thw8w80u",

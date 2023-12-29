@@ -47,7 +47,7 @@ public final class FollowListEvent: NostrEvent, NonParameterizedReplaceableEvent
     
     /// Pubkeys for followed/known profiles.
     public var followedPubkeys: [String] {
-        allValues(forTagName: .pubkey) ?? []
+        allValues(forTagName: .pubkey)
     }
     
     /// Pubkey tags for followed/known profiles.
