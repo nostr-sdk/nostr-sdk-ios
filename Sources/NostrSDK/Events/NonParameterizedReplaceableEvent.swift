@@ -14,10 +14,6 @@ public extension NonParameterizedReplaceableEvent {
             return nil
         }
 
-        do {
-            return try EventCoordinates(kind: kind, pubkey: publicKey, relayURL: relayURL)
-        } catch {
-            return nil
-        }
+        return try? EventCoordinates(kind: kind, pubkey: publicKey, relayURL: relayURL)
     }
 }
