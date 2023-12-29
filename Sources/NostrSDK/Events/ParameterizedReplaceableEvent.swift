@@ -20,10 +20,6 @@ public extension ParameterizedReplaceableEvent {
             return nil
         }
 
-        do {
-            return try EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
-        } catch {
-            return nil
-        }
+        return try? EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
     }
 }

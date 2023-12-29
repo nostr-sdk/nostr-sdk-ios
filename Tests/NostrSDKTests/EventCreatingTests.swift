@@ -646,7 +646,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let identifier = "family-calendar"
         let title = "Family Calendar"
         let description = "All family events."
-        let eventCoordinates = try XCTUnwrap(EventCoordinates(kind: EventKind.longformContent, pubkey: Keypair.test.publicKey, identifier: "abc"))
+        let eventCoordinates = try XCTUnwrap(EventCoordinates(kind: .longformContent, pubkey: Keypair.test.publicKey, identifier: "abc"))
 
         XCTAssertThrowsError(try calendarListEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [eventCoordinates], signedBy: Keypair.test))
     }
@@ -698,7 +698,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     func testCalendarEventRSVPWithInvalidCalendarEventCoordinatesShouldFail() throws {
         let identifier = "hockey-practice-rsvp"
         let note = "Don't forget your skates!"
-        let eventCoordinates = try XCTUnwrap(EventCoordinates(kind: EventKind.longformContent, pubkey: Keypair.test.publicKey, identifier: "abc"))
+        let eventCoordinates = try XCTUnwrap(EventCoordinates(kind: .longformContent, pubkey: Keypair.test.publicKey, identifier: "abc"))
 
         XCTAssertThrowsError(try calendarEventRSVP(withIdentifier: identifier, calendarEventCoordinates: eventCoordinates, status: .accepted, freebusy: .busy, note: note, signedBy: Keypair.test))
     }
