@@ -17,7 +17,6 @@ final class EventKindTests: XCTestCase {
         XCTAssertTrue(EventKind(rawValue: 19999).isNonParameterizedReplaceable)
 
         XCTAssertFalse(EventKind.textNote.isNonParameterizedReplaceable)
-        XCTAssertFalse(EventKind.recommendServer.isNonParameterizedReplaceable)
         XCTAssertFalse(EventKind(rawValue: 999).isNonParameterizedReplaceable)
         XCTAssertFalse(EventKind(rawValue: 20000).isNonParameterizedReplaceable)
     }
