@@ -60,9 +60,37 @@ final class EventCoordinatesTests: XCTestCase {
         XCTAssertNil(eventCoordinates.relayURL)
     }
 
+    func testInitFailsOnNonReplaceableEvent() throws {
+        XCTAssertThrowsError(
+            try EventCoordinates(
+                kind: .textNote,
+                pubkey: Keypair.test.publicKey
+            )
+        )
+    }
+
+    func testInitFailsOnNonParameterizedReplaceableEventWithIdentifier() throws {
+        XCTAssertThrowsError(
+            try EventCoordinates(
+                kind: .setMetadata,
+                pubkey: Keypair.test.publicKey,
+                identifier: "should-fail"
+            )
+        )
+    }
+
+    func testInitFailsOnParameterizedReplaceableEventWithoutIdentifier() throws {
+        XCTAssertThrowsError(
+            try EventCoordinates(
+                kind: .longformContent,
+                pubkey: Keypair.test.publicKey
+            )
+        )
+    }
+
     func testInitFailsOnInvalidRelayURL() throws {
-        XCTAssertNil(
-            EventCoordinates(
+        XCTAssertThrowsError(
+            try EventCoordinates(
                 kind: .longformContent,
                 pubkey: Keypair.test.publicKey,
                 identifier: "F8SII-G5LDumDZgxGCVQS",

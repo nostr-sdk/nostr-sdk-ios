@@ -11,7 +11,7 @@ import Foundation
 /// event creator would like to delete.
 ///
 /// > Note: [NIP-09 Specification](https://github.com/nostr-protocol/nips/blob/master/09.md)
-public final class DeletionEvent: NostrEvent {
+public final class DeletionEvent: NostrEvent, EventCoordinatesTagInterpreting {
     
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

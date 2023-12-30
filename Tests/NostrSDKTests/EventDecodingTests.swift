@@ -473,11 +473,14 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.content, "All family events.")
 
         let pubkey = try XCTUnwrap(PublicKey(hex: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"))
+        let dateBasedCalendarEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D5EB0A5A-0B36-44DB-95C3-DB51799894E6"))
+        let timeBasedCalendarEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .timeBasedCalendarEvent, pubkey: pubkey, identifier: "1D355ED3-A45D-41A9-B3A5-709211794EFB"))
+
         XCTAssertEqual(
             event.calendarEventCoordinateList,
             [
-                EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D5EB0A5A-0B36-44DB-95C3-DB51799894E6"),
-                EventCoordinates(kind: .timeBasedCalendarEvent, pubkey: pubkey, identifier: "1D355ED3-A45D-41A9-B3A5-709211794EFB")
+                dateBasedCalendarEventCoordinates,
+                timeBasedCalendarEventCoordinates
             ]
         )
     }
@@ -496,7 +499,9 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(event.freebusy, .busy)
 
         let pubkey = try XCTUnwrap(PublicKey(hex: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"))
-        XCTAssertEqual(event.calendarEventCoordinates, EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D1D48740-2CF8-4483-B5F0-1E83F6D7EC50"))
+        let dateBasedCalendarEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D1D48740-2CF8-4483-B5F0-1E83F6D7EC50"))
+
+        XCTAssertEqual(event.calendarEventCoordinates, dateBasedCalendarEventCoordinates)
     }
 
     func testDecodeMuteListEvent() throws {

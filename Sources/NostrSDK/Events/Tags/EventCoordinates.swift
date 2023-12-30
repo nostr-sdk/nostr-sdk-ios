@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum EventCoordinatesError: Error {
+    case invalidInput
+}
+
 /// Coordinates to a (maybe parameterized) replaceable event.
 /// See [NIP-01 Tags](https://github.com/nostr-protocol/nips/blob/master/01.md#tags).
 public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
@@ -86,19 +90,21 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
     }
 
     /// Initializes coordinates to a replaceable event.
+    /// Returns nil if the kind is not a replaceable event kind.
     /// - Parameters:
     ///   - kind: The ``EventKind`` of the referenced replaceable event.
     ///   - pubkey: The pubkey that signed the referenced replaceable event.
-    ///   - identifier: The identifier of the referenced replaceable event.
+    ///   - identifier: The identifier of the referenced replaceable event. Must be `nil` if `kind.isNonParameterizedReplaceable` is `true`. Must not be `nil` if `kind.isParameterizedReplaceable` is `true`.
     ///   - relayURL: A relay in which the referenced replaceable event could be found.
-    public init?(kind: EventKind, pubkey: PublicKey, identifier: String?, relayURL: URL? = nil) {
+    public init?(kind: EventKind, pubkey: PublicKey, identifier: String? = nil, relayURL: URL? = nil) throws {
+        guard (kind.isParameterizedReplaceable && identifier != nil) || (kind.isNonParameterizedReplaceable && identifier == nil) else {
+            throw EventCoordinatesError.invalidInput
+        }
+
         let otherParameters: [String]
         if let relayURL {
-            guard (try? RelayURLValidator.shared.validateRelayURL(relayURL)) != nil else {
-                return nil
-            }
-
-            otherParameters = [relayURL.absoluteString]
+            let validatedURL = try RelayURLValidator.shared.validateRelayURL(relayURL)
+            otherParameters = [validatedURL.absoluteString]
         } else {
             otherParameters = []
         }
@@ -113,8 +119,8 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
     }
 }
 
-public protocol EventCoordinatesInterpreting: NostrEvent {}
-public extension EventCoordinatesInterpreting {
+public protocol EventCoordinatesTagInterpreting: NostrEvent {}
+public extension EventCoordinatesTagInterpreting {
     /// The referenced replaceable event tags of the event.
     var eventCoordinates: [EventCoordinates] {
         tags.filter { $0.name == TagName.eventCoordinates.rawValue }
