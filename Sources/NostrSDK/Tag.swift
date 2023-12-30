@@ -176,6 +176,10 @@ public class Tag: Codable, Equatable {
         value == tag.value &&
         otherParameters == tag.otherParameters
     }
+    
+    var raw: [String] {
+        [name, value] + otherParameters
+    }
 }
 
 /// Shortcuts for creating common tags

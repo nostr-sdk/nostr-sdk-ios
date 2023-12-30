@@ -10,7 +10,7 @@ import Foundation
 /// An event that contains an uncategorized, "global" list of things a user wants to save.
 ///
 /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists).
-public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateTagInterpreting {
+public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateTagInterpreting, ReferenceTagInterpreting, EventCoordinatesInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -31,12 +31,12 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
     
     /// Coordinates of bookmarked articles.
     public var articlesCoordinates: [EventCoordinates] {
-        tags.filter({ $0.name == TagName.eventCoordinates.rawValue }).compactMap { EventCoordinates(eventCoordinatesTag: $0) }
+        eventCoordinates
     }
     
     /// Bookmarked links (web URLs).
     public var links: [URL] {
-        allValues(forTagName: .webURL)?.compactMap { URL(string: $0) } ?? []
+        references
     }
     
     /// The privately bookmarked note ids.

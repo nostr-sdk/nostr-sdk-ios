@@ -301,6 +301,7 @@ public extension EventCreating {
     ///   - privatelyBookmarkedHashtags: Hashtags to privately bookmark.
     ///   - publiclyBookmarkedLinks: Links to bookmark.
     ///   - privatelyBookmarkedLinks: Links to privately bookmark.
+    ///   - keypair: The Keypair to sign with.
     func bookmarksList(withPubliclyBookmarksEventIds publiclyBookmarkedEventIds: [String] = [],
                        privatelyBookmarkedEventIds: [String] = [],
                        publiclyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
@@ -311,37 +312,43 @@ public extension EventCreating {
                        privatelyBookmarkedLinks: [URL] = [],
                        signedBy keypair: Keypair) throws -> BookmarksListEvent {
         var publicTags = [Tag]()
+        publicTags.append(contentsOf: publiclyBookmarkedEventIds.map { .event($0) })
+        publicTags.append(contentsOf: publiclyBookmarkedArticlesCoordinates.map { $0.tag })
+        publicTags.append(contentsOf: publiclyBookmarkedHashtags.map { .hashtag($0) })
+        publicTags.append(contentsOf: publiclyBookmarkedLinks.map { .link($0) })
         
-        for eventId in publiclyBookmarkedEventIds {
-            publicTags.append(.event(eventId))
-        }
-        for coordinates in publiclyBookmarkedArticlesCoordinates {
-            publicTags.append(coordinates.tag)
-        }
-        for hashtag in publiclyBookmarkedHashtags {
-            publicTags.append(.hashtag(hashtag))
-        }
-        for link in publiclyBookmarkedLinks {
-            publicTags.append(Tag(name: .webURL, value: link.absoluteString))
-        }
+        var privateTags = [Tag]()
+        privateTags.append(contentsOf: privatelyBookmarkedEventIds.map { .event($0) })
+        privateTags.append(contentsOf: privatelyBookmarkedArticlesCoordinates.map { $0.tag })
+        privateTags.append(contentsOf: privatelyBookmarkedHashtags.map { .hashtag($0) })
+        privateTags.append(contentsOf: privatelyBookmarkedLinks.map { .link($0) })
         
-        var secretTags = [[String]]()
-        for eventId in privatelyBookmarkedEventIds {
-            secretTags.append([TagName.event.rawValue, eventId])
-        }
-        for coordinates in privatelyBookmarkedArticlesCoordinates {
-            secretTags.append([TagName.eventCoordinates.rawValue, coordinates.tag.value])
-        }
-        for hashtag in privatelyBookmarkedHashtags {
-            secretTags.append([TagName.hashtag.rawValue, hashtag])
-        }
-        for link in privatelyBookmarkedLinks {
-            secretTags.append([TagName.webURL.rawValue, link.absoluteString])
+        return try bookmarksList(withPublicTags: publicTags,
+                                 privateTags: privateTags,
+                                 signedBy: keypair)
+    }
+    
+    /// Creates a ``BookmarksListEvent`` (kind 10003) containing an uncategorized, "global" list of things a user wants to save from the provided tags.
+    /// - Parameters:
+    ///   - publicTags: The public tags to bookmark. May include "e" (event id), "t" (hashtag), "a" (event coordinates), and "r" (reference) tags.
+    ///   - privateTags: The private tags to bookmark. May include "e" (event id), "t" (hashtag), "a" (event coordinates), and "r" (reference) tags.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed event.
+    func bookmarksList(withPublicTags publicTags: [Tag] = [],
+                       privateTags: [Tag] = [],
+                       signedBy keypair: Keypair) throws -> BookmarksListEvent {
+        let validTagNames: Set<TagName> = [.event, .eventCoordinates, .hashtag, .webURL]
+        let validRawTagNames = Set(validTagNames.map { $0.rawValue })
+        let tagNames: Set<String> = Set((publicTags + privateTags).map { $0.name })
+        
+        guard tagNames.isSubset(of: validRawTagNames) else {
+            throw EventCreatingError.invalidInput
         }
         
         var encryptedContent: String?
-        if !secretTags.isEmpty {
-            if let unencryptedData = try? JSONSerialization.data(withJSONObject: secretTags),
+        if !privateTags.isEmpty {
+            let rawPrivateTags = privateTags.map { $0.raw }
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: rawPrivateTags),
                let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
                 encryptedContent = try encrypt(content: unencryptedContent,
                                                privateKey: keypair.privateKey,
