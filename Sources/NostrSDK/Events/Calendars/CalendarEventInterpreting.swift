@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol CalendarEventInterpreting: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, IdentifierTagInterpreting, ReferenceTagInterpreting, TitleTagInterpreting {}
+public protocol CalendarEventInterpreting: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, ParameterizedReplaceableEvent, ReferenceTagInterpreting, TitleTagInterpreting {}
 public extension CalendarEventInterpreting {
     /// The name of the calendar event.
     @available(*, deprecated, message: "This method of naming a calendar event is out of spec, not preferred, and will be removed in the future. Please use only the title field when it is available.")

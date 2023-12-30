@@ -14,7 +14,7 @@ import Foundation
 ///              * MUST NOT support adding HTML to Markdown.
 ///
 /// > Note: [NIP-23 Specification](https://github.com/nostr-protocol/nips/blob/master/23.md)
-public final class LongformContentEvent: NostrEvent, HashtagInterpreting, TitleTagInterpreting {
+public final class LongformContentEvent: NostrEvent, HashtagInterpreting, ParameterizedReplaceableEvent, TitleTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -35,11 +35,6 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting, TitleT
             return nil
         }
         return Date(timeIntervalSince1970: unixSeconds)
-    }
-    
-    /// A unique identifier for the content. Can be reused in the future for replacing the event.
-    var identifier: String? {
-        firstValueForTagName(.identifier)
     }
 
     /// A summary of the content.

@@ -26,7 +26,7 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-06: Basic key derivation from mnemonic seed phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)
 - [ ] [NIP-07: `window.nostr` capability for web browsers](https://github.com/nostr-protocol/nips/blob/master/07.md)
 - [ ] [NIP-08: Handling Mentions](https://github.com/nostr-protocol/nips/blob/master/08.md) --- **unrecommended**: deprecated in favor of [NIP-27](https://github.com/nostr-protocol/nips/blob/master/27.md)
-- [ ] [NIP-09: Event Deletion](https://github.com/nostr-protocol/nips/blob/master/09.md)
+- [x] [NIP-09: Event Deletion](https://github.com/nostr-protocol/nips/blob/master/09.md)
 - [x] [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](https://github.com/nostr-protocol/nips/blob/master/10.md)
 - [x] [NIP-11: Relay Information Document](https://github.com/nostr-protocol/nips/blob/master/11.md)
 - [ ] [NIP-13: Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md)

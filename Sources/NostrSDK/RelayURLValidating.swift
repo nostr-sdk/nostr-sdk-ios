@@ -20,16 +20,15 @@ public extension RelayURLValidating {
             throw URLError(.badURL)
         }
 
-        try validateRelayURL(url)
-
-        return url
+        return try validateRelayURL(url)
     }
 
-    /// Validates that a URL string is well-formatted as a relay URL.
+    /// Validates that a URL is well-formatted as a relay URL and returns it if it is valid.
     /// - Parameters:
-    ///   - relayURLString: The URL string.
+    ///   - relayURL: The URL of the relay.
+    /// - Returns: The ``URL`` of the relay if it is well-formatted.
     /// - Throws: URLError.Code.badURL,  RelayURLError.invalidScheme
-    func validateRelayURL(_ relayURL: URL) throws {
+    func validateRelayURL(_ relayURL: URL) throws -> URL {
         guard let components = URLComponents(url: relayURL, resolvingAgainstBaseURL: false) else {
             throw URLError(.badURL)
         }
@@ -37,6 +36,8 @@ public extension RelayURLValidating {
         guard components.scheme == "wss" || components.scheme == "ws" else {
             throw RelayURLError.invalidScheme
         }
+
+        return relayURL
     }
 }
 
