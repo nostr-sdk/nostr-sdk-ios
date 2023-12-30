@@ -29,6 +29,11 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
         allValues(forTagName: .event) ?? []
     }
     
+    /// Tags with bookmarked kind-1 notes. The returned ``Tag`` objects may contain relay information.
+    public var noteTags: [Tag] {
+        allTags(withTagName: .event)
+    }
+    
     /// Coordinates of bookmarked articles.
     public var articlesCoordinates: [EventCoordinates] {
         eventCoordinates
@@ -44,6 +49,13 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
     /// - Returns: The note ids.
     public func privateNoteIds(using keypair: Keypair) -> [String] {
         valuesForPrivateTags(from: content, withName: .event, using: keypair)
+    }
+    
+    /// The privately bookmarked note tags. The returned ``Tag`` objects may contain relay information.
+    /// - Parameter keypair: The keypair with which to decrypt the content.
+    /// - Returns: The note tags.
+    public func privateNoteTags(using keypair: Keypair) -> [Tag] {
+        privateTags(from: content, withName: .event, using: keypair)
     }
     
     /// The privately bookmarked articles coordinates.

@@ -442,6 +442,9 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(bookmarks.privateLinks(using: .test), [URL(string: "https://www.private.net")!])
         XCTAssertEqual(bookmarks.privateArticlesCoordinates(using: .test), [privateCoordinates])
         
+        XCTAssertEqual(bookmarks.noteTags, [Tag.event("test-id", otherParameters: ["wss://relay.com"])])
+        XCTAssertEqual(bookmarks.privateNoteTags(using: .test), [Tag.event("test-id-private", otherParameters: ["wss://relay.com"])])
+        
         try verifyEvent(bookmarks)
     }
     
