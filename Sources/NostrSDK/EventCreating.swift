@@ -47,19 +47,7 @@ public extension EventCreating {
         }
         return try TextNoteEvent(content: content, tags: tags, signedBy: keypair)
     }
-    
-    /// Creates a ``RecommendServerEvent`` (kind 2) and signs it with the provided ``Keypair``.
-    /// - Parameters:
-    ///   - relayURL: The URL of the relay, which must be a websocket URL.
-    ///   - keypair: The Keypair to sign with.
-    /// - Returns: The signed ``RecommendServerEvent``.
-    ///
-    /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
-    func recommendServerEvent(withRelayURL relayURL: URL, signedBy keypair: Keypair) throws -> RecommendServerEvent {
-        let validatedRelayURL = try validateRelayURL(relayURL)
-        return try RecommendServerEvent(content: validatedRelayURL.absoluteString, signedBy: keypair)
-    }
-    
+
     /// Creates a ``FollowListEvent`` (kind 3) following the provided pubkeys and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - pubkeys: The pubkeys of followed/known profiles to add to the follow list, in hex format.

@@ -69,25 +69,6 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         try verifyEvent(note)
     }
     
-    func testCreateRecommendServerEvent() throws {
-        let inputURL = URL(string: "wss://relay.test")!
-        let event = try recommendServerEvent(withRelayURL: inputURL,
-                                             signedBy: Keypair.test)
-        
-        XCTAssertEqual(event.kind, .recommendServer)
-        XCTAssertEqual(event.relayURL, inputURL)
-        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
-        XCTAssertEqual(event.tags, [])
-        
-        try verifyEvent(event)
-    }
-    
-    func testRecommendServerEventFailsWithNonWebsocketURL() throws {
-        let inputURL = URL(string: "https://not-a-socket.com")!
-        XCTAssertThrowsError(try recommendServerEvent(withRelayURL: inputURL,
-                                                      signedBy: Keypair.test))
-    }
-    
     func testCreateFollowListEvent() throws {
         let pubkeys = [
             "83y9iuhw9u0t8thw8w80u",
@@ -266,20 +247,20 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testRepostNonTextNoteEvent() throws {
-        let eventToRepost: RecommendServerEvent = try decodeFixture(filename: "recommend_server")
-        
+        let eventToRepost: LongformContentEvent = try decodeFixture(filename: "longform")
+
         let repostEvent = try repost(event: eventToRepost, signedBy: Keypair.test)
         XCTAssertFalse(repostEvent is TextNoteRepostEvent)
         XCTAssertEqual(repostEvent.kind, .genericRepost)
         
-        XCTAssertTrue(repostEvent.tags.contains(.pubkey("test-pubkey")))
-        XCTAssertTrue(repostEvent.tags.contains(.event("test-id")))
-        XCTAssertTrue(repostEvent.tags.contains(.kind(.recommendServer)))
+        XCTAssertTrue(repostEvent.tags.contains(.pubkey("7489688c05bb72112dd82d54fdbf26bb5f03e1de48e97861d8fce294a2f16946")))
+        XCTAssertTrue(repostEvent.tags.contains(.event("8f4b2477881ec73c824410610709163f6a4e8fda067de8c4bbd0a9e337901eac")))
+        XCTAssertTrue(repostEvent.tags.contains(.kind(.longformContent)))
         
         let repostedEvent = try XCTUnwrap(repostEvent.repostedEvent)
-        XCTAssertEqual(repostedEvent.id, "test-id")
-        XCTAssertEqual(repostedEvent.pubkey, "test-pubkey")
-        XCTAssertEqual(repostedEvent.createdAt, 1683799330)
+        XCTAssertEqual(repostedEvent.id, "8f4b2477881ec73c824410610709163f6a4e8fda067de8c4bbd0a9e337901eac")
+        XCTAssertEqual(repostedEvent.pubkey, "7489688c05bb72112dd82d54fdbf26bb5f03e1de48e97861d8fce294a2f16946")
+        XCTAssertEqual(repostedEvent.createdAt, 1700532108)
         
         try verifyEvent(repostEvent)
     }

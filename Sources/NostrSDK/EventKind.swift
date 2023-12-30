@@ -22,11 +22,6 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
     case textNote
     
-    /// The content is set to the URL (e.g., wss://somerelay.com) of a relay the event creator wants to recommend to its followers.
-    ///
-    /// See [NIP-01 - Basic Event Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#basic-event-kinds)
-    case recommendServer
-    
     /// This kind of event should have a list of p tags, one for each of the followed/known profiles one is following.
     /// > Note: The `content` can be anything and should be ignored.
     ///
@@ -103,7 +98,6 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     static public let allCases: AllCases = [
         .setMetadata,
         .textNote,
-        .recommendServer,
         .followList,
         .directMessage,
         .deletion,
@@ -128,7 +122,6 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
         switch self {
         case .setMetadata: return 0
         case .textNote: return 1
-        case .recommendServer: return 2
         case .followList: return 3
         case .directMessage: return 4
         case .deletion: return 5

@@ -180,21 +180,6 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(try event.decryptedContent(using: Keypair.test.privateKey), "Secret message.")
     }
     
-    func testDecodeRecommendServer() throws {
-        
-        let event: RecommendServerEvent = try decodeFixture(filename: "recommend_server")
-        
-        XCTAssertEqual(event.id, "test-id")
-        XCTAssertEqual(event.pubkey, "test-pubkey")
-        XCTAssertEqual(event.createdAt, 1683799330)
-        XCTAssertEqual(event.kind, .recommendServer)
-        XCTAssertEqual(event.tags, [])
-        XCTAssertEqual(event.content, "wss://nostr.relay")
-        XCTAssertEqual(event.signature, "test-signature")
-
-        XCTAssertEqual(event.relayURL, URL(string: "wss://nostr.relay"))
-    }
-    
     func testDecodeFollowList() throws {
 
         let event: FollowListEvent = try decodeFixture(filename: "follow_list")
@@ -267,15 +252,15 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
     func testDecodeGenericRepost() throws {
         
         let event: GenericRepostEvent = try decodeFixture(filename: "generic_repost")
-        
-        XCTAssertEqual(event.repostedEventPubkey, "reposted-event-pubkey")
-        XCTAssertEqual(event.repostedEventId, "test-id")
+
+        XCTAssertEqual(event.repostedEventPubkey, "7489688c05bb72112dd82d54fdbf26bb5f03e1de48e97861d8fce294a2f16946")
+        XCTAssertEqual(event.repostedEventId, "8f4b2477881ec73c824410610709163f6a4e8fda067de8c4bbd0a9e337901eac")
         XCTAssertEqual(event.repostedEventRelayURL?.absoluteString, "wss://reposted.relay")
 
         let repostedEvent = try XCTUnwrap(event.repostedEvent)
         
-        XCTAssertEqual(repostedEvent.id, "test-id")
-        XCTAssertEqual(repostedEvent.kind, .recommendServer)
+        XCTAssertEqual(repostedEvent.id, "8f4b2477881ec73c824410610709163f6a4e8fda067de8c4bbd0a9e337901eac")
+        XCTAssertEqual(repostedEvent.kind, .longformContent)
     }
 
     func testDecodeReaction() throws {
