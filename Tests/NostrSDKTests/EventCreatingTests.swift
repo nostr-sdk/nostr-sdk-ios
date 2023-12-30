@@ -411,6 +411,44 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         try verifyEvent(event)
     }
     
+    func testCreateBookmarkList() throws {
+        let publicCoordinates = try XCTUnwrap(try EventCoordinates(kind: .longformContent, pubkey: Keypair.test.publicKey, identifier: "the-public-one"))
+        let publicTags: [Tag] = [
+            .event("test-id", otherParameters: ["wss://relay.com"]),
+            .hashtag("nostra"),
+            .link(URL(string: "https://www.nostr.com")!),
+            publicCoordinates.tag
+        ]
+        
+        let privateCoordinates = try XCTUnwrap(try EventCoordinates(kind: .longformContent, pubkey: Keypair.test.publicKey, identifier: "the-private-one"))
+        let privateTags: [Tag] = [
+            .event("test-id-private", otherParameters: ["wss://relay.com"]),
+            .hashtag("noster"),
+            .link(URL(string: "https://www.private.net")!),
+            privateCoordinates.tag
+        ]
+        
+        let bookmarks = try bookmarksList(withPublicTags: publicTags,
+                                          privateTags: privateTags,
+                                          signedBy: .test)
+        
+        XCTAssertEqual(bookmarks.noteIds, ["test-id"])
+        XCTAssertEqual(bookmarks.hashtags, ["nostra"])
+        XCTAssertEqual(bookmarks.links, [URL(string: "https://www.nostr.com")!])
+        XCTAssertEqual(bookmarks.articlesCoordinates, [publicCoordinates])
+        
+        XCTAssertEqual(bookmarks.privateNoteIds(using: .test), ["test-id-private"])
+        XCTAssertEqual(bookmarks.privateHashtags(using: .test), ["noster"])
+        XCTAssertEqual(bookmarks.privateLinks(using: .test), [URL(string: "https://www.private.net")!])
+        XCTAssertEqual(bookmarks.privateArticlesCoordinates(using: .test), [privateCoordinates])
+        
+        try verifyEvent(bookmarks)
+    }
+    
+    func testCreateBookmarkListFailsWithUnexpectedTag() throws {
+        XCTAssertThrowsError(try bookmarksList(withPublicTags: [Tag(name: .title, value: "hello world")], signedBy: .test))
+    }
+    
     func testLongformContentEvent() throws {
         let identifier = "my-blog-post"
         let title = "My Blog Post"
