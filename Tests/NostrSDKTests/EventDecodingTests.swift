@@ -532,7 +532,7 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         
         XCTAssertTrue(event.noteIds.contains("be8567dc210986fe5dc0ad04e02a8850b3b86e1d30c0ab674d102f0eefa68921"))
         XCTAssertTrue(event.hashtags.contains("up"))
-        XCTAssertTrue(event.references.contains(URL(string: "https://nostr.com/")!))
+        XCTAssertTrue(event.links.contains(URL(string: "https://nostr.com/")!))
         let coordinates = try XCTUnwrap(EventCoordinates(kind: .longformContent,
                                                          pubkey: PublicKey(hex: "599f67f7df7694c603a6d0636e15ebc610db77dcfd47d6e5d05386d821fb3ea9")!,
                                                          identifier: "1700730909108",

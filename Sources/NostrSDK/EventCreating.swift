@@ -250,38 +250,20 @@ public extension EventCreating {
                   publiclyMutedKeywords: [String] = [],
                   privatelyMutedKeywords: [String] = [],
                   signedBy keypair: Keypair) throws -> MuteListEvent {
-        var publicTags = [Tag]()
+        let publicTags: [Tag] = publiclyMutedPubkeys.map { .pubkey($0) } +
+                                publiclyMutedEventIds.map { .event($0) } +
+                                publiclyMutedHashtags.map { .hashtag($0) } +
+                                publiclyMutedKeywords.map { Tag(name: .word, value: $0) }
         
-        for pubkey in publiclyMutedPubkeys {
-            publicTags.append(.pubkey(pubkey))
-        }
-        for eventId in publiclyMutedEventIds {
-            publicTags.append(.event(eventId))
-        }
-        for hashtag in publiclyMutedHashtags {
-            publicTags.append(.hashtag(hashtag))
-        }
-        for keyword in publiclyMutedKeywords {
-            publicTags.append(Tag(name: .word, value: keyword))
-        }
-        
-        var secretTags = [[String]]()
-        for pubkey in privatelyMutedPubkeys {
-            secretTags.append([TagName.pubkey.rawValue, pubkey])
-        }
-        for eventId in privatelyMutedEventIds {
-            secretTags.append([TagName.event.rawValue, eventId])
-        }
-        for hashtag in privatelyMutedHashtags {
-            secretTags.append([TagName.hashtag.rawValue, hashtag])
-        }
-        for keyword in privatelyMutedKeywords {
-            secretTags.append([TagName.word.rawValue, keyword])
-        }
+        let privateTags: [Tag] = privatelyMutedPubkeys.map { .pubkey($0) } +
+                                 privatelyMutedEventIds.map { .event($0) } +
+                                 privatelyMutedHashtags.map { .hashtag($0) } +
+                                 privatelyMutedKeywords.map { Tag(name: .word, value: $0) }
         
         var encryptedContent: String?
-        if !secretTags.isEmpty {
-            if let unencryptedData = try? JSONSerialization.data(withJSONObject: secretTags),
+        if !privateTags.isEmpty {
+            let rawPrivateTags = privateTags.map { $0.raw }
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: rawPrivateTags),
                let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
                 encryptedContent = try encrypt(content: unencryptedContent,
                                                privateKey: keypair.privateKey,
@@ -312,17 +294,15 @@ public extension EventCreating {
                        publiclyBookmarkedLinks: [URL] = [],
                        privatelyBookmarkedLinks: [URL] = [],
                        signedBy keypair: Keypair) throws -> BookmarksListEvent {
-        var publicTags = [Tag]()
-        publicTags.append(contentsOf: publiclyBookmarkedEventIds.map { .event($0) })
-        publicTags.append(contentsOf: publiclyBookmarkedArticlesCoordinates.map { $0.tag })
-        publicTags.append(contentsOf: publiclyBookmarkedHashtags.map { .hashtag($0) })
-        publicTags.append(contentsOf: publiclyBookmarkedLinks.map { .link($0) })
+        let publicTags: [Tag] = publiclyBookmarkedEventIds.map { .event($0) } +
+                                publiclyBookmarkedArticlesCoordinates.map { $0.tag } +
+                                publiclyBookmarkedHashtags.map { .hashtag($0) } +
+                                publiclyBookmarkedLinks.map { .link($0) }
         
-        var privateTags = [Tag]()
-        privateTags.append(contentsOf: privatelyBookmarkedEventIds.map { .event($0) })
-        privateTags.append(contentsOf: privatelyBookmarkedArticlesCoordinates.map { $0.tag })
-        privateTags.append(contentsOf: privatelyBookmarkedHashtags.map { .hashtag($0) })
-        privateTags.append(contentsOf: privatelyBookmarkedLinks.map { .link($0) })
+        let privateTags: [Tag] = privatelyBookmarkedEventIds.map { .event($0) } +
+                                 privatelyBookmarkedArticlesCoordinates.map { $0.tag } +
+                                 privatelyBookmarkedHashtags.map { .hashtag($0) } +
+                                 privatelyBookmarkedLinks.map { .link($0) }
         
         return try bookmarksList(withPublicTags: publicTags,
                                  privateTags: privateTags,

@@ -177,6 +177,11 @@ public class Tag: Codable, Equatable {
         otherParameters == tag.otherParameters
     }
     
+    /// The raw format of a tag, which can be serialized and transmitted.
+    ///
+    /// For example:
+    /// An "e" tag (event tag), has a 32-byte event id as the first value and can optionally have a relay URL after that. So its raw value would look like:
+    /// [ "e", "1dc8b913d9d4f50a71182dc9232996d6fbc69e8c955866e43ef2c2e35185bbfa", "wss://www.relay.com" ]
     var raw: [String] {
         [name, value] + otherParameters
     }
