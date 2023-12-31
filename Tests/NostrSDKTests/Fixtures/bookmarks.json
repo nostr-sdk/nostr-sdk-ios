@@ -1,0 +1,31 @@
+{
+  "created_at": 1703464264,
+  "content": "DsoNDQY6jpgSZP5hp4To1UPZj+al2TqW0uuKyUEu7bAgdH9OIfUQZVBKDpnilqSiHeEjCT5am8pz3gP0agLBQFa0LtDtvVRkpnsPXDOtor9xzFnvn1kZe4t+xIZy+BaLLkyENYXrKMBqez86jFppyx55je61MPLz6h2FV56usROar9Wx+CN7ObawFFWU2mJnjly36JzcAm1Pj8VUUmmXe0WsYEfiMzz1dRDqgpk8KFQENUlc1X6rOEsbFkUVaRCL/leAvGw8VIat7KkO6WaNE18iEGQydEYGOINy9qADKEZ+cX65V8+CG88y7r21iukq?iv=ZkqidCJFJujZQaiS4gNOYw==",
+  "tags": [
+    [
+      "t",
+      "up"
+    ],
+    [
+      "r",
+      "https://nostr.com/"
+    ],
+    [
+      "e",
+      "be8567dc210986fe5dc0ad04e02a8850b3b86e1d30c0ab674d102f0eefa68921"
+    ],
+    [
+      "a",
+      "30023:599f67f7df7694c603a6d0636e15ebc610db77dcfd47d6e5d05386d821fb3ea9:1700730909108",
+      "wss://relay.nostr.band"
+    ],
+    [
+      "title",
+      "Bookmarks"
+    ]
+  ],
+  "kind": 10003,
+  "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+  "id": "60cf106df8f7e4437db3119f3795607961d9b764a622eca67d97db60ee1313d8",
+  "sig": "test"
+}

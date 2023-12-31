@@ -500,11 +500,33 @@ final class EventDecodingTests: XCTestCase, FixtureLoading {
         XCTAssertTrue(event.tags.contains(.hashtag("testing")))
         XCTAssertTrue(event.tags.contains(.hashtag("test2")))
         
-        let secretTags = event.privateTags(using: .test)
-        XCTAssertTrue(secretTags.contains(.pubkey("6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93")))
-        XCTAssertTrue(secretTags.contains(.hashtag("sportsball")))
-        XCTAssertTrue(secretTags.contains(.hashtag("footstr")))
+        let privateTags = event.privateTags(using: .test)
+        XCTAssertTrue(privateTags.contains(.pubkey("6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93")))
+        XCTAssertTrue(privateTags.contains(.hashtag("sportsball")))
+        XCTAssertTrue(privateTags.contains(.hashtag("footstr")))
         
         XCTAssertEqual(event.privateHashtags(using: .test), ["sportsball", "footstr"])
+    }
+    
+    func testDecodeBookmarksListEvent() throws {
+        let event: BookmarksListEvent = try decodeFixture(filename: "bookmarks")
+        
+        XCTAssertEqual(event.id, "60cf106df8f7e4437db3119f3795607961d9b764a622eca67d97db60ee1313d8")
+        XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
+        XCTAssertEqual(event.kind, .bookmarksList)
+        
+        XCTAssertTrue(event.noteIds.contains("be8567dc210986fe5dc0ad04e02a8850b3b86e1d30c0ab674d102f0eefa68921"))
+        XCTAssertTrue(event.hashtags.contains("up"))
+        XCTAssertTrue(event.links.contains(URL(string: "https://nostr.com/")!))
+        let coordinates = try XCTUnwrap(EventCoordinates(kind: .longformContent,
+                                                         pubkey: PublicKey(hex: "599f67f7df7694c603a6d0636e15ebc610db77dcfd47d6e5d05386d821fb3ea9")!,
+                                                         identifier: "1700730909108",
+                                                         relayURL: URL(string: "wss://relay.nostr.band")))
+        XCTAssertTrue(event.articlesCoordinates.contains(coordinates))
+        
+        XCTAssertTrue(event.privateNoteIds(using: .test).contains("65eff7eb588f169789026d2915c1fe6aaa3be0b855cebeb32b727f68c54c5a64"))
+        XCTAssertTrue(event.privateHashtags(using: .test).contains("down"))
+        XCTAssertTrue(event.privateLinks(using: .test).contains(URL(string: "https://www.apple.com/")!))
+        XCTAssertTrue(event.privateArticlesCoordinates(using: .test).contains(coordinates))
     }
 }

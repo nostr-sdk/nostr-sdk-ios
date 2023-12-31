@@ -67,12 +67,12 @@ public class NostrEvent: Codable {
         signature = try keypair.privateKey.signatureForContent(id)
     }
     
-    /// the date the event was created
+    /// The date the event was created.
     public var createdDate: Date {
         Date(timeIntervalSince1970: TimeInterval(createdAt))
     }
     
-    /// the event serialized, so that it can be signed
+    /// The event serialized, so that it can be signed.
     public var serialized: String {
         EventSerializer.serializedEvent(withPubkey: pubkey,
                                         createdAt: createdAt,
@@ -81,7 +81,7 @@ public class NostrEvent: Codable {
                                         content: content)
     }
     
-    /// the event.id calculated as a SHA256 of the serialized event. See ``EventSerializer``.
+    /// The event.id calculated as a SHA256 of the serialized event. See ``EventSerializer``.
     public var calculatedId: String {
         EventSerializer.identifierForEvent(withPubkey: pubkey,
                                            createdAt: createdAt,
@@ -90,17 +90,22 @@ public class NostrEvent: Codable {
                                            content: content)
     }
     
-    /// the first String value for the provided ``TagName``, if it exists
+    /// All tags with the provided name.
+    public func allTags(withTagName tagName: TagName) -> [Tag] {
+        tags.filter { $0.name == tagName.rawValue }
+    }
+    
+    /// The first String value for the provided ``TagName``, if it exists.
     public func firstValueForTagName(_ tag: TagName) -> String? {
         firstValueForRawTagName(tag.rawValue)
     }
     
-    /// the first String value for the provided raw tag name, if it exists
+    /// The first String value for the provided raw tag name, if it exists.
     public func firstValueForRawTagName(_ tagName: String) -> String? {
         tags.first(where: { $0.name == tagName })?.value
     }
     
-    /// All tags with the provided name.
+    /// All values for tags with the provided name.
     /// - Parameter tag: The tag name to filter.
     /// - Returns: The values associated with the tags of the provided name.
     public func allValues(forTagName tag: TagName) -> [String]? {
