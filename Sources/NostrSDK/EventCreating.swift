@@ -220,13 +220,13 @@ public extension EventCreating {
     /// Creates a ``MuteListEvent`` (kind 10000) containing things the user doesn't want to see in their feeds. Mute list items be publicly visible or private.
     /// - Parameters:
     ///   - publiclyMutedPubkeys: Pubkeys to mute.
-    ///   - privatelyMutedPubkeys: Pubkeys to secretly mute.
+    ///   - privatelyMutedPubkeys: Pubkeys to privately mute.
     ///   - publiclyMutedEventIds: Event ids to mute.
-    ///   - privatelyMutedEventIds: Event ids to secretly mute.
+    ///   - privatelyMutedEventIds: Event ids to privately mute.
     ///   - publiclyMutedHashtags: Hashtags to mute.
-    ///   - privatelyMutedHashtags: Hashtags to secretly mute.
+    ///   - privatelyMutedHashtags: Hashtags to privately mute.
     ///   - publiclyMutedKeywords: Keywords to mute.
-    ///   - privatelyMutedKeywords: Keywords to secretly mute.
+    ///   - privatelyMutedKeywords: Keywords to privately mute.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``MuteListEvent``.
     func muteList(withPubliclyMutedPubkeys publiclyMutedPubkeys: [String] = [],
@@ -238,38 +238,20 @@ public extension EventCreating {
                   publiclyMutedKeywords: [String] = [],
                   privatelyMutedKeywords: [String] = [],
                   signedBy keypair: Keypair) throws -> MuteListEvent {
-        var publicTags = [Tag]()
+        let publicTags: [Tag] = publiclyMutedPubkeys.map { .pubkey($0) } +
+                                publiclyMutedEventIds.map { .event($0) } +
+                                publiclyMutedHashtags.map { .hashtag($0) } +
+                                publiclyMutedKeywords.map { Tag(name: .word, value: $0) }
         
-        for pubkey in publiclyMutedPubkeys {
-            publicTags.append(.pubkey(pubkey))
-        }
-        for eventId in publiclyMutedEventIds {
-            publicTags.append(.event(eventId))
-        }
-        for hashtag in publiclyMutedHashtags {
-            publicTags.append(.hashtag(hashtag))
-        }
-        for keyword in publiclyMutedKeywords {
-            publicTags.append(Tag(name: .word, value: keyword))
-        }
-        
-        var secretTags = [[String]]()
-        for pubkey in privatelyMutedPubkeys {
-            secretTags.append([TagName.pubkey.rawValue, pubkey])
-        }
-        for eventId in privatelyMutedEventIds {
-            secretTags.append([TagName.event.rawValue, eventId])
-        }
-        for hashtag in privatelyMutedHashtags {
-            secretTags.append([TagName.hashtag.rawValue, hashtag])
-        }
-        for keyword in privatelyMutedKeywords {
-            secretTags.append([TagName.word.rawValue, keyword])
-        }
+        let privateTags: [Tag] = privatelyMutedPubkeys.map { .pubkey($0) } +
+                                 privatelyMutedEventIds.map { .event($0) } +
+                                 privatelyMutedHashtags.map { .hashtag($0) } +
+                                 privatelyMutedKeywords.map { Tag(name: .word, value: $0) }
         
         var encryptedContent: String?
-        if !secretTags.isEmpty {
-            if let unencryptedData = try? JSONSerialization.data(withJSONObject: secretTags),
+        if !privateTags.isEmpty {
+            let rawPrivateTags = privateTags.map { $0.raw }
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: rawPrivateTags),
                let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
                 encryptedContent = try encrypt(content: unencryptedContent,
                                                privateKey: keypair.privateKey,
@@ -278,6 +260,72 @@ public extension EventCreating {
         }
         
         return try MuteListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
+    }
+    
+    /// Creates a ``BookmarksListEvent`` (kind 10003) containing an uncategorized, "global" list of things a user wants to save.
+    /// - Parameters:
+    ///   - publiclyBookmarkedEventIds: Event ids to bookmark.
+    ///   - privatelyBookmarkedEventIds: Event ids to privately bookmark.
+    ///   - publiclyBookmarkedArticlesCoordinates: Articles coordinates to bookmark.
+    ///   - privatelyBookmarkedArticlesCoordinates: Articles coordinates to privately bookmark.
+    ///   - publiclyBookmarkedHashtags: Hashtags to bookmark.
+    ///   - privatelyBookmarkedHashtags: Hashtags to privately bookmark.
+    ///   - publiclyBookmarkedLinks: Links to bookmark.
+    ///   - privatelyBookmarkedLinks: Links to privately bookmark.
+    ///   - keypair: The Keypair to sign with.
+    func bookmarksList(withPubliclyBookmarksEventIds publiclyBookmarkedEventIds: [String] = [],
+                       privatelyBookmarkedEventIds: [String] = [],
+                       publiclyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
+                       privatelyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
+                       publiclyBookmarkedHashtags: [String] = [],
+                       privatelyBookmarkedHashtags: [String] = [],
+                       publiclyBookmarkedLinks: [URL] = [],
+                       privatelyBookmarkedLinks: [URL] = [],
+                       signedBy keypair: Keypair) throws -> BookmarksListEvent {
+        let publicTags: [Tag] = publiclyBookmarkedEventIds.map { .event($0) } +
+                                publiclyBookmarkedArticlesCoordinates.map { $0.tag } +
+                                publiclyBookmarkedHashtags.map { .hashtag($0) } +
+                                publiclyBookmarkedLinks.map { .link($0) }
+        
+        let privateTags: [Tag] = privatelyBookmarkedEventIds.map { .event($0) } +
+                                 privatelyBookmarkedArticlesCoordinates.map { $0.tag } +
+                                 privatelyBookmarkedHashtags.map { .hashtag($0) } +
+                                 privatelyBookmarkedLinks.map { .link($0) }
+        
+        return try bookmarksList(withPublicTags: publicTags,
+                                 privateTags: privateTags,
+                                 signedBy: keypair)
+    }
+    
+    /// Creates a ``BookmarksListEvent`` (kind 10003) containing an uncategorized, "global" list of things a user wants to save from the provided tags.
+    /// - Parameters:
+    ///   - publicTags: The public tags to bookmark. May include "e" (event id), "t" (hashtag), "a" (event coordinates), and "r" (reference) tags.
+    ///   - privateTags: The private tags to bookmark. May include "e" (event id), "t" (hashtag), "a" (event coordinates), and "r" (reference) tags.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed event.
+    func bookmarksList(withPublicTags publicTags: [Tag] = [],
+                       privateTags: [Tag] = [],
+                       signedBy keypair: Keypair) throws -> BookmarksListEvent {
+        let validTagNames: Set<TagName> = [.event, .eventCoordinates, .hashtag, .webURL]
+        let validRawTagNames = Set(validTagNames.map { $0.rawValue })
+        let tagNames: Set<String> = Set((publicTags + privateTags).map { $0.name })
+        
+        guard tagNames.isSubset(of: validRawTagNames) else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        var encryptedContent: String?
+        if !privateTags.isEmpty {
+            let rawPrivateTags = privateTags.map { $0.raw }
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: rawPrivateTags),
+               let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
+                encryptedContent = try encrypt(content: unencryptedContent,
+                                               privateKey: keypair.privateKey,
+                                               publicKey: keypair.publicKey)
+            }
+        }
+        
+        return try BookmarksListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
     }
     
     /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".
