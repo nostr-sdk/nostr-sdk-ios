@@ -5,20 +5,25 @@
 //  Created by Bryan Montz on 12/31/23.
 //
 
+import Combine
 import Foundation
 import os.log
 
 /// An object that manages a set of relays.
 /// Send events and messages to all the relays in the pool.
-public final class RelayPool: RelayDelegate, RelayOperating {
+public final class RelayPool: ObservableObject, RelayDelegate, RelayOperating {
     
     /// The set of relays.
     public private(set) var relays = Set<Relay>()
+    
+    /// A Publisher that publishes all events from all relays.
+    @Published public private(set) var events = PassthroughSubject<RelayEvent, Never>()
     
     /// A delegate to receive events and state changes.
     public weak var delegate: RelayDelegate?
     
     private let logger = Logger(subsystem: "NostrSDK", category: "RelayPool")
+    private var cancellable: AnyCancellable?
     
     public init(relays: Set<Relay> = [], delegate: RelayDelegate? = nil) {
         self.relays = relays
@@ -33,11 +38,20 @@ public final class RelayPool: RelayDelegate, RelayOperating {
     
     private func setUpRelays() {
         relays.forEach { setUpRelay($0) }
+        updateEventsPublisher()
     }
     
     private func setUpRelay(_ relay: Relay) {
         relay.delegate = self
         relay.connect()
+    }
+    
+    private func updateEventsPublisher() {
+        let mergedEvents = Publishers.MergeMany(relays.map { $0.events })
+        cancellable = mergedEvents
+            .sink { [weak self] event in
+                self?.events.send(event)
+            }
     }
     
     /// Adds a relay to the pool, if a matching one is not already there (based on relay URL).
@@ -52,6 +66,7 @@ public final class RelayPool: RelayDelegate, RelayOperating {
         
         relays.insert(relay)
         setUpRelay(relay)
+        updateEventsPublisher()
     }
     
     /// Removes a relay from the pool, if a matching one is found (based on relay URL).
@@ -60,6 +75,7 @@ public final class RelayPool: RelayDelegate, RelayOperating {
     /// > Note: The relay connection will be automatically closed.
     public func remove(relay: Relay) {
         removeRelay(withURL: relay.url)
+        updateEventsPublisher()
     }
     
     /// Removes a relay from the pool, if one with a matching URL is found.

@@ -48,6 +48,7 @@ public protocol RelayOperating {
     func subscribe(with filter: Filter, subscriptionId: String) throws -> String
     func closeSubscription(with subscriptionId: String) throws
     func publishEvent(_ event: NostrEvent) throws
+    var events: PassthroughSubject<RelayEvent, Never> { get }
 }
 
 /// An optional interface for receiving state updates and events
@@ -63,7 +64,7 @@ public struct RelayEvent {
 }
 
 /// An object that communicates with a relay.
-public final class Relay: ObservableObject, EventVerifying, RelayOperating, Hashable {
+public final class Relay: ObservableObject, EventVerifying, RelayOperating, Hashable, Comparable {
     
     /// Constants indicating the current state of the relay.
     public enum State: Equatable {
@@ -255,5 +256,11 @@ public final class Relay: ObservableObject, EventVerifying, RelayOperating, Hash
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(url)
+    }
+    
+    // MARK: - Comparable
+    
+    public static func < (lhs: Relay, rhs: Relay) -> Bool {
+        lhs.url.absoluteString < rhs.url.absoluteString
     }
 }
