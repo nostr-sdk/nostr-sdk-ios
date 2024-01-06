@@ -76,17 +76,10 @@ public extension EventCreating {
 
                 // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
                 // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
-                var foundAuthorTag = false
-                repliedEvent.tags.forEach {
-                    if $0.name == TagName.pubkey.rawValue {
-                        if !foundAuthorTag && $0.value == repliedEvent.pubkey {
-                            foundAuthorTag = true
-                        }
-                        tags.append($0)
-                    }
-                }
-                // Skip adding the author "p" tag if it was already added.
-                if !foundAuthorTag {
+                tags += repliedEvent.tags.filter { $0.name == TagName.pubkey.rawValue }
+
+                // Add the author "p" tag if it was not already added.
+                if !tags.contains(where: { $0.name == TagName.pubkey.rawValue && $0.value == repliedEvent.pubkey }) {
                     tags.append(Tag(name: .pubkey, value: repliedEvent.pubkey))
                 }
             } else {
