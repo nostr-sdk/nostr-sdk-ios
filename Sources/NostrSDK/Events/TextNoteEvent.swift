@@ -39,38 +39,21 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     /// This event tag may be the same as ``rootEventTag`` if this note is a direct reply to the root of a thread.
     public var replyEventTag: EventTag? {
         let eventTags = tags.compactMap { EventTag(tag: $0) }
-        var rootEventTag: EventTag?
 
-        // Track whether the event has any event tags with a marker as a proxy indicator
-        // that the client that created this event uses deprecated positional event tags or not.
-        var hasMarker = false
-
-        for eventTag in eventTags {
-            let marker = eventTag.marker
-
-            if !hasMarker && marker != nil {
-                hasMarker = true
-            }
-
-            // Return the first event tag with a reply marker if it exists.
-            if marker == .reply {
-                return eventTag
-            }
-
-            if rootEventTag == nil && marker == .root {
-                rootEventTag = eventTag
-            }
+        // Return the first event tag with a reply marker if it exists.
+        if let reply = eventTags.first(where: { $0.marker == .reply }) {
+            return reply
         }
 
         // A direct reply to the root of a thread should have a single marked event tag of type "root".
-        if let rootEventTag {
-            return rootEventTag
+        if let root = eventTags.first(where: { $0.marker == .root }) {
+            return root
         }
 
-        // If there are no reply event markers, and there is at least one event tag with a marker,
+        // If there are no reply or root event markers, and there is at least one event tag with a marker,
         // then we can make a reasonable assumption that the client that created the event does not use
         // deprecated positional event tags, so there is no reply event tag.
-        guard !hasMarker else {
+        guard eventTags.allSatisfy({ $0.marker == nil }) else {
             return nil
         }
 
@@ -82,27 +65,15 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     public var rootEventTag: EventTag? {
         let eventTags = tags.compactMap { EventTag(tag: $0) }
 
-        // Track whether the event has any event tags with a marker as a proxy indicator
-        // that the client that created this event uses deprecated positional event tags or not.
-        var hasMarker = false
-
-        for eventTag in eventTags {
-            let marker = eventTag.marker
-
-            if !hasMarker && marker != nil {
-                hasMarker = true
-            }
-
-            // Return the first event tag with a root marker if it exists.
-            if marker == .root {
-                return eventTag
-            }
+        // Return the first event tag with a root marker if it exists.
+        if let root = eventTags.first(where: { $0.marker == .root }) {
+            return root
         }
 
-        // If there are no root event markers and there is at least one event tag with a marker,
+        // If there are no root event markers, and there is at least one event tag with a marker,
         // then we can make a reasonable assumption that the client that created the event does not use
         // deprecated positional event tags, so there is no root event tag.
-        guard !hasMarker else {
+        guard eventTags.allSatisfy({ $0.marker == nil }) else {
             return nil
         }
 
@@ -113,34 +84,23 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     /// The ``EventTag``s that denotes quoted or reposted events.
     public var mentionedEventTags: [EventTag] {
         let eventTags = tags.compactMap { EventTag(tag: $0) }
-        var mentionedEventTags: [EventTag] = []
 
-        // Track whether the event has any event tags with a marker as a proxy indicator
-        // that the client that created this event uses deprecated positional event tags or not.
-        var hasMarker = false
-
-        for eventTag in eventTags {
-            let marker = eventTag.marker
-
-            if marker != nil {
-                hasMarker = true
-            }
-
-            // Only mention markers are considered mentions in the preferred spec.
-            // If there is a mix of mention markers and no markers, the event tags
-            // with no markers are ignored.
-            if marker == .mention {
-                mentionedEventTags.append(eventTag)
-            }
-        }
+        // Only mention markers are considered mentions in the preferred spec.
+        // If there is a mix of mention markers and no markers, the event tags
+        // with no markers are ignored.
+        let mentionedEventTags = eventTags.filter { $0.marker == .mention }
 
         if !mentionedEventTags.isEmpty {
             return mentionedEventTags
         }
 
-        // The deprecated positional event tag spec in NIP-10 states that there are no mentions
-        // unless there are 3 or more event tags.
-        guard !hasMarker && eventTags.count >= 3 else {
+        // If the event has any event tags with any marker, then we can make a reasonable assummption
+        // that the client that created this event does not use deprecated positional event tags,
+        // so there are no mentions.
+        //
+        // Even if there are no event tag markers, the deprecated positional event tag spec in NIP-10
+        // states that there are no mentions unless there are 3 or more event tags.
+        guard eventTags.allSatisfy({ $0.marker == nil }) && eventTags.count >= 3 else {
             return []
         }
 
