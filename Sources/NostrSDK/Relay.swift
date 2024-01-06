@@ -41,6 +41,16 @@ public enum RelayRequestError: Error, CustomStringConvertible {
     }
 }
 
+public protocol RelayOperating {
+    func connect()
+    func disconnect()
+    func send(request: String)
+    func subscribe(with filter: Filter, subscriptionId: String) throws -> String
+    func closeSubscription(with subscriptionId: String) throws
+    func publishEvent(_ event: NostrEvent) throws
+    var events: PassthroughSubject<RelayEvent, Never> { get }
+}
+
 /// An optional interface for receiving state updates and events
 public protocol RelayDelegate: AnyObject {
     func relayStateDidChange(_ relay: Relay, state: Relay.State)
@@ -54,7 +64,7 @@ public struct RelayEvent {
 }
 
 /// An object that communicates with a relay.
-public final class Relay: ObservableObject, EventVerifying {
+public final class Relay: ObservableObject, EventVerifying, RelayOperating, Hashable, Comparable {
     
     /// Constants indicating the current state of the relay.
     public enum State: Equatable {
@@ -158,6 +168,8 @@ public final class Relay: ObservableObject, EventVerifying {
         }
     }
 
+    // MARK: - RelayOperating
+    
     /// Connects to the relay if it is not already in a connected or connecting state.
     public func connect() {
         guard state != .connected && state != .connecting else {
@@ -185,17 +197,17 @@ public final class Relay: ObservableObject, EventVerifying {
     
     /// Sends a request to the relay with the provided filter.
     /// - Parameter filter: The filter to send to the relay
+    /// - Parameter subscriptionId: The subscription id to use with this relay for this subscription.
     /// - Returns: The subscription id
     ///
     /// Call this function to begin a new subscription to the relay, which should
     /// respond with events that match the provided filter.
     @discardableResult
-    public func subscribe(with filter: Filter) throws -> String {
+    public func subscribe(with filter: Filter, subscriptionId: String = UUID().uuidString) throws -> String {
         guard state == .connected else {
             throw RelayRequestError.notConnected
         }
 
-        let subscriptionId = UUID().uuidString
         guard let request = RelayRequest.request(subscriptionId: subscriptionId,
                                                  filter: filter).encoded else {
             throw RelayRequestError.invalidRequest
@@ -234,5 +246,21 @@ public final class Relay: ObservableObject, EventVerifying {
         }
         
         send(request: request)
+    }
+    
+    // MARK: - Hashable
+    
+    public static func == (lhs: Relay, rhs: Relay) -> Bool {
+        lhs.url == rhs.url
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+    }
+    
+    // MARK: - Comparable
+    
+    public static func < (lhs: Relay, rhs: Relay) -> Bool {
+        lhs.url.absoluteString < rhs.url.absoluteString
     }
 }
