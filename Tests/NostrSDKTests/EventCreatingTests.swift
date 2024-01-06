@@ -75,7 +75,7 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
         let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
         let mentionedEventTag2 = try XCTUnwrap(EventTag(eventId: "mentionednote2", relayURL: relayURL, marker: .mention))
-        let note = try textNote(withContent: "This is a reply to a note in a thread.", replyTo: noteToReply, mentionedEvents: [mentionedEventTag1, mentionedEventTag2], signedBy: Keypair.test)
+        let note = try textNote(withContent: "This is a reply to a note in a thread.", replyingTo: noteToReply, mentionedEventTags: [mentionedEventTag1, mentionedEventTag2], signedBy: Keypair.test)
 
         XCTAssertEqual(note.kind, .textNote)
         XCTAssertEqual(note.content, "This is a reply to a note in a thread.")

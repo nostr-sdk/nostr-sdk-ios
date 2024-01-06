@@ -35,7 +35,7 @@ public extension EventCreating {
     /// - Parameters:
     ///   - content: The content of the text note.
     ///   - repliedEvent: The event being replied to.
-    ///   - mentionedEvents: The ``EventTag``s with `mention` markers for the mentioned events.
+    ///   - mentionedEventTags: The ``EventTag``s with `mention` markers for the mentioned events.
     ///   - subject: A subject for the text note.
     ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the content field.
     ///   - keypair: The Keypair to sign with.
@@ -43,9 +43,9 @@ public extension EventCreating {
     ///
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
     /// See [NIP-10 - On "e" and "p" tags in Text Events (kind 1)](https://github.com/nostr-protocol/nips/blob/master/10.md)
-    func textNote(withContent content: String, replyTo repliedEvent: TextNoteEvent? = nil, mentionedEvents: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
-        if let mentionedEvents {
-            guard mentionedEvents.allSatisfy({ $0.marker == .mention }) else {
+    func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
+        if let mentionedEventTags {
+            guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
                 throw EventCreatingError.invalidInput
             }
         }
@@ -67,8 +67,8 @@ public extension EventCreating {
                 }
 
                 // 2. Mentions go in between.
-                if let mentionedEvents {
-                    tags += mentionedEvents.map { $0.tag }
+                if let mentionedEventTags {
+                    tags += mentionedEventTags.map { $0.tag }
                 }
 
                 // 3. Reply tag comes last.
@@ -90,16 +90,16 @@ public extension EventCreating {
                     tags.append(Tag(name: .pubkey, value: repliedEvent.pubkey))
                 }
             } else {
-                if let mentionedEvents {
-                    tags += mentionedEvents.map { $0.tag }
+                if let mentionedEventTags {
+                    tags += mentionedEventTags.map { $0.tag }
                 }
 
                 // If the event being replied to has no root marker event tag,
                 // the event being replied to is the root.
                 tags.append(try EventTag(eventId: repliedEvent.id, marker: .root).tag)
             }
-        } else if let mentionedEvents {
-            tags += mentionedEvents.map { $0.tag }
+        } else if let mentionedEventTags {
+            tags += mentionedEventTags.map { $0.tag }
         }
 
         if let customEmojis {
