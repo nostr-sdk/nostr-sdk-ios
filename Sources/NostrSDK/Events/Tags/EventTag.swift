@@ -123,9 +123,9 @@ public struct EventTag: RelayProviding, RelayURLValidating, Equatable {
             guard marker == .root || marker == .reply || marker == .mention else {
                 throw EventTagError.invalidInput
             }
-            self.tag = Tag(name: .event, value: eventId, otherParameters: [validatedRelayURL?.absoluteString ?? "", marker.rawValue])
+            tag = Tag(name: .event, value: eventId, otherParameters: [validatedRelayURL?.absoluteString ?? "", marker.rawValue])
         } else {
-            self.tag = Tag(name: .event, value: eventId, otherParameters: [validatedRelayURL?.absoluteString ?? ""])
+            tag = Tag(name: .event, value: eventId, otherParameters: [validatedRelayURL?.absoluteString ?? ""])
         }
     }
 }
