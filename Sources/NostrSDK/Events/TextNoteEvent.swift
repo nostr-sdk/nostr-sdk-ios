@@ -38,7 +38,7 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     /// The ``EventTag`` that denotes the reply event being responded to.
     /// This event tag may be the same as ``rootEventTag`` if this note is a direct reply to the root of a thread.
     public var replyEventTag: EventTag? {
-        let eventTags = tags.compactMap { EventTag(eventTag: $0) }
+        let eventTags = tags.compactMap { EventTag(tag: $0) }
         var rootEventTag: EventTag?
 
         // Track whether the event has any event tags with a marker as a proxy indicator
@@ -80,7 +80,7 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
 
     /// The ``EventTag`` that denotes the root event of the thread being responded to.
     public var rootEventTag: EventTag? {
-        let eventTags = tags.compactMap { EventTag(eventTag: $0) }
+        let eventTags = tags.compactMap { EventTag(tag: $0) }
 
         // Track whether the event has any event tags with a marker as a proxy indicator
         // that the client that created this event uses deprecated positional event tags or not.
@@ -112,7 +112,7 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
 
     /// The ``EventTag``s that denotes quoted or reposted events.
     public var mentionedEventTags: [EventTag] {
-        let eventTags = tags.compactMap { EventTag(eventTag: $0) }
+        let eventTags = tags.compactMap { EventTag(tag: $0) }
         var mentionedEventTags: [EventTag] = []
 
         // Track whether the event has any event tags with a marker as a proxy indicator

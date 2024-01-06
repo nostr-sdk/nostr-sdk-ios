@@ -98,12 +98,12 @@ public struct EventTag: RelayProviding, RelayURLValidating, Equatable {
 
     /// Initializes an event tag from a ``Tag``.
     /// `nil` is returned if the tag is not an event tag.
-    public init?(eventTag: Tag) {
-        guard eventTag.name == TagName.event.rawValue else {
+    public init?(tag: Tag) {
+        guard tag.name == TagName.event.rawValue else {
             return nil
         }
 
-        self.tag = eventTag
+        self.tag = tag
     }
 
     /// Initializes an event tag.
@@ -135,6 +135,6 @@ public extension EventTagInterpreting {
     /// The event tags assigned to this ``NostrEvent``.
     var eventTags: [EventTag] {
         tags.filter { $0.name == TagName.event.rawValue }
-            .compactMap { EventTag(eventTag: $0) }
+            .compactMap { EventTag(tag: $0) }
     }
 }
