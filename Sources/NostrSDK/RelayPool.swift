@@ -11,7 +11,7 @@ import os.log
 
 /// An object that manages a set of relays.
 /// Send events and messages to all the relays in the pool.
-public final class RelayPool: ObservableObject, RelayDelegate, RelayOperating {
+public final class RelayPool: ObservableObject, RelayOperating {
     
     /// The set of relays.
     public private(set) var relays = Set<Relay>()
@@ -20,7 +20,11 @@ public final class RelayPool: ObservableObject, RelayDelegate, RelayOperating {
     @Published public private(set) var events = PassthroughSubject<RelayEvent, Never>()
     
     /// A delegate to receive events and state changes.
-    public weak var delegate: RelayDelegate?
+    public weak var delegate: RelayDelegate? {
+        didSet {
+            relays.forEach { $0.delegate = delegate }
+        }
+    }
     
     private let logger = Logger(subsystem: "NostrSDK", category: "RelayPool")
     private var cancellable: AnyCancellable?
@@ -31,9 +35,9 @@ public final class RelayPool: ObservableObject, RelayDelegate, RelayOperating {
         setUpRelays()
     }
     
-    public convenience init(relayURLs: Set<URL> = [], delegate: RelayDelegate? = nil) {
-        self.init(relays: Set(relayURLs.compactMap { try? Relay(url: $0) }),
-                  delegate: delegate)
+    public convenience init(relayURLs: Set<URL> = [], delegate: RelayDelegate? = nil) throws {
+        try self.init(relays: Set(relayURLs.compactMap { try Relay(url: $0) }),
+                      delegate: delegate)
     }
     
     private func setUpRelays() {
@@ -42,7 +46,7 @@ public final class RelayPool: ObservableObject, RelayDelegate, RelayOperating {
     }
     
     private func setUpRelay(_ relay: Relay) {
-        relay.delegate = self
+        relay.delegate = delegate
         relay.connect()
     }
     
@@ -113,40 +117,38 @@ public final class RelayPool: ObservableObject, RelayDelegate, RelayOperating {
     ///   - filter: The filter to subscribe to.
     ///   - subscriptionId: The subscription id. If you do not supply one, a random one will be created and returned.
     /// - Returns: The subscription id.
-    public func subscribe(with filter: Filter, subscriptionId: String = UUID().uuidString) throws -> String {
-        do {
-            try relays.forEach { try $0.subscribe(with: filter, subscriptionId: subscriptionId) }
-        } catch {
-            logger.error("An error occurred while subscribing to a relay with a filter: \(error)")
+    public func subscribe(with filter: Filter, subscriptionId: String = UUID().uuidString) -> String {
+        relays.forEach {
+            do {
+                try $0.subscribe(with: filter, subscriptionId: subscriptionId)
+            } catch {
+                logger.error("An error occurred while subscribing to a relay (\($0.url)) with a filter: \(error)")
+            }
         }
         return subscriptionId
     }
     
     /// Attempts to close subscriptions with all relays with the supplied subscription id.
     /// - Parameter subscriptionId: The subscription id to close subscriptions for.
-    public func closeSubscription(with subscriptionId: String) throws {
-        do {
-            try relays.forEach { try $0.closeSubscription(with: subscriptionId) }
-        } catch {
-            logger.error("An error occurred while closing a subscription with subscription id: \(subscriptionId): \(error)")
+    public func closeSubscription(with subscriptionId: String) {
+        relays.forEach {
+            do {
+                try $0.closeSubscription(with: subscriptionId)
+            } catch {
+                logger.error("An error occurred while closing a subscription with a relay (\($0.url)) with subscription id: \(subscriptionId): \(error)")
+            }
         }
     }
     
     /// Publishes an event to the relays.
     /// - Parameter event: The ``NostrEvent`` to publish
-    public func publishEvent(_ event: NostrEvent) throws {
-        try relays.forEach {
-            try $0.publishEvent(event)
+    public func publishEvent(_ event: NostrEvent) {
+        relays.forEach {
+            do {
+                try $0.publishEvent(event)
+            } catch {
+                logger.error("An error occurred while publishing an event to a relay (\($0.url)): \(error)")
+            }
         }
-    }
-    
-    // MARK: - RelayDelegate
-    
-    public func relayStateDidChange(_ relay: Relay, state: Relay.State) {
-        delegate?.relayStateDidChange(relay, state: state)
-    }
-    
-    public func relay(_ relay: Relay, didReceive event: RelayEvent) {
-        delegate?.relay(relay, didReceive: event)
     }
 }
