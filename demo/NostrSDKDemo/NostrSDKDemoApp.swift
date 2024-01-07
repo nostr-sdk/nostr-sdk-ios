@@ -10,6 +10,7 @@ import SwiftUI
 
 @main
 struct NostrSDKDemoApp: App {
+    // swiftlint:disable:next force_try
     @StateObject var relayPool = try! RelayPool(relayURLs: [
         URL(string: "wss://relay.damus.io")!,
         URL(string: "wss://relay.snort.social")!,
