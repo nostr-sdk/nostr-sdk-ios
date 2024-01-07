@@ -108,7 +108,7 @@ public class NostrEvent: Codable {
     /// All values for tags with the provided name.
     /// - Parameter tag: The tag name to filter.
     /// - Returns: The values associated with the tags of the provided name.
-    public func allValues(forTagName tag: TagName) -> [String]? {
+    public func allValues(forTagName tag: TagName) -> [String] {
         tags.filter { $0.name == tag.rawValue }.map { $0.value }
     }
 }

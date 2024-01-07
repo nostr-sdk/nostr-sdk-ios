@@ -1,0 +1,19 @@
+{
+  "kind": 1,
+  "id": "2e3325c6b0c983091390730bcfa8768ca2b5f5acbc4f7f187bc12d7a8c057201",
+  "created_at": 1704154322,
+  "sig": "a40b016c85d62a771793300c73494157dcb813eb25aa101b13e26beb987f521d80d1b1d2f026539107ecf861d60c98410063358adaaf5e45d1ce71a4e54e4774",
+  "tags":
+  [
+    [
+      "e",
+      "a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03"
+    ],
+    [
+      "e",
+      "c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda"
+    ]
+  ],
+  "content": "Reply 2 with deprecated positional tags and mention\nnostr:note1257hctv73whvfgy3wvfdxkcj8ydjfl80vstmzh0j3ppzukzwpyxsc0hy03",
+  "pubkey": "a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6"
+}

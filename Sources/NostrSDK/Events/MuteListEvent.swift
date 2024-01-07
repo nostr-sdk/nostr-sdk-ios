@@ -26,17 +26,17 @@ public final class MuteListEvent: NostrEvent, HashtagInterpreting, PrivateTagInt
     
     /// The publicly muted public keys (authors).
     public var pubkeys: [String] {
-        allValues(forTagName: .pubkey) ?? []
+        allValues(forTagName: .pubkey)
     }
     
     /// The publicly muted event ids (threads).
     public var eventIds: [String] {
-        allValues(forTagName: .event) ?? []
+        allValues(forTagName: .event)
     }
     
     /// The publicly muted keywords.
     public var keywords: [String] {
-        allValues(forTagName: .word) ?? []
+        allValues(forTagName: .word)
     }
     
     /// The privately muted public keys (authors).

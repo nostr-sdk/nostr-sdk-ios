@@ -1,0 +1,15 @@
+{
+  "created_at": 1704153856,
+  "sig": "7583a884c7f5061e8693a3e09ef6f427f4fda0c4b58666b654e2db344b3ffbd8bfdb5ba11292990e3d3845f67d3afac500b18f9c98d62b11bd46d90ef95d115e",
+  "pubkey": "a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6",
+  "id": "d5f7e913264a407a60619df12a845d52512027588846a5a6fb4da392613fdf23",
+  "content": "Text note reply to root with deprecated positional tags.\nnostr:note1257hctv73whvfgy3wvfdxkcj8ydjfl80vstmzh0j3ppzukzwpyxsc0hy03",
+  "tags":
+  [
+    [
+      "e",
+      "a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03"
+    ]
+  ],
+  "kind": 1
+}

@@ -1,0 +1,29 @@
+{
+  "id": "e93f47af92d844f27ea30c8a352e758d2b0a24028fa99319abff784a78bd572c",
+  "created_at": 1704157235,
+  "pubkey": "a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6",
+  "sig": "b2a33fbf571dc3056346bf4f28b620076a8152d6b419ae7b4c474350c7811325a5996d63e3520130d89f97ee73e92f94122a0bb478b9517eae5d8c22ffd77b7f",
+  "content": "Direct reply with mention nostr:nevent1qqs920tu9k0ghtky5zghxykntvfrjxeylnhkg9a3thegss3wtp8qjrgpp4mhxue69uhkummn9ekx7mqzyz50xus6387m0xn703h8hqf5cus2gz9kcf9lgf3yr884fvtqc5n6vqcyqqqqqqgwjgqyy",
+  "tags":
+  [
+    [
+      "e",
+      "a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03",
+      "",
+      "root"
+    ],
+    [
+      "e",
+      "553d7c2d9e8baec4a0917312d35b12391b24fcef6417b15df288422e584e090d",
+      "",
+      "mention"
+    ],
+    [
+      "p",
+      "a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6",
+      "",
+      "mention"
+    ]
+  ],
+  "kind": 1
+}
