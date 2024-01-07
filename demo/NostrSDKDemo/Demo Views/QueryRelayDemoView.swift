@@ -11,7 +11,7 @@ import Combine
 
 struct QueryRelayDemoView: View {
 
-    @Binding var relay: Relay?
+    @EnvironmentObject var relayPool: RelayPool
 
     @State private var authorPubkey: String = ""
     @State private var events: [NostrEvent] = []
@@ -24,8 +24,8 @@ struct QueryRelayDemoView: View {
     @State private var selectedKind = 1
 
     var body: some View {
-        RelayFormView(relay: $relay) {
-            Section("Query Relay") {
+        Form {
+            Section("Query Relays") {
 
                 TextField(text: $authorPubkey) {
                     Text("Author Public Key (HEX)")
@@ -65,6 +65,11 @@ struct QueryRelayDemoView: View {
             events = []
             updateSubscription()
         }
+        .onDisappear {
+            if let subscriptionId {
+                relayPool.closeSubscription(with: subscriptionId)
+            }
+        }
     }
     
     private var currentFilter: Filter {
@@ -78,31 +83,27 @@ struct QueryRelayDemoView: View {
     }
     
     private func updateSubscription() {
-        do {
-            if let subscriptionId {
-                try relay?.closeSubscription(with: subscriptionId)
-            }
-            
-            subscriptionId = try relay?.subscribe(with: currentFilter)
-            
-            eventsCancellable = relay?.events
-                .receive(on: DispatchQueue.main)
-                .map {
-                    $0.event
-                }
-                .sink { event in
-                    events.insert(event, at: 0)
-                }
-        } catch {
-            errorString = error.localizedDescription
+        if let subscriptionId {
+            relayPool.closeSubscription(with: subscriptionId)
         }
+        
+        subscriptionId = relayPool.subscribe(with: currentFilter)
+        
+        eventsCancellable = relayPool.events
+            .receive(on: DispatchQueue.main)
+            .map {
+                $0.event
+            }
+            .sink { event in
+                events.insert(event, at: 0)
+            }
     }
 }
 
 struct QueryRelayView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            QueryRelayDemoView(relay: DemoHelper.previewRelay)
+            QueryRelayDemoView()
         }
     }
 }

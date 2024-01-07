@@ -15,13 +15,15 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                ConnectRelayView(relay: $relay)
                 List {
-                    ListOptionView(destinationView: AnyView(QueryRelayDemoView(relay: $relay)),
+                    ListOptionView(destinationView: AnyView(RelaysView()),
+                                   imageName: "network",
+                                   labelText: "Configure Relays")
+                    ListOptionView(destinationView: AnyView(QueryRelayDemoView()),
                                    imageName: "list.bullet.rectangle.portrait",
-                                   labelText: "Query relay")
+                                   labelText: "Query Relays")
                     ListOptionView(destinationView:
-                                    AnyView(DirectMessageDemoView(relay: $relay)),
+                                    AnyView(DirectMessageDemoView()),
                                    imageName: "list.bullet",
                                    labelText: "Direct Message")
                     ListOptionView(destinationView: AnyView(GenerateKeyDemoView()),
@@ -32,6 +34,8 @@ struct ContentView: View {
                                    labelText: "NIP-05")
                 }
             }
+            .navigationTitle("Nostr SDK Demo")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 

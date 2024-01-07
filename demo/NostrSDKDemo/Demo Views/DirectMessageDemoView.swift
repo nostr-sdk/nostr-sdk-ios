@@ -10,7 +10,7 @@ import NostrSDK
 
 struct DirectMessageDemoView: View, EventCreating {
 
-    @Binding var relay: Relay?
+    @EnvironmentObject var relayPool: RelayPool
 
     @State private var recipientPublicKey = ""
     @State private var recipientPublicKeyIsValid: Bool = false
@@ -21,7 +21,7 @@ struct DirectMessageDemoView: View, EventCreating {
     @State private var message: String = ""
 
     var body: some View {
-        RelayFormView(relay: $relay) {
+        Form {
             Section("Recipient") {
                 KeyInputSectionView(key: $recipientPublicKey,
                                     isValid: $recipientPublicKeyIsValid,
@@ -44,7 +44,7 @@ struct DirectMessageDemoView: View, EventCreating {
                     let directMessage = try directMessage(withContent: message,
                                                           toRecipient: recipientPublicKey,
                                                           signedBy: senderKeyPair)
-                    try relay?.publishEvent(directMessage)
+                    relayPool.publishEvent(directMessage)
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -81,6 +81,6 @@ struct DirectMessageDemoView: View, EventCreating {
 
 struct DirectMessageDemoView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectMessageDemoView(relay: DemoHelper.previewRelay)
+        DirectMessageDemoView()
     }
 }
