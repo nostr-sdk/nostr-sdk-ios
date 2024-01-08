@@ -10,7 +10,10 @@ import Foundation
 /// A structure that describes a Nostr event.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
-public class NostrEvent: Codable {
+public class NostrEvent: Codable, Equatable {
+    public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
+        lhs.id == rhs.id
+    }
     
     /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data
     public let id: String
