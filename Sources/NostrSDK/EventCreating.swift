@@ -612,13 +612,11 @@ public extension EventCreating {
         var tags: [Tag] = [
             calendarEventCoordinates.tag,
             Tag(name: .identifier, value: identifier),
-            Tag(name: .labelNamespace, value: "status"),
-            Tag(name: .label, value: status.rawValue, otherParameters: ["status"])
+            Tag(name: "status", value: status.rawValue)
         ]
 
         if let freebusy {
-            tags.append(Tag(name: .labelNamespace, value: "freebusy"))
-            tags.append(Tag(name: .label, value: freebusy.rawValue, otherParameters: ["freebusy"]))
+            tags.append(Tag(name: "fb", value: freebusy.rawValue))
         }
 
         return try CalendarEventRSVP(content: note, tags: tags, signedBy: keypair)
