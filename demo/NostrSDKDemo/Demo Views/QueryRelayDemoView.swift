@@ -44,9 +44,9 @@ struct QueryRelayDemoView: View {
                 Picker("Kind", selection: $selectedKind) {
                     ForEach(kindOptions.keys.sorted(), id: \.self) { number in
                         if let name = kindOptions[number] {
-                            Text("\(name) (\(number))")
+                            Text("\(name) (\(String(number)))")
                         } else {
-                            Text("\(number)")
+                            Text("\(String(number))")
                         }
                     }
                 }
