@@ -13,22 +13,12 @@
       "hockey-practice-rsvp"
     ],
     [
-      "L",
-      "hockey-practice-rsvp"
-    ],
-    [
-      "l",
+      "status",
       "accepted",
-      "status"
     ],
     [
-      "L",
-      "freebusy"
-    ],
-    [
-      "l",
-      "busy",
-      "freebusy"
+      "fb",
+      "busy"
     ]
   ],
   "content": "Don't forget your skates!",
