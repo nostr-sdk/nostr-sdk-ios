@@ -19,7 +19,17 @@ struct QueryRelayDemoView: View {
     @State private var errorString: String?
     @State private var subscriptionId: String?
 
-    private let kindOptions = [0, 1, 2]
+    private let kindOptions = [
+        0: "Set Metadata",
+        1: "Text Note",
+        3: "Follow List",
+        6: "Repost",
+        7: "Reaction",
+        1984: "Report",
+        10000: "Mute List",
+        10003: "Bookmarks List",
+        30023: "Longform Content"
+    ]
 
     @State private var selectedKind = 1
 
@@ -32,8 +42,12 @@ struct QueryRelayDemoView: View {
                 }
 
                 Picker("Kind", selection: $selectedKind) {
-                    ForEach(kindOptions, id: \.self) { number in
-                        Text("\(number)")
+                    ForEach(kindOptions.keys.sorted(), id: \.self) { number in
+                        if let name = kindOptions[number] {
+                            Text("\(name) (\(String(number)))")
+                        } else {
+                            Text("\(String(number))")
+                        }
                     }
                 }
             }
@@ -52,7 +66,11 @@ struct QueryRelayDemoView: View {
                             .font(.footnote)
                     }
                     List(events, id: \.id) { event in
-                        Text("\(event.content)")
+                        if !event.content.isEmpty {
+                            Text("\(event.content)")
+                        } else {
+                            Text("Empty content field for event \(event.id)")
+                        }
                     }
                 }
             }
@@ -94,6 +112,7 @@ struct QueryRelayDemoView: View {
             .map {
                 $0.event
             }
+            .removeDuplicates()
             .sink { event in
                 events.insert(event, at: 0)
             }
