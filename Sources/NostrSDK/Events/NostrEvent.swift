@@ -97,7 +97,12 @@ public class NostrEvent: Codable, Equatable {
     public func allTags(withTagName tagName: TagName) -> [Tag] {
         tags.filter { $0.name == tagName.rawValue }
     }
-    
+
+    /// The first tag with the provided tag name, if it exists.
+    public func firstTag(withTagName tagName: TagName) -> Tag? {
+        tags.first { $0.name == tagName.rawValue }
+    }
+
     /// The first String value for the provided ``TagName``, if it exists.
     public func firstValueForTagName(_ tag: TagName) -> String? {
         firstValueForRawTagName(tag.rawValue)

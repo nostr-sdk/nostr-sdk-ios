@@ -109,6 +109,14 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
         return eventTags.dropFirst().dropLast()
     }
 
+    public var quoteRepostTag: QuoteRepostTag? {
+        guard let quoteRepostTag = firstTag(withTagName: .quoteRepost) else {
+            return nil
+        }
+
+        return QuoteRepostTag(tag: quoteRepostTag)
+    }
+
     /// a short subject for a text note, similar to subjects in emails.
     ///
     /// See [NIP-14 - Subject tag in Text events](https://github.com/nostr-protocol/nips/blob/master/14.md).

@@ -13,7 +13,7 @@ public enum TagName: String {
     /// a custom emoji that defines the shortcode name and image URL of the image file
     case emoji
     
-    /// points to the id of an event this event is quoting, replying to or referring to somehow
+    /// points to the id of an event this event is replying to or referring to somehow
     case event = "e"
 
     /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is parameterized)
@@ -39,6 +39,9 @@ public enum TagName: String {
 
     /// namespace for a label
     case labelNamespace = "L"
+
+    /// points to the id of an event this event is quote reposting
+    case quoteRepost = "q"
 
     /// a short subject for a text note, similar to subjects in emails
     case subject

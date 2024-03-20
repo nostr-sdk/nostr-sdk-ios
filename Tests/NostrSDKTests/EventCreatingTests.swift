@@ -98,6 +98,26 @@ final class EventCreatingTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         try verifyEvent(note)
     }
 
+    func testQuoteRepost() throws {
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
+        let quoteRepostTag = try XCTUnwrap(QuoteRepostTag(eventId: "quoterepostednote", relayURL: relayURL))
+        let note = try textNote(withContent: "This is a quote repost of a note.", quoteRepostTag: quoteRepostTag, signedBy: Keypair.test)
+
+        XCTAssertEqual(note.kind, .textNote)
+        XCTAssertEqual(note.content, "This is a quote repost of a note.")
+        XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
+
+        let expectedTags: [Tag] = [
+            quoteRepostTag.tag,
+
+        ]
+        XCTAssertEqual(note.tags, expectedTags)
+
+        try verifyEvent(note)
+    }
+
     func testCreateFollowListEvent() throws {
         let pubkeys = [
             "83y9iuhw9u0t8thw8w80u",

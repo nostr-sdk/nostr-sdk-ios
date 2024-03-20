@@ -36,6 +36,7 @@ public extension EventCreating {
     ///   - content: The content of the text note.
     ///   - repliedEvent: The event being replied to.
     ///   - mentionedEventTags: The ``EventTag``s with `mention` markers for the mentioned events.
+    ///   - quoteRepostTag: The ``QuoteRepostTag`` for the note that is being quote reposted.
     ///   - subject: A subject for the text note.
     ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the content field.
     ///   - keypair: The Keypair to sign with.
@@ -43,7 +44,7 @@ public extension EventCreating {
     ///
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
     /// See [NIP-10 - On "e" and "p" tags in Text Events (kind 1)](https://github.com/nostr-protocol/nips/blob/master/10.md)
-    func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
+    func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, quoteRepostingFrom: NostrEvent? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
         if let mentionedEventTags {
             guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
                 throw EventCreatingError.invalidInput
@@ -93,6 +94,12 @@ public extension EventCreating {
             }
         } else if let mentionedEventTags {
             tags += mentionedEventTags.map { $0.tag }
+        }
+
+        if let quoteRepostingFrom {
+            let quoteRepostTag = try QuoteRepostTag(eventId: quoteRepostingFrom.id)
+            tags.append(quoteRepostTag.tag)
+            // TODO add p tag?
         }
 
         if let customEmojis {
