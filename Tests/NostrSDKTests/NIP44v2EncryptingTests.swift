@@ -11,7 +11,7 @@ import CryptoKit
 
 final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
-    private static let vectors: NIP44Vectors? = try? FixtureLoader.shared.decodeFixture(filename: "nip44.vectors")
+    private lazy var vectors: NIP44Vectors = try! decodeFixture(filename: "nip44.vectors")  // swiftlint:disable:this force_try
 
     override func setUpWithError() throws {
         XCTAssertNotNil(Self.vectors)
