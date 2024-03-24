@@ -48,12 +48,38 @@ public protocol NIP44v2Encrypting {}
 
 public extension NIP44v2Encrypting {
 
+    /// Produces a `String` containing `plaintext` that has been encrypted using the `privateKey` of user A and the `publicKey`  of user B.
+    ///
+    /// The result is non-deterministic because a cryptographically secure pseudorandom generated nonce is used each time,
+    /// but can be decrypted deterministically with a call to ``NIP44v2Encrypting/decrypt(payload:privateKeyA:publicKeyB:)``,
+    /// where user A and user B are interchangeable.
+    ///
+    /// This function can `throw` an error from ``NIP44v2EncryptingError`` if it fails to encrypt the plaintext.
+    ///
+    /// - Parameters:
+    ///   - plaintext: The plaintext to encrypt.
+    ///   - privateKeyA: The private key of user A.
+    ///   - publicKeyB: The public key of user B.
+    /// - Returns: The encrypted ciphertext.
     func encrypt(plaintext: String, privateKeyA: PrivateKey, publicKeyB: PublicKey) throws -> String {
         let conversationKey = try conversationKey(privateKeyA: privateKeyA, publicKeyB: publicKeyB)
 
         return try encrypt(plaintext: plaintext, conversationKey: conversationKey)
     }
 
+    /// Produces a `String` containing `payload` that has been decrypted using the `privateKey` of user A and the `publicKey` of user B,
+    /// and the result is identical to if the `privateKey` of user B and `publicKey` of user A were used to decrypt `payload` instead.
+    ///
+    /// Any ciphertext returned from the call to ``NIP44v2Encrypting/encrypt(plaintext:privateKeyA:publicKeyB:)``
+    /// can be decrypted, where user A and B are interchangeable.
+    ///
+    /// This function can `throw` an error from ``NIP44v2EncryptingError`` if it fails to decrypt the payload.
+    ///
+    /// - Parameters:
+    ///   - payload: The payload to decrypt.
+    ///   - privateKeyA: The private key of user A.
+    ///   - publicKeyB: The public key of user B.
+    /// - Returns: The decrypted plaintext message.
     func decrypt(payload: String, privateKeyA: PrivateKey, publicKeyB: PublicKey) throws -> String {
         let conversationKey = try conversationKey(privateKeyA: privateKeyA, publicKeyB: publicKeyB)
 
