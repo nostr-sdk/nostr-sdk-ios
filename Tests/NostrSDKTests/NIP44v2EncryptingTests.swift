@@ -19,11 +19,11 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
 
         try conversationKeyVectors.forEach { vector in
             let expectedConversationKey = try XCTUnwrap(vector.conversationKey)
-            let senderPrivateKey = try XCTUnwrap(PrivateKey(hex: vector.sec1))
-            let recipientPublicKey = try XCTUnwrap(PublicKey(hex: vector.pub2))
+            let privateKeyA = try XCTUnwrap(PrivateKey(hex: vector.sec1))
+            let publicKeyB = try XCTUnwrap(PublicKey(hex: vector.pub2))
             let conversationKeyBytes = try conversationKey(
-                senderPrivateKey: senderPrivateKey,
-                recipientPublicKey: recipientPublicKey
+                privateKeyA: privateKeyA,
+                publicKeyB: publicKeyB
             ).bytes
             let conversationKey = Data(conversationKeyBytes).hexString
             XCTAssertEqual(conversationKey, expectedConversationKey)
@@ -56,7 +56,7 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
         }
     }
 
-    /// Emulate real conversation.
+    /// Emulate real conversation with a hardcoded nonce.
     /// Calculate pub2 from sec2, verify conversation key from (sec1, pub2), encrypt, verify payload.
     /// Then calculate pub1 from sec1, verify conversation key from (sec2, pub1), decrypt, verify plaintext.
     func testValidEncryptDecrypt() throws {
@@ -74,8 +74,8 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
 
             // Conversation key from sec1 and pub2.
             let conversationKey1Bytes = try conversationKey(
-                senderPrivateKey: keypair1.privateKey,
-                recipientPublicKey: keypair2.publicKey
+                privateKeyA: keypair1.privateKey,
+                publicKeyB: keypair2.publicKey
             ).bytes
             XCTAssertEqual(expectedConversationKey, Data(conversationKey1Bytes).hexString)
 
@@ -89,14 +89,14 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
 
             // Conversation key from sec2 and pub1.
             let conversationKey2Bytes = try conversationKey(
-                senderPrivateKey: keypair2.privateKey,
-                recipientPublicKey: keypair1.publicKey
+                privateKeyA: keypair2.privateKey,
+                publicKeyB: keypair1.publicKey
             ).bytes
             XCTAssertEqual(expectedConversationKey, Data(conversationKey2Bytes).hexString)
 
             // Verify that decrypted data equals the plaintext that we started off with.
             let decrypted = try decrypt(payload: payload, conversationKey: conversationKey2Bytes)
-            XCTAssertEqual(plaintext, decrypted)
+            XCTAssertEqual(decrypted, plaintext)
         }
     }
 
@@ -133,6 +133,31 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
         }
     }
 
+    /// Emulate real conversation with only the public encrypt and decrypt functions,
+    /// where the nonce used for encryption is a cryptographically secure pseudorandom generated series of bytes.
+    func testValidEncryptDecryptRandomNonce() throws {
+        let encryptDecryptVectors = try XCTUnwrap(vectors.v2.valid.encryptDecrypt)
+        try encryptDecryptVectors.forEach { vector in
+            let sec1 = vector.sec1
+            let sec2 = vector.sec2
+            let plaintext = vector.plaintext
+
+            let keypair1 = try XCTUnwrap(Keypair(hex: sec1))
+            let keypair2 = try XCTUnwrap(Keypair(hex: sec2))
+
+            // Encrypt plaintext with user A's private key and user B's public key.
+            let ciphertext = try encrypt(
+                plaintext: plaintext,
+                privateKeyA: keypair1.privateKey,
+                publicKeyB: keypair2.publicKey
+            )
+
+            // Decrypt ciphertext with user B's private key and user A's public key.
+            let decrypted = try decrypt(payload: ciphertext, privateKeyA: keypair2.privateKey, publicKeyB: keypair1.publicKey)
+            XCTAssertEqual(decrypted, plaintext)
+        }
+    }
+
     /// Encrypting a plaintext message that is not at a minimum of 1 byte and maximum of 65535 bytes must throw an error.
     func testInvalidEncryptMessageLengths() throws {
         let encryptMessageLengthsVectors = try XCTUnwrap(vectors.v2.invalid.encryptMessageLengths)
@@ -147,9 +172,9 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
         let conversationKeyVectors = try XCTUnwrap(vectors.v2.invalid.getConversationKey)
 
         try conversationKeyVectors.forEach { vector in
-            let senderPrivateKey = try XCTUnwrap(PrivateKey(hex: vector.sec1))
-            let recipientPublicKey = try XCTUnwrap(PublicKey(hex: vector.pub2))
-            XCTAssertThrowsError(try conversationKey(senderPrivateKey: senderPrivateKey, recipientPublicKey: recipientPublicKey), vector.note ?? "")
+            let privateKeyA = try XCTUnwrap(PrivateKey(hex: vector.sec1))
+            let publicKeyB = try XCTUnwrap(PublicKey(hex: vector.pub2))
+            XCTAssertThrowsError(try conversationKey(privateKeyA: privateKeyA, publicKeyB: publicKeyB), vector.note ?? "")
         }
     }
 
