@@ -160,8 +160,8 @@ public extension NIP44v2Encrypting {
         return Data(HMAC<CryptoKit.SHA256>.authenticationCode(for: combined, using: SymmetricKey(data: key)).bytes)
     }
 
-    private func preparePublicKeyBytes(from publicKey: String) throws -> [UInt8] {
-        guard let publicKeyBytes = publicKey.hexDecoded?.bytes else {
+    private func preparePublicKeyBytes(from publicKey: PublicKey) throws -> [UInt8] {
+        guard let publicKeyBytes = publicKey.hex.hexDecoded?.bytes else {
             throw NIP44v2EncryptingError.publicKeyInvalid
         }
 
@@ -197,8 +197,8 @@ public extension NIP44v2Encrypting {
 
     /// Calculates long-term key between users A and B.
     /// The conversation key of A's private key and B's public key is equal to the conversation key of B's private key and A's public key.
-    internal func conversationKey(senderPrivateKey: String, recipientPublicKey: String) throws -> ContiguousBytes {
-        guard let privateKeyBytes = senderPrivateKey.hexDecoded?.bytes else {
+    internal func conversationKey(senderPrivateKey: PrivateKey, recipientPublicKey: PublicKey) throws -> ContiguousBytes {
+        guard let privateKeyBytes = senderPrivateKey.hex.hexDecoded?.bytes else {
             throw NIP44v2EncryptingError.privateKeyInvalid
         }
         let publicKeyBytes = try preparePublicKeyBytes(from: recipientPublicKey)
@@ -228,10 +228,10 @@ public extension NIP44v2Encrypting {
         return MessageKeys(chaChaKey: chaChaKey, chaChaNonce: chaChaNonce, hmacKey: hmacKey)
     }
 
-    func encrypt(plaintext: String, senderPrivateKey: String, recipientPublicKey: String) throws -> String {
+    func encrypt(content: String, senderPrivateKey: PrivateKey, recipientPublicKey: PublicKey) throws -> String {
         let conversationKey = try conversationKey(senderPrivateKey: senderPrivateKey, recipientPublicKey: recipientPublicKey)
 
-        return try encrypt(plaintext: plaintext, conversationKey: conversationKey)
+        return try encrypt(plaintext: content, conversationKey: conversationKey)
     }
 
     internal func encrypt(plaintext: String, conversationKey: ContiguousBytes, nonce: Data? = nil) throws -> String {

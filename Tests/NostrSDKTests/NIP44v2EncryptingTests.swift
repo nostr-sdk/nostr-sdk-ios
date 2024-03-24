@@ -19,9 +19,11 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
 
         try conversationKeyVectors.forEach { vector in
             let expectedConversationKey = try XCTUnwrap(vector.conversationKey)
+            let senderPrivateKey = try XCTUnwrap(PrivateKey(hex: vector.sec1))
+            let recipientPublicKey = try XCTUnwrap(PublicKey(hex: vector.pub2))
             let conversationKeyBytes = try conversationKey(
-                senderPrivateKey: vector.sec1,
-                recipientPublicKey: vector.pub2
+                senderPrivateKey: senderPrivateKey,
+                recipientPublicKey: recipientPublicKey
             ).bytes
             let conversationKey = Data(conversationKeyBytes).hexString
             XCTAssertEqual(conversationKey, expectedConversationKey)
@@ -67,15 +69,13 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
             let plaintext = vector.plaintext
             let payload = vector.payload
 
-            let privateKey1 = try XCTUnwrap(PrivateKey(hex: sec1))
-            let keypair1 = try XCTUnwrap(Keypair(privateKey: privateKey1))
-            let privateKey2 = try XCTUnwrap(PrivateKey(hex: sec2))
-            let keypair2 = try XCTUnwrap(Keypair(privateKey: privateKey2))
+            let keypair1 = try XCTUnwrap(Keypair(hex: sec1))
+            let keypair2 = try XCTUnwrap(Keypair(hex: sec2))
 
             // Conversation key from sec1 and pub2.
             let conversationKey1Bytes = try conversationKey(
-                senderPrivateKey: sec1,
-                recipientPublicKey: keypair2.publicKey.hex
+                senderPrivateKey: keypair1.privateKey,
+                recipientPublicKey: keypair2.publicKey
             ).bytes
             XCTAssertEqual(expectedConversationKey, Data(conversationKey1Bytes).hexString)
 
@@ -89,8 +89,8 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
 
             // Conversation key from sec2 and pub1.
             let conversationKey2Bytes = try conversationKey(
-                senderPrivateKey: sec2,
-                recipientPublicKey: keypair1.publicKey.hex
+                senderPrivateKey: keypair2.privateKey,
+                recipientPublicKey: keypair1.publicKey
             ).bytes
             XCTAssertEqual(expectedConversationKey, Data(conversationKey2Bytes).hexString)
 
@@ -147,7 +147,9 @@ final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encryptin
         let conversationKeyVectors = try XCTUnwrap(vectors.v2.invalid.getConversationKey)
 
         try conversationKeyVectors.forEach { vector in
-            XCTAssertThrowsError(try conversationKey(senderPrivateKey: vector.sec1, recipientPublicKey: vector.pub2), vector.note ?? "")
+            let senderPrivateKey = try XCTUnwrap(PrivateKey(hex: vector.sec1))
+            let recipientPublicKey = try XCTUnwrap(PublicKey(hex: vector.pub2))
+            XCTAssertThrowsError(try conversationKey(senderPrivateKey: senderPrivateKey, recipientPublicKey: recipientPublicKey), vector.note ?? "")
         }
     }
 

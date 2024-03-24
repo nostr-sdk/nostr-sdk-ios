@@ -26,6 +26,15 @@ public struct Keypair {
         self.init(privateKey: privateKey)
     }
 
+    public init?(hex: String) {
+        guard let privateKey = PrivateKey(hex: hex) else {
+            Loggers.keypairs.error("Could not create keypair from private key hex.")
+            return nil
+        }
+
+        self.init(privateKey: privateKey)
+    }
+
     public init?(nsec: String) {
         guard let privateKey = PrivateKey(nsec: nsec) else {
             Loggers.keypairs.error("Could not create keypair from private key nsec")
