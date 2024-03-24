@@ -54,7 +54,23 @@ final class KeysTests: XCTestCase {
         XCTAssertNil(privateKeyNsec)
     }
 
-    func testKeypair() throws {
+    func testKeypairHex() throws {
+        let keypair = try XCTUnwrap(Keypair(hex: privateKeyHex))
+
+        XCTAssertEqual(keypair.privateKey.nsec, privateKeyNsec)
+        XCTAssertEqual(keypair.privateKey.hex, privateKeyHex)
+        XCTAssertEqual(keypair.publicKey.npub, publicKeyNpub)
+        XCTAssertEqual(keypair.publicKey.hex, publicKeyHex)
+
+        // Sanity check that creating a new keypair yields keys in the correct length.
+        let newKeypair = try XCTUnwrap(Keypair())
+        XCTAssertEqual(newKeypair.privateKey.hex.count, privateKeyHex.count)
+        XCTAssertEqual(newKeypair.privateKey.nsec.count, privateKeyNsec.count)
+        XCTAssertEqual(newKeypair.publicKey.hex.count, publicKeyHex.count)
+        XCTAssertEqual(newKeypair.publicKey.npub.count, publicKeyNpub.count)
+    }
+
+    func testKeypairNsec() throws {
         let keypair = try XCTUnwrap(Keypair(nsec: privateKeyNsec))
 
         XCTAssertEqual(keypair.privateKey.nsec, privateKeyNsec)

@@ -57,9 +57,7 @@ struct DirectMessageDemoView: View, EventCreating {
         if senderPrivateKey.contains("nsec") {
             return Keypair(nsec: senderPrivateKey)
         } else {
-            if let privateKey = PrivateKey(hex: senderPrivateKey) {
-                return Keypair(privateKey: privateKey)
-            }
+            return Keypair(hex: senderPrivateKey)
         }
         return nil
     }
