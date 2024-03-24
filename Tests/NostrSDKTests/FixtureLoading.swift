@@ -38,7 +38,3 @@ extension FixtureLoading {
     }
 
 }
-
-final class FixtureLoader: FixtureLoading {
-    static let shared = FixtureLoader()
-}

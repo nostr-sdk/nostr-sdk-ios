@@ -9,17 +9,13 @@ import XCTest
 import CryptoKit
 @testable import NostrSDK
 
-final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
+final class NIP44v2EncryptingTests: XCTestCase, FixtureLoading, NIP44v2Encrypting {
 
     private lazy var vectors: NIP44Vectors = try! decodeFixture(filename: "nip44.vectors")  // swiftlint:disable:this force_try
 
-    override func setUpWithError() throws {
-        XCTAssertNotNil(Self.vectors)
-    }
-
     /// Calculate the conversation key from secret key, sec1, and public key, pub2.
     func testValidConversationKey() throws {
-        let conversationKeyVectors = try XCTUnwrap(Self.vectors?.v2.valid.getConversationKey)
+        let conversationKeyVectors = try XCTUnwrap(vectors.v2.valid.getConversationKey)
 
         try conversationKeyVectors.forEach { vector in
             let expectedConversationKey = try XCTUnwrap(vector.conversationKey)
@@ -34,7 +30,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
     /// Calculate ChaCha key, ChaCha nonce, and HMAC key from conversation key and nonce.
     func testValidMessageKeys() throws {
-        let messageKeyVectors = try XCTUnwrap(Self.vectors?.v2.valid.getMessageKeys)
+        let messageKeyVectors = try XCTUnwrap(vectors.v2.valid.getMessageKeys)
         let conversationKey = messageKeyVectors.conversationKey
         let conversationKeyBytes = try XCTUnwrap(conversationKey.hexDecoded?.bytes)
         let keys = messageKeyVectors.keys
@@ -50,7 +46,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
     /// Take unpadded length (first value), calculate padded length (second value).
     func testValidCalculatePaddedLength() throws {
-        let calculatePaddedLengthVectors = try XCTUnwrap(Self.vectors?.v2.valid.calculatePaddedLength)
+        let calculatePaddedLengthVectors = try XCTUnwrap(vectors.v2.valid.calculatePaddedLength)
         try calculatePaddedLengthVectors.forEach { vector in
             XCTAssertEqual(vector.count, 2)
             let paddedLength = try calculatePaddedLength(vector[0])
@@ -62,7 +58,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
     /// Calculate pub2 from sec2, verify conversation key from (sec1, pub2), encrypt, verify payload.
     /// Then calculate pub1 from sec1, verify conversation key from (sec2, pub1), decrypt, verify plaintext.
     func testValidEncryptDecrypt() throws {
-        let encryptDecryptVectors = try XCTUnwrap(Self.vectors?.v2.valid.encryptDecrypt)
+        let encryptDecryptVectors = try XCTUnwrap(vectors.v2.valid.encryptDecrypt)
         try encryptDecryptVectors.forEach { vector in
             let sec1 = vector.sec1
             let sec2 = vector.sec2
@@ -106,7 +102,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
     /// Same as previous step, but instead of a full plaintext and payload, their checksum is provided.
     func testValidEncryptDecryptLongMessage() throws {
-        let encryptDecryptVectors = try XCTUnwrap(Self.vectors?.v2.valid.encryptDecryptLongMessage)
+        let encryptDecryptVectors = try XCTUnwrap(vectors.v2.valid.encryptDecryptLongMessage)
         try encryptDecryptVectors.forEach { vector in
             let conversationKey = vector.conversationKey
             let conversationKeyData = try XCTUnwrap(conversationKey.hexDecoded)
@@ -139,7 +135,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
     /// Encrypting a plaintext message that is not at a minimum of 1 byte and maximum of 65535 bytes must throw an error.
     func testInvalidEncryptMessageLengths() throws {
-        let encryptMessageLengthsVectors = try XCTUnwrap(Self.vectors?.v2.invalid.encryptMessageLengths)
+        let encryptMessageLengthsVectors = try XCTUnwrap(vectors.v2.invalid.encryptMessageLengths)
         try encryptMessageLengthsVectors.forEach { length in
             let randomBytes = Data.randomBytes(count: 32)
             XCTAssertThrowsError(try encrypt(plaintext: String(repeating: "a", count: length), conversationKey: randomBytes))
@@ -148,7 +144,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
     /// Calculating conversation key must throw an error.
     func testInvalidConversationKey() throws {
-        let conversationKeyVectors = try XCTUnwrap(Self.vectors?.v2.invalid.getConversationKey)
+        let conversationKeyVectors = try XCTUnwrap(vectors.v2.invalid.getConversationKey)
 
         try conversationKeyVectors.forEach { vector in
             XCTAssertThrowsError(try conversationKey(senderPrivateKey: vector.sec1, recipientPublicKey: vector.pub2), vector.note ?? "")
@@ -157,7 +153,7 @@ final class NIP44v2EncryptingTests: XCTestCase, NIP44v2Encrypting {
 
     /// Decrypting message content must throw an error
     func testInvalidDecrypt() throws {
-        let decryptVectors = try XCTUnwrap(Self.vectors?.v2.invalid.decrypt)
+        let decryptVectors = try XCTUnwrap(vectors.v2.invalid.decrypt)
         try decryptVectors.forEach { vector in
             let conversationKey = try XCTUnwrap(vector.conversationKey.hexDecoded).bytes
             let payload = vector.payload
