@@ -4,6 +4,8 @@
 
 [Nostr](https://github.com/nostr-protocol/nostr) SDK library for Apple Platforms.
 
+**Warning: The API is not currently stable and not guaranteed to be backwards compatible yet.**
+
 ## Minimum Requirements
 
 - Swift 5.7.1
@@ -41,19 +43,22 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
 - [ ] [NIP-27: Text Note References](https://github.com/nostr-protocol/nips/blob/master/27.md)
 - [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
+- [ ] [NIP-29: Relay-based Groups](https://github.com/nostr-protocol/nips/blob/master/29.md)
 - [x] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
 - [ ] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
 - [ ] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
+- [ ] [NIP-34: `git` stuff](https://github.com/nostr-protocol/nips/blob/master/34.md)
 - [ ] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
 - [ ] [NIP-38: User Statuses](https://github.com/nostr-protocol/nips/blob/master/38.md)
 - [ ] [NIP-39: External Identities in Profiles](https://github.com/nostr-protocol/nips/blob/master/39.md)
 - [ ] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [ ] [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
-- [ ] [NIP-44: Versioned Encryption](https://github.com/nostr-protocol/nips/blob/master/44.md)
+- [x] [NIP-44: Versioned Encryption](https://github.com/nostr-protocol/nips/blob/master/44.md)
 - [ ] [NIP-45: Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
 - [ ] [NIP-46: Nostr Connect](https://github.com/nostr-protocol/nips/blob/master/46.md)
 - [ ] [NIP-47: Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md)
 - [ ] [NIP-48: Proxy Tags](https://github.com/nostr-protocol/nips/blob/master/48.md)
+- [ ] [NIP-49: Private Key Encryption](https://github.com/nostr-protocol/nips/blob/master/49.md)
 - [ ] [NIP-50: Search Capability](https://github.com/nostr-protocol/nips/blob/master/50.md)
 - [ ] [NIP-51: Lists](https://github.com/nostr-protocol/nips/blob/master/51.md)
 - [x] [NIP-52: Calendar Events](https://github.com/nostr-protocol/nips/blob/master/52.md)
@@ -61,6 +66,7 @@ Nostr SDK iOS implements the following NIPs:
 - [x] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-58: Badges](https://github.com/nostr-protocol/nips/blob/master/58.md)
+- [ ] [NIP-59: Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md)
 - [ ] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
 - [ ] [NIP-72: Moderated Communities](https://github.com/nostr-protocol/nips/blob/master/72.md)
 - [ ] [NIP-75: Zap Goals](https://github.com/nostr-protocol/nips/blob/master/75.md)
@@ -68,13 +74,48 @@ Nostr SDK iOS implements the following NIPs:
 - [ ] [NIP-84: Highlights](https://github.com/nostr-protocol/nips/blob/master/84.md)
 - [ ] [NIP-89: Recommended Application Handlers](https://github.com/nostr-protocol/nips/blob/master/89.md)
 - [ ] [NIP-90: Data Vending Machines](https://github.com/nostr-protocol/nips/blob/master/90.md)
+- [ ] [NIP-92: Media Attachments](https://github.com/nostr-protocol/nips/blob/master/92.md)
 - [ ] [NIP-94: File Metadata](https://github.com/nostr-protocol/nips/blob/master/94.md)
+- [ ] [NIP-96: HTTP File Storage Integration](https://github.com/nostr-protocol/nips/blob/master/96.md)
 - [ ] [NIP-98: HTTP Auth](https://github.com/nostr-protocol/nips/blob/master/98.md)
 - [ ] [NIP-99: Classified Listings](https://github.com/nostr-protocol/nips/blob/master/99.md)
 
 ## Installation
 
-TBD
+Nostr SDK can be integrated as an Xcode project target or a Swift package target.
+
+### Xcode Project Target
+
+1. Go to `File` -> `Add Package Dependencies`.
+2. Type https://github.com/nostr-sdk/nostr-sdk-ios.git into the search field.
+3. Select `nostr-sdk-ios` from the search results.
+4. Click `Add Package`.
+
+### Swift Package Target
+
+In your `Package.swift` file:
+1. Add the NostrSDK package dependency to https://github.com/nostr-sdk/nostr-sdk-ios.git
+2. Add `NostrSDK` as a dependency on the targets that need to use the SDK.
+
+```swift
+let package = Package(
+	// ...
+    dependencies: [
+        // ...
+        .package(url: "https://github.com/nostr-sdk/nostr-sdk-ios.git", branch: "master")
+    ],
+    targets: [
+        .target(
+            // ...
+            dependencies: ["NostrSDK"]
+        ),
+        .testTarget(
+            // ...
+            dependencies: ["NostrSDK"]
+        )
+    ]
+)
+```
 
 ## Contributing
 
