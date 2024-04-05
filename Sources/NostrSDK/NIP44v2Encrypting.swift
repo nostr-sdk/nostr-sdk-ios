@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import Clibsodium
 import CryptoKit
+import CryptoSwift
 import secp256k1
 
 public enum NIP44v2EncryptingError: Error {
@@ -144,7 +144,7 @@ extension NIP44v2Encrypting {
             throw NIP44v2EncryptingError.paddingInvalid
         }
 
-        let unpadded = padded.bytes[2..<2+unpaddedLength]
+        let unpadded = toBytes(from: padded)[2..<2+unpaddedLength]
         let paddedLength = try calculatePaddedLength(unpaddedLength)
 
         guard unpaddedLength > 0,
@@ -199,16 +199,21 @@ extension NIP44v2Encrypting {
 
         let combined = aad + message
 
-        return Data(HMAC<CryptoKit.SHA256>.authenticationCode(for: combined, using: SymmetricKey(data: key)).bytes)
+        return Data(CryptoKit.HMAC<CryptoKit.SHA256>.authenticationCode(for: combined, using: SymmetricKey(data: key)))
+    }
+
+    private func toBytes(from data: Data) -> [UInt8] {
+        data.withUnsafeBytes { bytesPointer in Array(bytesPointer) }
     }
 
     private func preparePublicKeyBytes(from publicKey: PublicKey) throws -> [UInt8] {
-        guard let publicKeyBytes = publicKey.hex.hexDecoded?.bytes else {
+        guard let publicKeyHexDecoded = publicKey.hex.hexDecoded else {
             throw NIP44v2EncryptingError.publicKeyInvalid
         }
+        let publicKeyBytes = toBytes(from: publicKeyHexDecoded)
 
         let prefix = Data([2])
-        let prefixBytes = prefix.bytes
+        let prefixBytes = toBytes(from: prefix)
 
         return prefixBytes + publicKeyBytes
     }
@@ -240,27 +245,29 @@ extension NIP44v2Encrypting {
     /// Calculates long-term key between users A and B.
     /// The conversation key of A's private key and B's public key is equal to the conversation key of B's private key and A's public key.
     func conversationKey(privateKeyA: PrivateKey, publicKeyB: PublicKey) throws -> ContiguousBytes {
-        guard let privateKeyABytes = privateKeyA.hex.hexDecoded?.bytes else {
+        guard let privateKeyAHexDecoded = privateKeyA.hex.hexDecoded else {
             throw NIP44v2EncryptingError.privateKeyInvalid
         }
+        let privateKeyABytes = toBytes(from: privateKeyAHexDecoded)
         let publicKeyBBytes = try preparePublicKeyBytes(from: publicKeyB)
         let parsedPublicKeyB = try parsePublicKey(from: publicKeyBBytes)
         let sharedSecret = try computeSharedSecret(using: parsedPublicKeyB, and: privateKeyABytes)
 
-        return HKDF<CryptoKit.SHA256>.extract(inputKeyMaterial: SymmetricKey(data: sharedSecret), salt: Data("nip44-v2".utf8))
+        return CryptoKit.HKDF<CryptoKit.SHA256>.extract(inputKeyMaterial: SymmetricKey(data: sharedSecret), salt: Data("nip44-v2".utf8))
     }
 
     /// Calculates unique per-message key.
     func messageKeys(conversationKey: ContiguousBytes, nonce: Data) throws -> MessageKeys {
-        guard conversationKey.bytes.count == 32 else {
-            throw NIP44v2EncryptingError.conversationKeyLengthInvalid(conversationKey.bytes.count)
+        let conversationKeyByteCount = conversationKey.bytes.count
+        guard conversationKeyByteCount == 32 else {
+            throw NIP44v2EncryptingError.conversationKeyLengthInvalid(conversationKeyByteCount)
         }
 
         guard nonce.count == 32 else {
             throw NIP44v2EncryptingError.nonceLengthInvalid(nonce.count)
         }
 
-        let keys = HKDF<CryptoKit.SHA256>.expand(pseudoRandomKey: conversationKey, info: nonce, outputByteCount: 76)
+        let keys = CryptoKit.HKDF<CryptoKit.SHA256>.expand(pseudoRandomKey: conversationKey, info: nonce, outputByteCount: 76)
         let keysBytes = keys.bytes
 
         let chaChaKey = Data(keysBytes[0..<32])
@@ -281,23 +288,17 @@ extension NIP44v2Encrypting {
 
         let messageKeys = try messageKeys(conversationKey: conversationKey, nonce: nonceData)
         let padded = try pad(plaintext)
-        let paddedBytes = padded.bytes
+        let paddedBytes = toBytes(from: padded)
 
-        let chaChaKey = messageKeys.chaChaKey.bytes
-        let chaChaNonce = messageKeys.chaChaNonce.bytes
+        let chaChaKey = toBytes(from: messageKeys.chaChaKey)
+        let chaChaNonce = toBytes(from: messageKeys.chaChaNonce)
 
-        var ciphertext = Data(count: padded.count)
-        try ciphertext.withUnsafeMutableBytes { (pointer: UnsafeMutableRawBufferPointer) in
-            guard let ciphertextPointer = pointer.bindMemory(to: UInt8.self).baseAddress else {
-                throw NIP44v2EncryptingError.chaCha20EncryptionFailed
-            }
+        let ciphertext = try ChaCha20(key: chaChaKey, iv: chaChaNonce).encrypt(paddedBytes)
+        let ciphertextData = Data(ciphertext)
 
-            crypto_stream_chacha20_ietf_xor(ciphertextPointer, paddedBytes, UInt64(padded.count), chaChaNonce, chaChaKey)
-        }
+        let mac = try hmacAad(key: messageKeys.hmacKey, message: ciphertextData, aad: nonceData)
 
-        let mac = try hmacAad(key: messageKeys.hmacKey, message: ciphertext, aad: nonceData)
-
-        let data = Data([2]) + nonceData + ciphertext + mac
+        let data = Data([2]) + nonceData + ciphertextData + mac
         return data.base64EncodedString()
     }
 
@@ -305,7 +306,7 @@ extension NIP44v2Encrypting {
         let decodedPayload = try decodePayload(payload)
         let nonce = decodedPayload.nonce
         let ciphertext = decodedPayload.ciphertext
-        let ciphertextBytes = ciphertext.bytes
+        let ciphertextBytes = toBytes(from: ciphertext)
         let mac = decodedPayload.mac
 
         let messageKeys = try messageKeys(conversationKey: conversationKey, nonce: nonce)
@@ -316,20 +317,12 @@ extension NIP44v2Encrypting {
             throw NIP44v2EncryptingError.macInvalid
         }
 
-        let chaChaNonce = messageKeys.chaChaNonce.bytes
-        let chaChaKey = messageKeys.chaChaKey.bytes
+        let chaChaNonce = toBytes(from: messageKeys.chaChaNonce)
+        let chaChaKey = toBytes(from: messageKeys.chaChaKey)
 
-        let ciphertextLength = ciphertext.count
-        var paddedPlaintext = Data(count: ciphertextLength)
+        let paddedPlaintext = try ChaCha20(key: chaChaKey, iv: chaChaNonce).decrypt(ciphertextBytes)
+        let paddedPlaintextData = Data(paddedPlaintext.bytes)
 
-        try paddedPlaintext.withUnsafeMutableBytes { (pointer: UnsafeMutableRawBufferPointer) in
-            guard let paddedPlaintextPointer = pointer.bindMemory(to: UInt8.self).baseAddress else {
-                throw NIP44v2EncryptingError.chaCha20DecryptionFailed
-            }
-
-            crypto_stream_chacha20_ietf_xor(paddedPlaintextPointer, ciphertextBytes, UInt64(ciphertextLength), chaChaNonce, chaChaKey)
-        }
-
-        return try unpad(paddedPlaintext)
+        return try unpad(paddedPlaintextData)
     }
 }
