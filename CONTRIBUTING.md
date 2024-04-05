@@ -1,6 +1,10 @@
-# Nostr SDK iOS Contributing Guide
+# Contributing Guide
 
-Thank you for your interest in contributing to this Nostr SDK iOS library. We are currently not accepting external contributions (beyond core maintainers) at this time as we are in the early stages of bootstrapping the library. However, contributions will open up in the future, with the end goal of building a vibrant developer community.
+Thank you for your interest in contributing to Nostr SDK for Apple Platforms.
+
+If you would like to contribute code, please [fork](https://github.com/nostr-sdk/nostr-sdk-ios/fork) the repository on GitHub, apply your changes on your fork, and open a [pull request](https://github.com/nostr-sdk/nostr-sdk-ios/compare). Please ensure that the [core principles](#core-principles) are followed.
+
+If you would like to report an issue, please file an [issue](https://github.com/nostr-sdk/nostr-sdk-ios/issues/new) in GitHub.
 
 ## Core Principles
 
