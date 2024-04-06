@@ -4,8 +4,6 @@
 
 [Nostr](https://github.com/nostr-protocol/nostr) SDK library for Apple Platforms.
 
-**Warning: The API is not currently stable and not guaranteed to be backwards compatible yet.**
-
 ## Minimum Requirements
 
 - Swift 5.7.1
