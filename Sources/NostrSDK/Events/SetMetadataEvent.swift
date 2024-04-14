@@ -99,3 +99,23 @@ public final class SetMetadataEvent: NostrEvent, CustomEmojiInterpreting, NonPar
         return try? JSONDecoder().decode(UserMetadata.self, from: data)
     }
 }
+
+public extension EventCreating {
+    
+    /// Creates a ``SetMetadataEvent`` (kind 0) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - userMetadata: The metadata to set.
+    ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the name or about fields.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``SetMetadataEvent``.
+    ///
+    /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
+    func setMetadataEvent(withUserMetadata userMetadata: UserMetadata, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> SetMetadataEvent {
+        let metadataAsData = try JSONEncoder().encode(userMetadata)
+        guard let metadataAsString = String(data: metadataAsData, encoding: .utf8) else {
+            throw EventCreatingError.invalidInput
+        }
+        let customEmojiTags = customEmojis.map { $0.tag }
+        return try SetMetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
+    }
+}

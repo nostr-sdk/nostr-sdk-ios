@@ -81,3 +81,72 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
         return urlStrings.compactMap { URL(string: $0) }
     }
 }
+
+public extension EventCreating {
+
+    /// Creates a ``BookmarksListEvent`` (kind 10003) containing an uncategorized, "global" list of things a user wants to save.
+    /// - Parameters:
+    ///   - publiclyBookmarkedEventIds: Event ids to bookmark.
+    ///   - privatelyBookmarkedEventIds: Event ids to privately bookmark.
+    ///   - publiclyBookmarkedArticlesCoordinates: Articles coordinates to bookmark.
+    ///   - privatelyBookmarkedArticlesCoordinates: Articles coordinates to privately bookmark.
+    ///   - publiclyBookmarkedHashtags: Hashtags to bookmark.
+    ///   - privatelyBookmarkedHashtags: Hashtags to privately bookmark.
+    ///   - publiclyBookmarkedLinks: Links to bookmark.
+    ///   - privatelyBookmarkedLinks: Links to privately bookmark.
+    ///   - keypair: The Keypair to sign with.
+    func bookmarksList(withPubliclyBookmarksEventIds publiclyBookmarkedEventIds: [String] = [],
+                       privatelyBookmarkedEventIds: [String] = [],
+                       publiclyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
+                       privatelyBookmarkedArticlesCoordinates: [EventCoordinates] = [],
+                       publiclyBookmarkedHashtags: [String] = [],
+                       privatelyBookmarkedHashtags: [String] = [],
+                       publiclyBookmarkedLinks: [URL] = [],
+                       privatelyBookmarkedLinks: [URL] = [],
+                       signedBy keypair: Keypair) throws -> BookmarksListEvent {
+        let publicTags: [Tag] = publiclyBookmarkedEventIds.map { .event($0) } +
+                                publiclyBookmarkedArticlesCoordinates.map { $0.tag } +
+                                publiclyBookmarkedHashtags.map { .hashtag($0) } +
+                                publiclyBookmarkedLinks.map { .link($0) }
+
+        let privateTags: [Tag] = privatelyBookmarkedEventIds.map { .event($0) } +
+                                 privatelyBookmarkedArticlesCoordinates.map { $0.tag } +
+                                 privatelyBookmarkedHashtags.map { .hashtag($0) } +
+                                 privatelyBookmarkedLinks.map { .link($0) }
+
+        return try bookmarksList(withPublicTags: publicTags,
+                                 privateTags: privateTags,
+                                 signedBy: keypair)
+    }
+
+    /// Creates a ``BookmarksListEvent`` (kind 10003) containing an uncategorized, "global" list of things a user wants to save from the provided tags.
+    /// - Parameters:
+    ///   - publicTags: The public tags to bookmark. May include "e" (event id), "t" (hashtag), "a" (event coordinates), and "r" (reference) tags.
+    ///   - privateTags: The private tags to bookmark. May include "e" (event id), "t" (hashtag), "a" (event coordinates), and "r" (reference) tags.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed event.
+    func bookmarksList(withPublicTags publicTags: [Tag] = [],
+                       privateTags: [Tag] = [],
+                       signedBy keypair: Keypair) throws -> BookmarksListEvent {
+        let validTagNames: Set<TagName> = [.event, .eventCoordinates, .hashtag, .webURL]
+        let validRawTagNames = Set(validTagNames.map { $0.rawValue })
+        let tagNames: Set<String> = Set((publicTags + privateTags).map { $0.name })
+
+        guard tagNames.isSubset(of: validRawTagNames) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        var encryptedContent: String?
+        if !privateTags.isEmpty {
+            let rawPrivateTags = privateTags.map { $0.raw }
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: rawPrivateTags),
+               let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
+                encryptedContent = try encrypt(content: unencryptedContent,
+                                               privateKey: keypair.privateKey,
+                                               publicKey: keypair.publicKey)
+            }
+        }
+
+        return try BookmarksListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
+    }
+}

@@ -33,3 +33,45 @@ public class ReactionEvent: NostrEvent, CustomEmojiInterpreting {
         tags.last(where: { $0.name == TagName.pubkey.rawValue })?.value
     }
 }
+
+public extension EventCreating {
+    
+    /// Creates a ``ReactionEvent`` (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - content: The content of the reaction.
+    ///   - reactedEvent: The NostrEvent being reacted to.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``ReactionEvent``.
+    ///
+    /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+    func reaction(withContent content: String, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
+        let eventTag = Tag.event(reactedEvent.id)
+        let pubkeyTag = Tag.pubkey(reactedEvent.pubkey)
+        
+        var tags = reactedEvent.tags.filter { $0.name == TagName.event.rawValue || $0.name == TagName.pubkey.rawValue }
+        tags.append(eventTag)
+        tags.append(pubkeyTag)
+        
+        return try ReactionEvent(content: content, tags: tags, signedBy: keypair)
+    }
+
+    /// Creates a ``ReactionEvent`` (kind 7) in response to a different ``NostrEvent`` and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - customEmoji: The custom emoji to emojify with if the matching shortcode is found in the content field.
+    ///   - reactedEvent: The NostrEvent being reacted to.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``ReactionEvent``.
+    ///
+    /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+    func reaction(withCustomEmoji customEmoji: CustomEmoji, reactedEvent: NostrEvent, signedBy keypair: Keypair) throws -> ReactionEvent {
+        let eventTag = Tag.event(reactedEvent.id)
+        let pubkeyTag = Tag.pubkey(reactedEvent.pubkey)
+
+        var tags = reactedEvent.tags.filter { $0.name == TagName.event.rawValue || $0.name == TagName.pubkey.rawValue }
+        tags.append(eventTag)
+        tags.append(pubkeyTag)
+        tags.append(customEmoji.tag)
+
+        return try ReactionEvent(content: ":\(customEmoji.shortcode):", tags: tags, signedBy: keypair)
+    }
+}

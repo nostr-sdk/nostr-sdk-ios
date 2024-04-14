@@ -50,3 +50,52 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting, Parame
         return URL(string: imageURLString)
     }
 }
+
+public extension EventCreating {
+
+    /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".
+    /// - Parameters:
+    ///   - identifier: A unique identifier for the content. Can be reused in the future for replacing the event. If an identifier is not provided, a ``UUID`` string is used.
+    ///   - title: The article title.
+    ///   - markdownContent: A string text in Markdown syntax.
+    ///   - summary: A summary of the content.
+    ///   - imageURL: A URL pointing to an image to be shown along with the title.
+    ///   - hashtags: An optional list of topics about which the event might be of relevance.
+    ///   - publishedAt: The date of the first time the article was published.
+    ///   - keypair: The ``Keypair`` to sign with.
+    /// - Returns: The signed ``LongformContentEvent``.
+    func longformContentEvent(withIdentifier identifier: String = UUID().uuidString,
+                              title: String? = nil,
+                              markdownContent: String,
+                              summary: String? = nil,
+                              imageURL: URL? = nil,
+                              hashtags: [String]? = nil,
+                              publishedAt: Date = .now,
+                              signedBy keypair: Keypair) throws -> LongformContentEvent {
+        var tags = [Tag]()
+
+        tags.append(Tag(name: .identifier, value: identifier))
+
+        if let title {
+            tags.append(Tag(name: .title, value: title))
+        }
+
+        if let summary {
+            tags.append(Tag(name: .summary, value: summary))
+        }
+
+        if let imageURL {
+            tags.append(Tag(name: .image, value: imageURL.absoluteString))
+        }
+
+        if let hashtags {
+            for hashtag in hashtags {
+                tags.append(.hashtag(hashtag))
+            }
+        }
+
+        tags.append(Tag(name: .publishedAt, value: String(Int64(publishedAt.timeIntervalSince1970))))
+
+        return try LongformContentEvent(content: markdownContent, tags: tags, signedBy: keypair)
+    }
+}

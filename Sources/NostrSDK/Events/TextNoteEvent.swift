@@ -116,3 +116,81 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
         firstValueForTagName(.subject)
     }
 }
+
+public extension EventCreating {
+
+    /// Creates a ``TextNoteEvent`` (kind 1) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - content: The content of the text note.
+    ///   - repliedEvent: The event being replied to.
+    ///   - mentionedEventTags: The ``EventTag``s with `mention` markers for the mentioned events.
+    ///   - subject: A subject for the text note.
+    ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the content field.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``TextNoteEvent``.
+    ///
+    /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
+    /// See [NIP-10 - On "e" and "p" tags in Text Events (kind 1)](https://github.com/nostr-protocol/nips/blob/master/10.md)
+    func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
+        if let mentionedEventTags {
+            guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
+                throw EventCreatingError.invalidInput
+            }
+        }
+
+        var tags: [Tag] = []
+
+        if let repliedEvent {
+            if let rootEventTag = repliedEvent.rootEventTag {
+                // Maximize backwards compatibility with NIP-10 deprecated positional event tags
+                // by ensuring ordering of types of event tags.
+
+                // 1. Root tag comes first.
+                if rootEventTag.marker == .root {
+                    tags.append(rootEventTag.tag)
+                } else {
+                    // Recreate the event tag with a root marker if the one being read does not have a marker.
+                    let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root)
+                    tags.append(rootEventTagWithMarker.tag)
+                }
+
+                // 2. Mentions go in between.
+                if let mentionedEventTags {
+                    tags += mentionedEventTags.map { $0.tag }
+                }
+
+                // 3. Reply tag comes last.
+                tags.append(try EventTag(eventId: repliedEvent.id, marker: .reply).tag)
+
+                // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
+                // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
+                tags += repliedEvent.tags.filter { $0.name == TagName.pubkey.rawValue }
+
+                // Add the author "p" tag if it was not already added.
+                if !tags.contains(where: { $0.name == TagName.pubkey.rawValue && $0.value == repliedEvent.pubkey }) {
+                    tags.append(Tag(name: .pubkey, value: repliedEvent.pubkey))
+                }
+            } else {
+                if let mentionedEventTags {
+                    tags += mentionedEventTags.map { $0.tag }
+                }
+
+                // If the event being replied to has no root marker event tag,
+                // the event being replied to is the root.
+                tags.append(try EventTag(eventId: repliedEvent.id, marker: .root).tag)
+            }
+        } else if let mentionedEventTags {
+            tags += mentionedEventTags.map { $0.tag }
+        }
+
+        if let customEmojis {
+            tags += customEmojis.map { $0.tag }
+        }
+
+        if let subject {
+            tags.append(Tag(name: .subject, value: subject))
+        }
+
+        return try TextNoteEvent(content: content, tags: tags, signedBy: keypair)
+    }
+}
