@@ -61,3 +61,51 @@ public final class MuteListEvent: NostrEvent, HashtagInterpreting, PrivateTagInt
         valuesForPrivateTags(from: content, withName: .word, using: keypair)
     }
 }
+
+public extension EventCreating {
+    
+    /// Creates a ``MuteListEvent`` (kind 10000) containing things the user doesn't want to see in their feeds. Mute list items be publicly visible or private.
+    /// - Parameters:
+    ///   - publiclyMutedPubkeys: Pubkeys to mute.
+    ///   - privatelyMutedPubkeys: Pubkeys to privately mute.
+    ///   - publiclyMutedEventIds: Event ids to mute.
+    ///   - privatelyMutedEventIds: Event ids to privately mute.
+    ///   - publiclyMutedHashtags: Hashtags to mute.
+    ///   - privatelyMutedHashtags: Hashtags to privately mute.
+    ///   - publiclyMutedKeywords: Keywords to mute.
+    ///   - privatelyMutedKeywords: Keywords to privately mute.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``MuteListEvent``.
+    func muteList(withPubliclyMutedPubkeys publiclyMutedPubkeys: [String] = [],
+                  privatelyMutedPubkeys: [String] = [],
+                  publiclyMutedEventIds: [String] = [],
+                  privatelyMutedEventIds: [String] = [],
+                  publiclyMutedHashtags: [String] = [],
+                  privatelyMutedHashtags: [String] = [],
+                  publiclyMutedKeywords: [String] = [],
+                  privatelyMutedKeywords: [String] = [],
+                  signedBy keypair: Keypair) throws -> MuteListEvent {
+        let publicTags: [Tag] = publiclyMutedPubkeys.map { .pubkey($0) } +
+        publiclyMutedEventIds.map { .event($0) } +
+        publiclyMutedHashtags.map { .hashtag($0) } +
+        publiclyMutedKeywords.map { Tag(name: .word, value: $0) }
+        
+        let privateTags: [Tag] = privatelyMutedPubkeys.map { .pubkey($0) } +
+        privatelyMutedEventIds.map { .event($0) } +
+        privatelyMutedHashtags.map { .hashtag($0) } +
+        privatelyMutedKeywords.map { Tag(name: .word, value: $0) }
+        
+        var encryptedContent: String?
+        if !privateTags.isEmpty {
+            let rawPrivateTags = privateTags.map { $0.raw }
+            if let unencryptedData = try? JSONSerialization.data(withJSONObject: rawPrivateTags),
+               let unencryptedContent = String(data: unencryptedData, encoding: .utf8) {
+                encryptedContent = try encrypt(content: unencryptedContent,
+                                               privateKey: keypair.privateKey,
+                                               publicKey: keypair.publicKey)
+            }
+        }
+        
+        return try MuteListEvent(content: encryptedContent ?? "", tags: publicTags, signedBy: keypair)
+    }
+}

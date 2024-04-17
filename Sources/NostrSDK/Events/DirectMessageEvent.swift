@@ -38,3 +38,23 @@ public final class DirectMessageEvent: NostrEvent, DirectMessageEncrypting {
         return try decrypt(encryptedContent: content, privateKey: privateKey, publicKey: recipientPublicKey)
     }
 }
+
+public extension EventCreating {
+
+    /// Creates a ``DirectMessageEvent`` (kind 4) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - content: The content of the text note.
+    ///   - toRecipient: The PublicKey of the recipient.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``DirectMessageEvent``.
+    ///
+    /// See [NIP-04 - Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
+    func directMessage(withContent content: String, toRecipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> DirectMessageEvent {
+        guard let encryptedMessage = try? encrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        let recipientTag = Tag.pubkey(pubkey.hex)
+        return try DirectMessageEvent(content: encryptedMessage, tags: [recipientTag], signedBy: keypair)
+    }
+}

@@ -32,3 +32,33 @@ public final class CalendarListEvent: NostrEvent, ParameterizedReplaceableEvent,
             .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
     }
 }
+
+public extension EventCreating {
+    
+    /// Creates a ``CalendarListEvent`` (kind 31924), which is a collection of date-based and time-based calendar events.
+    /// - Parameters:
+    ///   - identifier: A unique identifier for the calendar. Can be reused in the future for replacing the calendar. If an identifier is not provided, a ``UUID`` string is used.
+    ///   - title: The title of the calendar.
+    ///   - description: A detailed description of the calendar.
+    ///   - calendarEventsCoordinates: The coordinates to date-based or time-based calendar events that belong to this calendar.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``CalendarListEvent``.
+    ///
+    /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    func calendarListEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarListEvent {
+        guard calendarEventsCoordinates.allSatisfy({ $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }) else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        var tags: [Tag] = [
+            Tag(name: .identifier, value: identifier),
+            Tag(name: .title, value: title)
+        ]
+        
+        calendarEventsCoordinates
+            .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
+            .forEach { tags.append($0.tag) }
+        
+        return try CalendarListEvent(content: description, tags: tags, signedBy: keypair)
+    }
+}

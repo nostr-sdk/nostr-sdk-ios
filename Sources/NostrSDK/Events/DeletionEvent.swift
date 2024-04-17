@@ -36,3 +36,32 @@ public final class DeletionEvent: NostrEvent, EventCoordinatesTagInterpreting {
         allValues(forTagName: .event)
     }
 }
+
+public extension EventCreating {
+    
+    /// Creates a ``DeletionEvent`` (kind 5) and signs it with the provided ``Keypair``.
+    /// - Parameters:
+    ///   - events: The events the signer would like to request deletion for. Only events that match the `id` will be requested for deletion.
+    ///   - replaceableEvents: The replaceable events the signer would like to request deletion for. All events that match the `replaceableEventCoordinates`, regardless of if `id` match, will be requested for deletion.
+    ///   - keypair: The Keypair to sign with.
+    /// - Returns: The signed ``DeletionEvent``.
+    ///
+    /// > Important: Events can only be deleted using the same keypair that was used to create them.
+    /// See [NIP-09 Specification](https://github.com/nostr-protocol/nips/blob/master/09.md)
+    func delete(events: [NostrEvent] = [], replaceableEvents: [ReplaceableEvent] = [], reason: String? = nil, signedBy keypair: Keypair) throws -> DeletionEvent {
+        guard !events.isEmpty || !replaceableEvents.isEmpty else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        // Verify that the events being deleted were created with the same keypair.
+        let creatorValidatedEvents = events.filter { $0.pubkey == keypair.publicKey.hex }
+        let creatorValidatedReplaceableEvents = replaceableEvents.filter { $0.pubkey == keypair.publicKey.hex }
+        
+        guard !creatorValidatedEvents.isEmpty || !creatorValidatedReplaceableEvents.isEmpty else {
+            throw EventCreatingError.invalidInput
+        }
+        
+        let tags: [Tag] = creatorValidatedEvents.map { .event($0.id) } + creatorValidatedReplaceableEvents.compactMap { $0.replaceableEventCoordinates(relayURL: nil)?.tag }
+        return try DeletionEvent(content: reason ?? "", tags: tags, signedBy: keypair)
+    }
+}
