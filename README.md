@@ -130,6 +130,7 @@ These are the core maintainers of this library and their Nostr public keys.
 
 ## Acknowledgements
 
+- [OpenSats](https://opensats.org/blog/nostr-grants-july-2023) - Nostr Grant in July 2023
 - [Swift-DocC Plugin](https://github.com/apple/swift-docc-plugin) - [Apache License 2.0, Apple Inc.](https://github.com/apple/swift-docc-plugin/blob/main/LICENSE.txt)
 - [SymbolKit](https://github.com/apple/swift-docc-symbolkit) - [Apache License 2.0, Apple Inc.](https://github.com/apple/swift-docc-symbolkit/blob/main/LICENSE.txt)
 - [secp256k1.swift](https://github.com/GigaBitcoin/secp256k1.swift) - [MIT License, Copyright (c) 2020 GigaBitcoin LLC](https://github.com/GigaBitcoin/secp256k1.swift/blob/main/LICENSE)
