@@ -56,4 +56,22 @@ final class DeletionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertThrowsError(try delete(replaceableEvents: [longformNoteToDelete], reason: reason, signedBy: Keypair.test))
     }
 
+    func testDecodeDeletionEvent() throws {
+        let event: TextNoteEvent = try decodeFixture(filename: "deletion")
+
+        XCTAssertEqual(event.id, "6ff64ff18b898a9039b3c9a09574b1bb2f6197b0782ab416cf1251eaff296ca3")
+        XCTAssertEqual(event.pubkey, "2779f3d9f42c7dee17f0e6bcdcf89a8f9d592d19e3b1bbd27ef1cffd1a7f98d1")
+        XCTAssertEqual(event.createdAt, 1713356767)
+        XCTAssertEqual(event.kind, .deletion)
+
+        let expectedTags: [Tag] = [
+            .event("69ba6336507d20f6673e5866be32583e0d0ae61a4149c04f2d48d124671e5aff")
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+        XCTAssertEqual(event.content, "")
+        XCTAssertEqual(event.signature, "f672f285ef3506509b6b12ffcfaf90f234ed9895894a989f9c7b69023b600dd0544b36edc81f0889928e637f53fe34444c62e82d4f5add46c5b7a283d02e207d")
+
+        XCTAssertEqual(event.mentionedEventIds, ["69ba6336507d20f6673e5866be32583e0d0ae61a4149c04f2d48d124671e5aff"])
+    }
+
 }
