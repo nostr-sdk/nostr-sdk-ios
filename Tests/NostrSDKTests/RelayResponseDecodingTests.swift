@@ -48,6 +48,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(subscriptionId, "some-subscription-id")
             XCTAssertNotNil(event)
+            XCTAssertTrue(event is TextNoteEvent)
             XCTAssertEqual(event.id, "fa5ed84fc8eeb959fd39ad8e48388cfc33075991ef8e50064cfcecfd918bb91b")
         } else {
             XCTFail("failed to decode")

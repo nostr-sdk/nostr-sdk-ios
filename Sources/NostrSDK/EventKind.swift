@@ -126,23 +126,46 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
 
     public var rawValue: RawValue {
         switch self {
-        case .setMetadata: return 0
-        case .textNote: return 1
-        case .followList: return 3
-        case .directMessage: return 4
-        case .deletion: return 5
-        case .repost: return 6
-        case .reaction: return 7
-        case .genericRepost: return 16
-        case .report: return 1984
-        case .muteList: return 10000
-        case .bookmarksList: return 10003
-        case .longformContent: return 30023
+        case .setMetadata:            return 0
+        case .textNote:               return 1
+        case .followList:             return 3
+        case .directMessage:          return 4
+        case .deletion:               return 5
+        case .repost:                 return 6
+        case .reaction:               return 7
+        case .genericRepost:          return 16
+        case .report:                 return 1984
+        case .muteList:               return 10000
+        case .bookmarksList:          return 10003
+        case .longformContent:        return 30023
         case .dateBasedCalendarEvent: return 31922
         case .timeBasedCalendarEvent: return 31923
-        case .calendar: return 31924
-        case .calendarEventRSVP: return 31925
-        case let .unknown(value): return value
+        case .calendar:               return 31924
+        case .calendarEventRSVP:      return 31925
+        case let .unknown(value):     return value
+        }
+    }
+
+    /// The ``NostrEvent`` subclass associated with the kind.
+    public var classForKind: NostrEvent.Type {
+        switch self {
+        case .setMetadata:            return SetMetadataEvent.self
+        case .textNote:               return TextNoteEvent.self
+        case .followList:             return FollowListEvent.self
+        case .directMessage:          return DirectMessageEvent.self
+        case .deletion:               return DeletionEvent.self
+        case .repost:                 return TextNoteRepostEvent.self
+        case .reaction:               return ReactionEvent.self
+        case .genericRepost:          return GenericRepostEvent.self
+        case .report:                 return ReportEvent.self
+        case .muteList:               return MuteListEvent.self
+        case .bookmarksList:          return BookmarksListEvent.self
+        case .longformContent:        return LongformContentEvent.self
+        case .dateBasedCalendarEvent: return DateBasedCalendarEvent.self
+        case .timeBasedCalendarEvent: return TimeBasedCalendarEvent.self
+        case .calendar:               return CalendarListEvent.self
+        case .calendarEventRSVP:      return CalendarEventRSVP.self
+        case .unknown:                return NostrEvent.self
         }
     }
 

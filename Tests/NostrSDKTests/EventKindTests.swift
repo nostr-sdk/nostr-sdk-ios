@@ -10,6 +10,12 @@ import XCTest
 
 final class EventKindTests: XCTestCase {
 
+    func testHasClassForKind() {
+        EventKind.allCases.forEach { kind in
+            XCTAssertTrue(kind.classForKind !== NostrEvent.self, "NostrEvent subclass for known event kind \"\(kind)\" was not defined.")
+        }
+    }
+
     func testIsNonParameterizedReplaceable() throws {
         XCTAssertTrue(EventKind.setMetadata.isNonParameterizedReplaceable)
         XCTAssertTrue(EventKind.followList.isNonParameterizedReplaceable)
