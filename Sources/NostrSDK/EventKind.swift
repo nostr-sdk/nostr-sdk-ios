@@ -8,7 +8,7 @@
 import Foundation
 
 /// A constant defining the kind of an event.
-public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
+public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hashable {
 
     public typealias RawValue = Int
 
@@ -122,6 +122,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable {
     public init(rawValue: Int) {
         self = Self.allCases.first { $0.rawValue == rawValue }
                ?? .unknown(rawValue)
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue)
     }
 
     public var rawValue: RawValue {

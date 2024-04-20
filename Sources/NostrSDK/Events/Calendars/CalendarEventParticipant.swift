@@ -8,7 +8,7 @@
 import Foundation
 
 /// A participant in a calendar event.
-public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
+public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag
     }
@@ -61,6 +61,10 @@ public struct CalendarEventParticipant: PubkeyProviding, RelayProviding, RelayUR
         }
         
         tag = Tag.pubkey(pubkey.hex, otherParameters: otherParameters)
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(tag)
     }
 }
 

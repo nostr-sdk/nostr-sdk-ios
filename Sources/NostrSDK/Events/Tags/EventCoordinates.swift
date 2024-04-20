@@ -13,7 +13,7 @@ enum EventCoordinatesError: Error {
 
 /// Coordinates to a (maybe parameterized) replaceable event.
 /// See [NIP-01 Tags](https://github.com/nostr-protocol/nips/blob/master/01.md#tags).
-public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable {
+public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag
     }
@@ -116,6 +116,10 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
                 otherParameters: otherParameters
             )
         )
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(tag)
     }
 }
 

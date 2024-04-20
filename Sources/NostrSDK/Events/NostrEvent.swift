@@ -10,9 +10,15 @@ import Foundation
 /// A structure that describes a Nostr event.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
-public class NostrEvent: Codable, Equatable {
+public class NostrEvent: Codable, Equatable, Hashable {
     public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id &&
+        lhs.pubkey == rhs.pubkey &&
+        lhs.createdAt == rhs.createdAt &&
+        lhs.kind == rhs.kind &&
+        lhs.tags == rhs.tags &&
+        lhs.content == rhs.content &&
+        lhs.signature == rhs.signature
     }
     
     /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data
@@ -69,7 +75,17 @@ public class NostrEvent: Codable, Equatable {
                                                 content: content)
         signature = try keypair.privateKey.signatureForContent(id)
     }
-    
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(pubkey)
+        hasher.combine(createdAt)
+        hasher.combine(kind)
+        hasher.combine(tags)
+        hasher.combine(content)
+        hasher.combine(signature)
+    }
+
     /// The date the event was created.
     public var createdDate: Date {
         Date(timeIntervalSince1970: TimeInterval(createdAt))
