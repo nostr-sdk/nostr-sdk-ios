@@ -12,7 +12,13 @@ import Foundation
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
 public class NostrEvent: Codable, Equatable, Hashable {
     public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
-        lhs.isEqual(to: rhs)
+        lhs.id == rhs.id &&
+        lhs.pubkey == rhs.pubkey &&
+        lhs.createdAt == rhs.createdAt &&
+        lhs.kind == rhs.kind &&
+        lhs.tags == rhs.tags &&
+        lhs.content == rhs.content &&
+        lhs.signature == rhs.signature
     }
     
     /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data
@@ -123,15 +129,5 @@ public class NostrEvent: Codable, Equatable, Hashable {
     /// - Returns: The values associated with the tags of the provided name.
     public func allValues(forTagName tag: TagName) -> [String] {
         tags.filter { $0.name == tag.rawValue }.map { $0.value }
-    }
-
-    func isEqual(to nostrEvent: NostrEvent) -> Bool {
-        id == nostrEvent.id &&
-        pubkey == nostrEvent.pubkey &&
-        createdAt == nostrEvent.createdAt &&
-        kind == nostrEvent.kind &&
-        tags == nostrEvent.tags &&
-        content == nostrEvent.content &&
-        signature == nostrEvent.signature
     }
 }

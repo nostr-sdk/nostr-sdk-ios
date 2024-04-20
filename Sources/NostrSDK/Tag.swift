@@ -62,7 +62,9 @@ public enum TagName: String {
 /// See https://github.com/nostr-protocol/nips/tree/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c#standardized-tags for a list of all standardized tags.
 public class Tag: Codable, Equatable, Hashable {
     public static func == (lhs: Tag, rhs: Tag) -> Bool {
-        lhs.isEqual(to: rhs)
+        lhs.name == rhs.name &&
+        lhs.value == rhs.value &&
+        lhs.otherParameters == rhs.otherParameters
     }
     
     /// The name of the tag.
@@ -124,12 +126,6 @@ public class Tag: Codable, Equatable, Hashable {
         for value in otherParameters {
             try container.encode(value)
         }
-    }
-    
-    func isEqual(to tag: Tag) -> Bool {
-        name == tag.name &&
-        value == tag.value &&
-        otherParameters == tag.otherParameters
     }
     
     /// The raw format of a tag, which can be serialized and transmitted.

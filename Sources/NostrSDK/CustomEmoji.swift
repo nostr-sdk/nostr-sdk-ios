@@ -10,7 +10,8 @@ import Foundation
 /// [NIP-30 Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
 public class CustomEmoji: CustomEmojiValidating, Equatable {
     public static func == (lhs: CustomEmoji, rhs: CustomEmoji) -> Bool {
-        lhs.isEqual(to: rhs)
+        lhs.shortcode == rhs.shortcode &&
+        lhs.imageURL == rhs.imageURL
     }
 
     /// A name given for the emoji, which MUST be comprised of only alphanumeric characters and underscores.
@@ -35,11 +36,6 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
         guard isValidShortcode(shortcode) else {
             return nil
         }
-    }
-
-    func isEqual(to customEmoji: CustomEmoji) -> Bool {
-        shortcode == customEmoji.shortcode &&
-        imageURL == customEmoji.imageURL
     }
 }
 
