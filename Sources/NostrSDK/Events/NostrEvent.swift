@@ -10,9 +10,9 @@ import Foundation
 /// A structure that describes a Nostr event.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
-public class NostrEvent: Codable, Equatable {
+public class NostrEvent: Codable, Equatable, Hashable {
     public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
-        lhs.id == rhs.id
+        lhs.isEqual(to: rhs)
     }
     
     /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data
@@ -69,7 +69,17 @@ public class NostrEvent: Codable, Equatable {
                                                 content: content)
         signature = try keypair.privateKey.signatureForContent(id)
     }
-    
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(pubkey)
+        hasher.combine(createdAt)
+        hasher.combine(kind)
+        hasher.combine(tags)
+        hasher.combine(content)
+        hasher.combine(signature)
+    }
+
     /// The date the event was created.
     public var createdDate: Date {
         Date(timeIntervalSince1970: TimeInterval(createdAt))
@@ -113,5 +123,15 @@ public class NostrEvent: Codable, Equatable {
     /// - Returns: The values associated with the tags of the provided name.
     public func allValues(forTagName tag: TagName) -> [String] {
         tags.filter { $0.name == tag.rawValue }.map { $0.value }
+    }
+
+    func isEqual(to nostrEvent: NostrEvent) -> Bool {
+        id == nostrEvent.id &&
+        pubkey == nostrEvent.pubkey &&
+        createdAt == nostrEvent.createdAt &&
+        kind == nostrEvent.kind &&
+        tags == nostrEvent.tags &&
+        content == nostrEvent.content &&
+        signature == nostrEvent.signature
     }
 }
