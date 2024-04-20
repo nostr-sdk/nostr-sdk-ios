@@ -17,15 +17,7 @@ fileprivate struct EventKindMapper: Decodable {     // swiftlint:disable:this pr
     
     /// The ``NostrEvent`` subclass associated with the kind.
     var classForKind: NostrEvent.Type {
-        switch kind {
-        case .setMetadata:      return SetMetadataEvent.self
-        case .textNote:         return TextNoteEvent.self
-        case .followList:      return FollowListEvent.self
-        case .directMessage:    return DirectMessageEvent.self
-        case .repost:           return TextNoteRepostEvent.self
-        case .genericRepost:    return GenericRepostEvent.self
-        default:                return NostrEvent.self
-        }
+        kind.classForKind
     }
 }
 
