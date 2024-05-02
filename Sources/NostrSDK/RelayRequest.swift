@@ -11,6 +11,7 @@ enum RelayRequest {
     case event(NostrEvent)
     case request(subscriptionId: String, filter: Filter)
     case close(subscriptionId: String)
+    case auth(AuthenticationEvent)
     case count(subscriptionId: String, filter: Filter)
     
     var encoded: String? {
@@ -22,6 +23,8 @@ enum RelayRequest {
             payload = [AnyEncodable("REQ"), AnyEncodable(subscriptionId), AnyEncodable(filter)]
         case .close(let subscriptionId):
             payload = [AnyEncodable("CLOSE"), AnyEncodable(subscriptionId)]
+        case .auth(let event):
+            payload = [AnyEncodable("AUTH"), AnyEncodable(event)]
         case .count(let subscriptionId, let filter):
             payload = [AnyEncodable("COUNT"), AnyEncodable(subscriptionId), AnyEncodable(filter)]
         }

@@ -8,7 +8,7 @@
 @testable import NostrSDK
 import XCTest
 
-final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
+final class RelayRequestEncodingTests: XCTestCase, EventCreating, FixtureLoading, JSONTesting {
 
     func testEncodeEvent() throws {
         let eventTag = Tag.event("93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63")
@@ -48,6 +48,14 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
         let expected = try loadFixtureString("close_request")
 
         XCTAssertEqual(request.encoded, expected)
+    }
+
+    func testEncodeAuth() throws {
+        let authenticationEvent: AuthenticationEvent = try decodeFixture(filename: "authentication_event")
+        let request = try XCTUnwrap(RelayRequest.auth(authenticationEvent))
+        let expected = try loadFixtureString("auth_request")
+
+        XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
     }
 
     func testEncodeCount() throws {

@@ -67,6 +67,8 @@ enum RelayResponse: Decodable {
         case rateLimited = "rate-limited"
         case invalid
         case error
+        case authRequired = "auth-required"
+        case restricted
     }
 
     case event(subscriptionId: String, event: NostrEvent)
