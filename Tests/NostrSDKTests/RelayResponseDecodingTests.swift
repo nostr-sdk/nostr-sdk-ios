@@ -38,7 +38,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
             XCTAssertEqual(message.type, .unknown)
-            XCTAssertNil(message.message)
+            XCTAssertEqual(message.message, "")
         } else {
             XCTFail("failed to decode")
         }
@@ -55,7 +55,41 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
             XCTAssertEqual(message.type, .pow)
-            XCTAssertEqual(message.message, "difficulty 25>=24")
+            XCTAssertEqual(message.message, "difficulty: 25>=24")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeOkMessageWithReasonPrefixNoMessage() throws {
+        let data = try loadFixtureData("ok_success_reason_prefix_no_message")
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .ok(let eventId, let success, let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
+            XCTAssertEqual(success, true)
+            XCTAssertEqual(message.type, .pow)
+            XCTAssertEqual(message.message, "")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeOkMessageWithUnknownReason() throws {
+        let data = try loadFixtureData("ok_unknown_reason")
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .ok(let eventId, let success, let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
+            XCTAssertEqual(success, true)
+            XCTAssertEqual(message.type, .unknown)
+            XCTAssertEqual(message.message, "unknown: reason: unknown")
         } else {
             XCTFail("failed to decode")
         }

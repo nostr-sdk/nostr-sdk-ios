@@ -38,20 +38,22 @@ enum RelayResponse: Decodable {
     
     struct OKMessage {
         let type: OKMessageType
-        let message: String?
+        let message: String
         
         init(rawMessage: String) {
-            let components = rawMessage.split(separator: ":")
+            let components = rawMessage.split(separator: ":", maxSplits: 1)
             if let firstComponent = components.first {
                 type = OKMessageType(rawValue: String(firstComponent)) ?? .unknown
             } else {
                 type = .unknown
             }
-            
-            if components.count >= 2 {
-                message = components[1].trimmingCharacters(in: .whitespaces)
+
+            if type == .unknown {
+                message = rawMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+            } else if components.count >= 2 {
+                message = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
             } else {
-                message = nil
+                message = ""
             }
         }
     }
