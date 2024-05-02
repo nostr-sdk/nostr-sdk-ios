@@ -29,11 +29,11 @@ enum RelayResponse: Decodable {
 
     enum MessageType: String, Codable {
         case event = "EVENT"
-        case notice = "NOTICE"
-        case eose = "EOSE"
         case ok = "OK"
-        case count = "COUNT"
+        case eose = "EOSE"
+        case notice = "NOTICE"
         case auth = "AUTH"
+        case count = "COUNT"
     }
     
     struct OKMessage {
@@ -66,12 +66,12 @@ enum RelayResponse: Decodable {
         case error
     }
 
-    case notice(message: String)
-    case eose(subscriptionId: String)
     case event(subscriptionId: String, event: NostrEvent)
     case ok(eventId: String, success: Bool, message: OKMessage)
-    case count(subscriptionId: String, count: Int)
+    case eose(subscriptionId: String)
+    case notice(message: String)
     case auth(challenge: String)
+    case count(subscriptionId: String, count: Int)
 
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
@@ -89,24 +89,24 @@ enum RelayResponse: Decodable {
             let event = try container2.decode(kindMapper.classForKind.self)
             
             self = .event(subscriptionId: subscriptionId, event: event)
-        case .notice:
-            let message = try container.decode(String.self)
-            self = .notice(message: message)
-        case .eose:
-            let subscriptionId = try container.decode(String.self)
-            self = .eose(subscriptionId: subscriptionId)
         case .ok:
             let eventId = try container.decode(String.self)
             let success = try container.decode(Bool.self)
             let message = try container.decode(String.self)
             self = .ok(eventId: eventId, success: success, message: OKMessage(rawMessage: message))
+        case .eose:
+            let subscriptionId = try container.decode(String.self)
+            self = .eose(subscriptionId: subscriptionId)
+        case .notice:
+            let message = try container.decode(String.self)
+            self = .notice(message: message)
+        case .auth:
+            let challenge = try container.decode(String.self)
+            self = .auth(challenge: challenge)
         case .count:
             let subscriptionId = try container.decode(String.self)
             let countResponse = try container.decode(CountResponse.self)
             self = .count(subscriptionId: subscriptionId, count: countResponse.count)
-        case .auth:
-            let challenge = try container.decode(String.self)
-            self = .auth(challenge: challenge)
         }
     }
 

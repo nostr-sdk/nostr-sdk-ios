@@ -10,34 +10,6 @@ import XCTest
 
 final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
 
-    func testDecodeNoticeMessage() throws {
-        let data = try loadFixtureData("notice")
-
-        if let relayResponse = RelayResponse.decode(data: data) {
-            guard case .notice(let message) = relayResponse else {
-                XCTFail("incorrect type")
-                return
-            }
-            XCTAssertEqual(message, "there was an error")
-        } else {
-            XCTFail("failed to decode")
-        }
-    }
-
-    func testDecodeEOSEMessage() throws {
-        let data = try loadFixtureData("eose")
-
-        if let relayResponse = RelayResponse.decode(data: data) {
-            guard case .eose(let subscriptionId) = relayResponse else {
-                XCTFail("incorrect type")
-                return
-            }
-            XCTAssertEqual(subscriptionId, "some-subscription-id")
-        } else {
-            XCTFail("failed to decode")
-        }
-    }
-
     func testDecodeEventMessage() throws {
         let data = try loadFixtureData("event")
 
@@ -106,16 +78,29 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
         }
     }
 
-    func testDecodeCount() throws {
-        let data = try loadFixtureData("count_response")
+    func testDecodeEOSEMessage() throws {
+        let data = try loadFixtureData("eose")
 
         if let relayResponse = RelayResponse.decode(data: data) {
-            guard case .count(let subscriptionId, let count) = relayResponse else {
+            guard case .eose(let subscriptionId) = relayResponse else {
                 XCTFail("incorrect type")
                 return
             }
-            XCTAssertEqual(subscriptionId, "subscription-id")
-            XCTAssertEqual(count, 238)
+            XCTAssertEqual(subscriptionId, "some-subscription-id")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeNoticeMessage() throws {
+        let data = try loadFixtureData("notice")
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .notice(let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(message, "there was an error")
         } else {
             XCTFail("failed to decode")
         }
@@ -130,6 +115,21 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
                 return
             }
             XCTAssertEqual(challenge, "some-challenge-string")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeCount() throws {
+        let data = try loadFixtureData("count_response")
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .count(let subscriptionId, let count) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(subscriptionId, "subscription-id")
+            XCTAssertEqual(count, 238)
         } else {
             XCTFail("failed to decode")
         }

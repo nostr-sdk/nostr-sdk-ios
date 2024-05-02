@@ -10,13 +10,6 @@ import XCTest
 
 final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
 
-    func testEncodeClose() throws {
-        let request = try XCTUnwrap(RelayRequest.close(subscriptionId: "some-subscription-id"), "failed to encode request")
-        let expected = try loadFixtureString("close_request")
-
-        XCTAssertEqual(request.encoded, expected)
-    }
-
     func testEncodeEvent() throws {
         let eventTag = Tag.event("93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63")
         let pubkeyTag = Tag.pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9")
@@ -34,22 +27,6 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
         XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
     }
 
-    func testEncodeCount() throws {
-        let filter = Filter(ids: nil,
-                            authors: ["some-pubkey"],
-                            kinds: [1, 7],
-                            events: nil,
-                            pubkeys: nil,
-                            since: nil,
-                            until: nil,
-                            limit: nil)
-
-        let request = try XCTUnwrap(RelayRequest.count(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
-        let expected = try loadFixtureString("count_request")
-
-        XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
-    }
-
     func testEncodeReq() throws {
         let filter = Filter(ids: nil,
                             authors: ["some-pubkey"],
@@ -62,6 +39,29 @@ final class RelayRequestEncodingTests: XCTestCase, FixtureLoading, JSONTesting {
 
         let request = try XCTUnwrap(RelayRequest.request(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("req")
+
+        XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
+    }
+
+    func testEncodeClose() throws {
+        let request = try XCTUnwrap(RelayRequest.close(subscriptionId: "some-subscription-id"), "failed to encode request")
+        let expected = try loadFixtureString("close_request")
+
+        XCTAssertEqual(request.encoded, expected)
+    }
+
+    func testEncodeCount() throws {
+        let filter = Filter(ids: nil,
+                            authors: ["some-pubkey"],
+                            kinds: [1, 7],
+                            events: nil,
+                            pubkeys: nil,
+                            since: nil,
+                            until: nil,
+                            limit: nil)
+
+        let request = try XCTUnwrap(RelayRequest.count(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
+        let expected = try loadFixtureString("count_request")
 
         XCTAssertTrue(areEquivalentJSONArrayStrings(request.encoded, expected))
     }
