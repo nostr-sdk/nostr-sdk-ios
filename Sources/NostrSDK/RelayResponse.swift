@@ -31,24 +31,25 @@ enum RelayResponse: Decodable {
         case event = "EVENT"
         case ok = "OK"
         case eose = "EOSE"
+        case closed = "CLOSED"
         case notice = "NOTICE"
         case auth = "AUTH"
         case count = "COUNT"
     }
     
-    struct OKMessage {
-        let type: OKMessageType
+    struct RelayResponseMessage {
+        let prefix: RelayResponseMessagePrefix
         let message: String
         
         init(rawMessage: String) {
             let components = rawMessage.split(separator: ":", maxSplits: 1)
             if let firstComponent = components.first {
-                type = OKMessageType(rawValue: String(firstComponent)) ?? .unknown
+                prefix = RelayResponseMessagePrefix(rawValue: String(firstComponent)) ?? .unknown
             } else {
-                type = .unknown
+                prefix = .unknown
             }
 
-            if type == .unknown {
+            if prefix == .unknown {
                 message = rawMessage.trimmingCharacters(in: .whitespacesAndNewlines)
             } else if components.count >= 2 {
                 message = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
@@ -58,7 +59,7 @@ enum RelayResponse: Decodable {
         }
     }
     
-    enum OKMessageType: String, Codable {
+    enum RelayResponseMessagePrefix: String, Codable {
         case unknown
         case duplicate
         case pow
@@ -69,8 +70,9 @@ enum RelayResponse: Decodable {
     }
 
     case event(subscriptionId: String, event: NostrEvent)
-    case ok(eventId: String, success: Bool, message: OKMessage)
+    case ok(eventId: String, success: Bool, message: RelayResponseMessage)
     case eose(subscriptionId: String)
+    case closed(subscriptionId: String, message: RelayResponseMessage)
     case notice(message: String)
     case auth(challenge: String)
     case count(subscriptionId: String, count: Int)
@@ -95,10 +97,14 @@ enum RelayResponse: Decodable {
             let eventId = try container.decode(String.self)
             let success = try container.decode(Bool.self)
             let message = try container.decode(String.self)
-            self = .ok(eventId: eventId, success: success, message: OKMessage(rawMessage: message))
+            self = .ok(eventId: eventId, success: success, message: RelayResponseMessage(rawMessage: message))
         case .eose:
             let subscriptionId = try container.decode(String.self)
             self = .eose(subscriptionId: subscriptionId)
+        case .closed:
+            let subscriptionId = try container.decode(String.self)
+            let message = try container.decode(String.self)
+            self = .closed(subscriptionId: subscriptionId, message: RelayResponseMessage(rawMessage: message))
         case .notice:
             let message = try container.decode(String.self)
             self = .notice(message: message)

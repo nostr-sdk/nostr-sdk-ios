@@ -37,7 +37,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
-            XCTAssertEqual(message.type, .unknown)
+            XCTAssertEqual(message.prefix, .unknown)
             XCTAssertEqual(message.message, "")
         } else {
             XCTFail("failed to decode")
@@ -54,7 +54,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
-            XCTAssertEqual(message.type, .pow)
+            XCTAssertEqual(message.prefix, .pow)
             XCTAssertEqual(message.message, "difficulty: 25>=24")
         } else {
             XCTFail("failed to decode")
@@ -71,7 +71,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
-            XCTAssertEqual(message.type, .pow)
+            XCTAssertEqual(message.prefix, .pow)
             XCTAssertEqual(message.message, "")
         } else {
             XCTFail("failed to decode")
@@ -88,7 +88,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, true)
-            XCTAssertEqual(message.type, .unknown)
+            XCTAssertEqual(message.prefix, .unknown)
             XCTAssertEqual(message.message, "unknown: reason: unknown")
         } else {
             XCTFail("failed to decode")
@@ -105,7 +105,7 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
             }
             XCTAssertEqual(eventId, "b1a649ebe8b435ec71d3784793f3bbf4b93e64e17568a741aecd4c7ddeafce30")
             XCTAssertEqual(success, false)
-            XCTAssertEqual(message.type, .blocked)
+            XCTAssertEqual(message.prefix, .blocked)
             XCTAssertEqual(message.message, "tor exit nodes not allowed")
         } else {
             XCTFail("failed to decode")
@@ -121,6 +121,22 @@ final class RelayResponseDecodingTests: XCTestCase, FixtureLoading {
                 return
             }
             XCTAssertEqual(subscriptionId, "some-subscription-id")
+        } else {
+            XCTFail("failed to decode")
+        }
+    }
+
+    func testDecodeClosedMessage() throws {
+        let data = try loadFixtureData("closed")
+
+        if let relayResponse = RelayResponse.decode(data: data) {
+            guard case .closed(let subscriptionId, let message) = relayResponse else {
+                XCTFail("incorrect type")
+                return
+            }
+            XCTAssertEqual(subscriptionId, "some-subscription-id")
+            XCTAssertEqual(message.prefix, .error)
+            XCTAssertEqual(message.message, "shutting down idle subscription")
         } else {
             XCTFail("failed to decode")
         }
