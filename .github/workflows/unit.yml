@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        swift: ['5.7.1', '5.8', '5.9']
+        swift: ['5.8', '5.9', '5.10']
 
     steps:
     - name: Checkout
