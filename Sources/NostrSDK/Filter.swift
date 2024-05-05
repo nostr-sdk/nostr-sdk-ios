@@ -19,13 +19,10 @@ public struct Filter: Codable, Hashable, Equatable {
     
     /// a list of a kind numbers
     public let kinds: [Int]?
-    
-    /// a list of event ids that are referenced in an "e" tag
-    public let events: [String]?
-    
-    /// a list of pubkeys that are referenced in a "p" tag
-    public let pubkeys: [String]?
-    
+
+    /// a list of tag values that are referenced by single English-alphabet letter tag names
+    public let tags: [Character: [String]]?
+
     /// an integer unix timestamp, events must be newer than this to pass
     public let since: Int?
     
@@ -36,16 +33,28 @@ public struct Filter: Codable, Hashable, Equatable {
     public let limit: Int?
 
     private enum CodingKeys: String, CodingKey {
-        case ids = "ids"
-        case authors = "authors"
-        case kinds = "kinds"
-        case events = "#e"
-        case pubkeys = "#p"
-        case since = "since"
-        case until = "until"
-        case limit = "limit"
+        case ids
+        case authors
+        case kinds
+        case since
+        case until
+        case limit
     }
-    
+
+    private struct TagFilterName: CodingKey {
+        var stringValue: String
+
+        init(stringValue: String) {
+            self.stringValue = stringValue
+        }
+
+        var intValue: Int? { nil }
+
+        init?(intValue: Int) {
+            return nil
+        }
+    }
+
     /// Creates and returns a filter with the specified parameters.
     ///
     /// - Parameters:
@@ -54,19 +63,85 @@ public struct Filter: Codable, Hashable, Equatable {
     ///   - kinds: a list of a kind numbers
     ///   - events: a list of event ids that are referenced in an "e" tag
     ///   - pubkeys: a list of pubkeys that are referenced in a "p" tag
+    ///   - tags: a list of tag values that are referenced by single English-alphabet letter tag names
     ///   - since: an integer unix timestamp, events must be newer than this to pass
     ///   - until: an integer unix timestamp, events must be older than this to pass
     ///   - limit: maximum number of events to be returned in the initial query
     ///
+    /// If `tags` contains an `e` tag and `events` is also provided, `events` takes precedence.
+    /// If `tags` contains a `p` tag and `pubkeys` is also provided, `pubkeys` takes precedence.
+    ///
+    /// Returns `nil` if `tags` contains tag names that are not in the English-alphabet of A-Z or a-z.
+    ///
     /// > Important: Event ids and pubkeys should be in the 32-byte hexadecimal format, not the `note...` and `npub...` formats.
-    public init(ids: [String]? = nil, authors: [String]? = nil, kinds: [Int]? = nil, events: [String]? = nil, pubkeys: [String]? = nil, since: Int? = nil, until: Int? = nil, limit: Int? = nil) {
+    public init?(ids: [String]? = nil, authors: [String]? = nil, kinds: [Int]? = nil, events: [String]? = nil, pubkeys: [String]? = nil, tags: [Character: [String]]? = nil, since: Int? = nil, until: Int? = nil, limit: Int? = nil) {
         self.ids = ids
         self.authors = authors
         self.kinds = kinds
-        self.events = events
-        self.pubkeys = pubkeys
         self.since = since
         self.until = until
         self.limit = limit
+
+        if let tags {
+            guard tags.keys.allSatisfy({ $0.isEnglishLetter }) else {
+                return nil
+            }
+        }
+
+        var tagsBuilder: [Character: [String]] = tags ?? [:]
+        if let events {
+            tagsBuilder["e"] = events
+        }
+        if let pubkeys {
+            tagsBuilder["p"] = pubkeys
+        }
+        self.tags = tagsBuilder
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        ids = try container.decodeIfPresent([String].self, forKey: .ids)
+        authors = try container.decodeIfPresent([String].self, forKey: .authors)
+        kinds = try container.decodeIfPresent([Int].self, forKey: .kinds)
+        since = try container.decodeIfPresent(Int.self, forKey: .since)
+        until = try container.decodeIfPresent(Int.self, forKey: .until)
+        limit = try container.decodeIfPresent(Int.self, forKey: .limit)
+
+        if let tagsContainer = try? decoder.container(keyedBy: TagFilterName.self) {
+            var decodedTags: [Character: [String]] = [:]
+            for key in tagsContainer.allKeys {
+                let tagName = key.stringValue
+
+                if tagName.count == 2 && tagName.first == "#", let tagCharacter = tagName.last, tagCharacter.isEnglishLetter {
+                    decodedTags[tagCharacter] = try tagsContainer.decode([String].self, forKey: key)
+                }
+            }
+            tags = decodedTags.isEmpty ? nil : decodedTags
+        } else {
+            tags = nil
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encodeIfPresent(self.ids, forKey: .ids)
+        try container.encodeIfPresent(self.authors, forKey: .authors)
+        try container.encodeIfPresent(self.kinds, forKey: .kinds)
+        try container.encodeIfPresent(self.since, forKey: .since)
+        try container.encodeIfPresent(self.until, forKey: .until)
+        try container.encodeIfPresent(self.limit, forKey: .limit)
+
+        var tagsContainer = encoder.container(keyedBy: TagFilterName.self)
+        try self.tags?.forEach {
+            try tagsContainer.encode($0.value, forKey: TagFilterName(stringValue: "#\($0.key)"))
+        }
+    }
+}
+
+private extension Character {
+    var isEnglishLetter: Bool {
+        (self >= "A" && self <= "Z") || (self >= "a" && self <= "z")
     }
 }

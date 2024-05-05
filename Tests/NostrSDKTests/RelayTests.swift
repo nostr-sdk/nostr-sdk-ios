@@ -44,7 +44,8 @@ final class RelayTests: XCTestCase {
         
         wait(for: [connectExpectation!], timeout: 10)
         
-        let subscriptionId = try relay.subscribe(with: Filter(kinds: [1], limit: 1))
+        let filter = try XCTUnwrap(Filter(kinds: [1], limit: 1))
+        let subscriptionId = try relay.subscribe(with: filter)
         
         relay.events
             .sink { [unowned relay] _ in
@@ -65,7 +66,8 @@ final class RelayTests: XCTestCase {
 
     func testSubscribeWithoutConnection() throws {
         let relay = try Relay(url: RelayTests.RelayURL)
-        XCTAssertThrowsError(try relay.subscribe(with: Filter(kinds: [1], limit: 1))) {
+        let filter = try XCTUnwrap(Filter(kinds: [1], limit: 1))
+        XCTAssertThrowsError(try relay.subscribe(with: filter)) {
             XCTAssertEqual($0 as? RelayRequestError, RelayRequestError.notConnected)
         }
     }
@@ -88,7 +90,8 @@ final class RelayTests: XCTestCase {
         
         wait(for: [connectExpectation!], timeout: 10)
         
-        let subscriptionId = try relay.subscribe(with: Filter(kinds: [1], limit: 1))
+        let filter = try XCTUnwrap(Filter(kinds: [1], limit: 1))
+        let subscriptionId = try relay.subscribe(with: filter)
         
         wait(for: [receiveExpectation!], timeout: 10)
         
