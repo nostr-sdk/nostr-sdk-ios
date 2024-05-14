@@ -38,19 +38,19 @@ private enum TLVEncodingType: Int {
 public struct Metadata {
     
     /// A 32-byte hexadecimal public key.
-    var pubkey: String?
+    public var pubkey: String?
     
     /// One or more relays on which the user or event can be found.
-    var relays: [String]?
+    public var relays: [String]?
     
     /// A 32-byte hexadecimal event identifier.
-    var eventId: String?
+    public var eventId: String?
     
     /// An identifier (d-tag) associated with an event, for use with parameterized replaceable events.
-    var identifier: String?
+    public var identifier: String?
     
     /// The kind of the event, as an integer.
-    var kind: UInt32?
+    public var kind: UInt32?
 }
 
 /// A protocol containing a set of functions for encoding and decoding identifiers.
