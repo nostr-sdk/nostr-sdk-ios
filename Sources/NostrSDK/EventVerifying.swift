@@ -9,10 +9,12 @@ import Foundation
 
 public enum EventVerifyingError: Error, CustomStringConvertible {
     case invalidId
-    
+    case unsignedEvent
+
     public var description: String {
         switch self {
-        case .invalidId:    return "The id property did not match the calculated id."
+        case .invalidId:     return "The id property did not match the calculated id."
+        case .unsignedEvent: return "The event is not signed."
         }
     }
 }
@@ -25,6 +27,9 @@ public extension EventVerifying {
         guard event.id == event.calculatedId else {
             throw EventVerifyingError.invalidId
         }
-        try verifySignature(event.signature, for: event.id, withPublicKey: event.pubkey)
+        guard let signature = event.signature else {
+            throw EventVerifyingError.unsignedEvent
+        }
+        try verifySignature(signature, for: event.id, withPublicKey: event.pubkey)
     }
 }

@@ -52,11 +52,28 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// See [NIP-25 - Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
     case reaction
 
+    /// This kind of event seals a `rumor` with the sender's private key.
+    /// A rumor is the same thing as an unsigned event. Any event kind can be made a rumor by removing the signature.
+    /// The seal is always encrypted to a receiver's pubkey but there is no p tag pointing to the receiver.
+    /// There is no way to know who the rumor is for without the receiver's or the sender's private key.
+    /// The only public information in this event is who is signing it.
+    ///
+    /// See [NIP-59 - Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md).
+    case seal
+
     /// This kind of note is used to signal to followers that another event is worth reading.
     ///
     /// > Note: The reposted event can be any kind of event other than a kind 1 text note.
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#nip-18).
     case genericRepost
+
+    /// This kind of event wraps a `seal` event.
+    /// The wrapped seal is always encrypted to a receiver's pubkey using a random, one-time-use private key.
+    /// The gift wrap event tags should include any information needed to route the event to its intended recipient,
+    /// including the recipient's `p` tag or [NIP-13 Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md).
+    ///
+    /// See [NIP-59 - Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md).
+    case giftWrap
 
     /// This kind of note is used to report users or other notes for spam, illegal, and explicit content.
     ///
@@ -114,7 +131,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .deletion,
         .repost,
         .reaction,
+        .seal,
         .genericRepost,
+        .giftWrap,
         .report,
         .muteList,
         .bookmarksList,
@@ -144,7 +163,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .deletion:               return 5
         case .repost:                 return 6
         case .reaction:               return 7
+        case .seal:                   return 13
         case .genericRepost:          return 16
+        case .giftWrap:               return 1059
         case .report:                 return 1984
         case .muteList:               return 10000
         case .bookmarksList:          return 10003
@@ -168,7 +189,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .deletion:               return DeletionEvent.self
         case .repost:                 return TextNoteRepostEvent.self
         case .reaction:               return ReactionEvent.self
+        case .seal:                   return SealEvent.self
         case .genericRepost:          return GenericRepostEvent.self
+        case .giftWrap:               return GiftWrapEvent.self
         case .report:                 return ReportEvent.self
         case .muteList:               return MuteListEvent.self
         case .bookmarksList:          return BookmarksListEvent.self
