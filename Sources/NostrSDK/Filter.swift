@@ -83,7 +83,7 @@ public struct Filter: Codable, Hashable, Equatable {
         self.limit = limit
 
         if let tags {
-            guard tags.keys.allSatisfy({ $0.isEnglishLetter }) else {
+            guard tags.keys.allSatisfy({ $0.isBasicLatinLetter }) else {
                 return nil
             }
         }
@@ -113,7 +113,7 @@ public struct Filter: Codable, Hashable, Equatable {
             for key in tagsContainer.allKeys {
                 let tagName = key.stringValue
 
-                if tagName.count == 2 && tagName.first == "#", let tagCharacter = tagName.last, tagCharacter.isEnglishLetter {
+                if tagName.count == 2 && tagName.first == "#", let tagCharacter = tagName.last, tagCharacter.isBasicLatinLetter {
                     decodedTags[tagCharacter] = try tagsContainer.decode([String].self, forKey: key)
                 }
             }
@@ -141,7 +141,7 @@ public struct Filter: Codable, Hashable, Equatable {
 }
 
 private extension Character {
-    var isEnglishLetter: Bool {
+    var isBasicLatinLetter: Bool {
         (self >= "A" && self <= "Z") || (self >= "a" && self <= "z")
     }
 }
