@@ -59,7 +59,6 @@ struct DirectMessageDemoView: View, EventCreating {
         } else {
             return Keypair(hex: senderPrivateKey)
         }
-        return nil
     }
 
     private func publicKey() -> PublicKey? {

@@ -14,7 +14,7 @@ import os.log
 public final class RelayPool: ObservableObject, RelayOperating {
     
     /// The set of relays.
-    public private(set) var relays = Set<Relay>()
+    @Published public private(set) var relays = Set<Relay>()
     
     /// A Publisher that publishes all events from all relays.
     @Published public private(set) var events = PassthroughSubject<RelayEvent, Never>()
