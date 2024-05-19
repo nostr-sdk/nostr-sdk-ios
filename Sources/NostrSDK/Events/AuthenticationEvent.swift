@@ -25,7 +25,7 @@ public final class AuthenticationEvent: NostrEvent, RelayProviding, RelayURLVali
         try super.init(kind: .authentication, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
 
-    /// The relay URL where this event authenticates to it.
+    /// The relay URL this event authenticates to.
     public var relayURL: URL? {
         guard let relayURLString = firstValueForRawTagName("relay") else {
             return nil
