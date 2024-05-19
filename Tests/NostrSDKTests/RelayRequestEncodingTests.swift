@@ -28,14 +28,17 @@ final class RelayRequestEncodingTests: XCTestCase, EventCreating, FixtureLoading
     }
 
     func testEncodeReq() throws {
-        let filter = Filter(ids: nil,
-                            authors: ["some-pubkey"],
-                            kinds: [1, 7],
-                            events: nil,
-                            pubkeys: nil,
-                            since: nil,
-                            until: nil,
-                            limit: nil)
+        let filter = try XCTUnwrap(
+            Filter(ids: nil,
+                   authors: ["some-pubkey"],
+                   kinds: [1, 7],
+                   events: nil,
+                   pubkeys: nil,
+                   since: nil,
+                   until: nil,
+                   limit: nil
+                  )
+            )
 
         let request = try XCTUnwrap(RelayRequest.request(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("req")
@@ -59,14 +62,17 @@ final class RelayRequestEncodingTests: XCTestCase, EventCreating, FixtureLoading
     }
 
     func testEncodeCount() throws {
-        let filter = Filter(ids: nil,
-                            authors: ["some-pubkey"],
-                            kinds: [1, 7],
-                            events: nil,
-                            pubkeys: nil,
-                            since: nil,
-                            until: nil,
-                            limit: nil)
+        let filter = try XCTUnwrap(
+            Filter(ids: nil,
+                   authors: ["some-pubkey"],
+                   kinds: [1, 7],
+                   events: nil,
+                   pubkeys: nil,
+                   since: nil,
+                   until: nil,
+                   limit: nil
+                  )
+            )
 
         let request = try XCTUnwrap(RelayRequest.count(subscriptionId: "some-subscription-id", filter: filter), "failed to encode request")
         let expected = try loadFixtureString("count_request")

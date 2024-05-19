@@ -7,5 +7,7 @@
   "#t": ["hashtag"],
   "since": 1234,
   "until": 12345,
-  "limit": 5
+  "limit": 5,
+  "#unrecognized": ["unrecognized"],
+  "unrecognized": 123
 }
