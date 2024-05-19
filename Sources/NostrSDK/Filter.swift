@@ -42,7 +42,7 @@ public struct Filter: Codable, Hashable, Equatable {
     }
 
     private struct TagFilterName: CodingKey {
-        var stringValue: String
+        let stringValue: String
 
         init(stringValue: String) {
             self.stringValue = stringValue
