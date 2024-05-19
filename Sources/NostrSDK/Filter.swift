@@ -20,7 +20,7 @@ public struct Filter: Codable, Hashable, Equatable {
     /// a list of a kind numbers
     public let kinds: [Int]?
 
-    /// a list of tag values that are referenced by single English-alphabet letter tag names
+    /// a list of tag values that are referenced by single basic Latin letter tag names
     public let tags: [Character: [String]]?
 
     /// an integer unix timestamp, events must be newer than this to pass
@@ -63,7 +63,7 @@ public struct Filter: Codable, Hashable, Equatable {
     ///   - kinds: a list of a kind numbers
     ///   - events: a list of event ids that are referenced in an "e" tag
     ///   - pubkeys: a list of pubkeys that are referenced in a "p" tag
-    ///   - tags: a list of tag values that are referenced by single English-alphabet letter tag names
+    ///   - tags: a list of tag values that are referenced by single basic Latin letter tag names
     ///   - since: an integer unix timestamp, events must be newer than this to pass
     ///   - until: an integer unix timestamp, events must be older than this to pass
     ///   - limit: maximum number of events to be returned in the initial query
@@ -71,7 +71,7 @@ public struct Filter: Codable, Hashable, Equatable {
     /// If `tags` contains an `e` tag and `events` is also provided, `events` takes precedence.
     /// If `tags` contains a `p` tag and `pubkeys` is also provided, `pubkeys` takes precedence.
     ///
-    /// Returns `nil` if `tags` contains tag names that are not in the English-alphabet of A-Z or a-z.
+    /// Returns `nil` if `tags` contains tag names that are not in the basic Latin alphabet of A-Z or a-z.
     ///
     /// > Important: Event ids and pubkeys should be in the 32-byte hexadecimal format, not the `note...` and `npub...` formats.
     public init?(ids: [String]? = nil, authors: [String]? = nil, kinds: [Int]? = nil, events: [String]? = nil, pubkeys: [String]? = nil, tags: [Character: [String]]? = nil, since: Int? = nil, until: Int? = nil, limit: Int? = nil) {
