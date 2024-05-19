@@ -29,34 +29,37 @@ enum RelayResponse: Decodable {
 
     enum MessageType: String, Codable {
         case event = "EVENT"
-        case notice = "NOTICE"
-        case eose = "EOSE"
         case ok = "OK"
-        case count = "COUNT"
+        case eose = "EOSE"
+        case closed = "CLOSED"
+        case notice = "NOTICE"
         case auth = "AUTH"
+        case count = "COUNT"
     }
     
-    struct OKMessage {
-        let type: OKMessageType
-        let message: String?
+    struct Message {
+        let prefix: MessagePrefix
+        let message: String
         
         init(rawMessage: String) {
-            let components = rawMessage.split(separator: ":")
+            let components = rawMessage.split(separator: ":", maxSplits: 1)
             if let firstComponent = components.first {
-                type = OKMessageType(rawValue: String(firstComponent)) ?? .unknown
+                prefix = MessagePrefix(rawValue: String(firstComponent)) ?? .unknown
             } else {
-                type = .unknown
+                prefix = .unknown
             }
-            
-            if components.count >= 2 {
-                message = components[1].trimmingCharacters(in: .whitespaces)
+
+            if prefix == .unknown {
+                message = rawMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+            } else if components.count >= 2 {
+                message = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
             } else {
-                message = nil
+                message = ""
             }
         }
     }
     
-    enum OKMessageType: String, Codable {
+    enum MessagePrefix: String, Codable {
         case unknown
         case duplicate
         case pow
@@ -64,14 +67,17 @@ enum RelayResponse: Decodable {
         case rateLimited = "rate-limited"
         case invalid
         case error
+        case authRequired = "auth-required"
+        case restricted
     }
 
-    case notice(message: String)
-    case eose(subscriptionId: String)
     case event(subscriptionId: String, event: NostrEvent)
-    case ok(eventId: String, success: Bool, message: OKMessage)
-    case count(subscriptionId: String, count: Int)
+    case ok(eventId: String, success: Bool, message: Message)
+    case eose(subscriptionId: String)
+    case closed(subscriptionId: String, message: Message)
+    case notice(message: String)
     case auth(challenge: String)
+    case count(subscriptionId: String, count: Int)
 
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
@@ -89,24 +95,28 @@ enum RelayResponse: Decodable {
             let event = try container2.decode(kindMapper.classForKind.self)
             
             self = .event(subscriptionId: subscriptionId, event: event)
-        case .notice:
-            let message = try container.decode(String.self)
-            self = .notice(message: message)
-        case .eose:
-            let subscriptionId = try container.decode(String.self)
-            self = .eose(subscriptionId: subscriptionId)
         case .ok:
             let eventId = try container.decode(String.self)
             let success = try container.decode(Bool.self)
             let message = try container.decode(String.self)
-            self = .ok(eventId: eventId, success: success, message: OKMessage(rawMessage: message))
+            self = .ok(eventId: eventId, success: success, message: Message(rawMessage: message))
+        case .eose:
+            let subscriptionId = try container.decode(String.self)
+            self = .eose(subscriptionId: subscriptionId)
+        case .closed:
+            let subscriptionId = try container.decode(String.self)
+            let message = try container.decode(String.self)
+            self = .closed(subscriptionId: subscriptionId, message: Message(rawMessage: message))
+        case .notice:
+            let message = try container.decode(String.self)
+            self = .notice(message: message)
+        case .auth:
+            let challenge = try container.decode(String.self)
+            self = .auth(challenge: challenge)
         case .count:
             let subscriptionId = try container.decode(String.self)
             let countResponse = try container.decode(CountResponse.self)
             self = .count(subscriptionId: subscriptionId, count: countResponse.count)
-        case .auth:
-            let challenge = try container.decode(String.self)
-            self = .auth(challenge: challenge)
         }
     }
 
