@@ -72,7 +72,13 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     ///
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
     case bookmarksList
-    
+
+    /// This kind of event provides a way for clients to authenticate to relays by signing an ephemeral event.
+    /// This kind is not meant to be published or queried.
+    ///
+    /// See [NIP-42](https://github.com/nostr-protocol/nips/blob/master/42.md).
+    case authentication
+
     /// This kind of event is for long-form texxt content, generally referred to as "articles" or "blog posts".
     ///
     /// See [NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md).
@@ -112,6 +118,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .report,
         .muteList,
         .bookmarksList,
+        .authentication,
         .longformContent,
         .dateBasedCalendarEvent,
         .timeBasedCalendarEvent,
@@ -141,6 +148,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .report:                 return 1984
         case .muteList:               return 10000
         case .bookmarksList:          return 10003
+        case .authentication:         return 22242
         case .longformContent:        return 30023
         case .dateBasedCalendarEvent: return 31922
         case .timeBasedCalendarEvent: return 31923
@@ -164,6 +172,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .report:                 return ReportEvent.self
         case .muteList:               return MuteListEvent.self
         case .bookmarksList:          return BookmarksListEvent.self
+        case .authentication:         return AuthenticationEvent.self
         case .longformContent:        return LongformContentEvent.self
         case .dateBasedCalendarEvent: return DateBasedCalendarEvent.self
         case .timeBasedCalendarEvent: return TimeBasedCalendarEvent.self
