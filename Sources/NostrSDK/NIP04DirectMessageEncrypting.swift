@@ -1,6 +1,6 @@
 //
-//  DirectMessageEncrypting.swift
-//  
+//  NIP04DirectMessageEncrypting.swift
+//
 //
 //  Created by Joel Klabo on 8/10/23.
 //
@@ -10,7 +10,7 @@ import secp256k1
 import CommonCrypto
 import CryptoKit
 
-public enum DirectMessageEncryptingError: Error {
+public enum NIP04DirectMessageEncryptingError: Error {
     case pubkeyInvalid
     case unsuccessfulExponentiation
     case encryptionError
@@ -18,8 +18,8 @@ public enum DirectMessageEncryptingError: Error {
     case missingValue
 }
 
-public protocol DirectMessageEncrypting {}
-public extension DirectMessageEncrypting {
+public protocol NIP04DirectMessageEncrypting {}
+public extension NIP04DirectMessageEncrypting {
 
     /// Produces a `String` containing `content` that has been encrypted using a sender's `privateKey` and a recipient's `publicKey`.
     /// This function can `throw` in the case of a failure to create a shared secret, a failure to successfully encrypt, or an invalid `publicKey`.
@@ -29,14 +29,14 @@ public extension DirectMessageEncrypting {
     ///   - privateKey: The private key of the sender.
     ///   - publicKey: The public key of the intended recipient.
     /// - Returns: Encrypted content.
-    func encrypt(content: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
+    func nip04Encrypt(content: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
 
         let sharedSecret = try getSharedSecret(privateKey: privateKey, recipient: publicKey)
         
         let iv = Data.randomBytes(count: 16).bytes
         let utf8Content = Data(content.utf8).bytes
         guard let encryptedMessage = AESEncrypt(data: utf8Content, iv: iv, sharedSecret: sharedSecret) else {
-            throw DirectMessageEncryptingError.encryptionError
+            throw NIP04DirectMessageEncryptingError.encryptionError
         }
 
         return encodeDMBase64(content: encryptedMessage.bytes, iv: iv)
@@ -50,7 +50,7 @@ public extension DirectMessageEncrypting {
     ///   - privateKey: The private key of the receiver.
     ///   - publicKey: The public key of the sender.
     /// - Returns: The un-encrypted message.
-    func decrypt(encryptedContent message: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
+    func nip04Decrypt(encryptedContent message: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
         guard let sharedSecret = try? getSharedSecret(privateKey: privateKey, recipient: publicKey) else {
             throw EventCreatingError.invalidInput
         }
@@ -58,16 +58,16 @@ public extension DirectMessageEncrypting {
         let sections = Array(message.split(separator: "?"))
 
         if sections.count != 2 {
-            throw DirectMessageEncryptingError.decryptionError
+            throw NIP04DirectMessageEncryptingError.decryptionError
         }
 
         guard let encryptedContent = sections.first,
               let encryptedContentData = Data(base64Encoded: String(encryptedContent)) else {
-            throw DirectMessageEncryptingError.decryptionError
+            throw NIP04DirectMessageEncryptingError.decryptionError
         }
 
         guard let ivContent = sections.last else {
-            throw DirectMessageEncryptingError.decryptionError
+            throw NIP04DirectMessageEncryptingError.decryptionError
         }
 
         let ivContentTrimmed = ivContent.dropFirst(3)
@@ -75,7 +75,7 @@ public extension DirectMessageEncrypting {
         guard let ivContentData = Data(base64Encoded: String(ivContentTrimmed)),
               let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, sharedSecret: sharedSecret),
               let decryptedMessage = String(data: decryptedContentData, encoding: .utf8) else {
-            throw DirectMessageEncryptingError.decryptionError
+            throw NIP04DirectMessageEncryptingError.decryptionError
         }
 
         return decryptedMessage
@@ -98,7 +98,7 @@ public extension DirectMessageEncrypting {
     private func parsePublicKey(from bytes: [UInt8]) throws -> secp256k1_pubkey {
         var recipientPublicKey = secp256k1_pubkey()
         guard secp256k1_ec_pubkey_parse(secp256k1.Context.rawRepresentation, &recipientPublicKey, bytes, bytes.count) != 0 else {
-            throw DirectMessageEncryptingError.pubkeyInvalid
+            throw NIP04DirectMessageEncryptingError.pubkeyInvalid
         }
         return recipientPublicKey
     }
@@ -110,7 +110,7 @@ public extension DirectMessageEncrypting {
             memcpy(output, x32, 32)
             return 1
         }, nil) != 0 else {
-            throw DirectMessageEncryptingError.unsuccessfulExponentiation
+            throw NIP04DirectMessageEncryptingError.unsuccessfulExponentiation
         }
         return sharedSecret
     }
