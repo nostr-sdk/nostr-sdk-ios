@@ -35,7 +35,7 @@ public final class SealEvent: NostrEvent, NIP44v2Encrypting {
     /// - Parameters:
     ///   - privateKey: The ``PrivateKey`` to decrypt the rumor.
     /// - Returns: The decrypted ``NostrEvent`` rumor, where its `signature` is `nil`.
-    public func unseal(privateKey: PrivateKey) throws -> NostrEvent {
+    public func unsealedRumor(using privateKey: PrivateKey) throws -> NostrEvent {
         guard let authorPublicKey = PublicKey(hex: pubkey) else {
             throw SealEventError.pubkeyInvalid
         }

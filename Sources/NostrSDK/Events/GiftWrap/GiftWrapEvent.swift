@@ -27,14 +27,14 @@ public final class GiftWrapEvent: NostrEvent, NIP44v2Encrypting {
     }
 
     public init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970 - TimeInterval.random(in: 0...172800)), signedBy keypair: Keypair) throws {
-        try super.init(kind: .seal, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+        try super.init(kind: .giftWrap, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
 
     /// Unwraps the content of the gift wrap event and decrypts it into a ``SealEvent``.
     /// - Parameters:
     ///   - privateKey: The ``PrivateKey`` to decrypt the content.
     /// - Returns: The ``SealEvent``.
-    public func unwrap(privateKey: PrivateKey) throws -> SealEvent {
+    public func unwrappedSeal(using privateKey: PrivateKey) throws -> SealEvent {
         guard let wrapperPublicKey = PublicKey(hex: pubkey) else {
             throw GiftWrapError.pubkeyInvalid
         }
@@ -93,12 +93,12 @@ public extension EventCreating {
         return try giftWrap(withSeal: seal, toRecipient: recipient, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
 
-    /// Creates a ``GiftWrapEvent`` that takes a signed``SealEvent``, and then wraps that seal encrypted in the content of the gift wrap.
+    /// Creates a ``GiftWrapEvent`` that takes a signed ``SealEvent``, and then wraps that seal encrypted in the content of the gift wrap.
     ///
     /// - Parameters:
     ///   - withSeal: a signed ``SealEvent``.
     ///   - toRecipient: the ``PublicKey`` of the receiver of the event.
-    ///   - tags: the list of tags
+    ///   - tags: the list of tags.
     ///   - createdAt: the creation timestamp of the seal. Note that this timestamp SHOULD be tweaked to thwart time-analysis attacks. Note that some relays don't serve events dated in the future, so all timestamps SHOULD be in the past. By default, if `createdAt` is not provided, a random timestamp within 2 days in the past will be chosen.
     ///   - keypair: The real ``Keypair`` to sign the seal with. Note that a different random one-time use key is used to sign the gift wrap.
     func giftWrap(
