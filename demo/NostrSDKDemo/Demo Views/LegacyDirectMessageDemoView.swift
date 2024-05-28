@@ -1,5 +1,5 @@
 //
-//  DirectMessageDemoView.swift
+//  LegacyDirectMessageDemoView.swift
 //  NostrSDKDemo
 //
 //  Created by Honk on 8/13/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import NostrSDK
 
-struct DirectMessageDemoView: View, EventCreating {
+struct LegacyDirectMessageDemoView: View, EventCreating {
 
     @EnvironmentObject var relayPool: RelayPool
 
@@ -41,9 +41,9 @@ struct DirectMessageDemoView: View, EventCreating {
                     return
                 }
                 do {
-                    let directMessage = try directMessage(withContent: message,
-                                                          toRecipient: recipientPublicKey,
-                                                          signedBy: senderKeyPair)
+                    let directMessage = try legacyEncryptedDirectMessage(withContent: message,
+                                                                         toRecipient: recipientPublicKey,
+                                                                         signedBy: senderKeyPair)
                     relayPool.publishEvent(directMessage)
                 } catch {
                     print(error.localizedDescription)
@@ -76,8 +76,8 @@ struct DirectMessageDemoView: View, EventCreating {
     }
 }
 
-struct DirectMessageDemoView_Previews: PreviewProvider {
+struct LegacyDirectMessageDemoView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectMessageDemoView()
+        LegacyDirectMessageDemoView()
     }
 }

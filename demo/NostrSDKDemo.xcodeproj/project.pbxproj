@@ -11,7 +11,7 @@
 		50BB70A12B4302F300EDD3B5 /* RelaysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BB70A02B4302F300EDD3B5 /* RelaysView.swift */; };
 		F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */; };
 		F78221C42A8803F3008D5AE8 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C32A8803F3008D5AE8 /* Helpers.swift */; };
-		F78221C62A898063008D5AE8 /* DirectMessageDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C52A898063008D5AE8 /* DirectMessageDemoView.swift */; };
+		F78221C62A898063008D5AE8 /* NIP04DirectMessageDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221C52A898063008D5AE8 /* NIP04DirectMessageDemoView.swift */; };
 		F78221CE2A8999F9008D5AE8 /* KeyInputSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78221CD2A8999F9008D5AE8 /* KeyInputSectionView.swift */; };
 		F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */; };
 		F7CB362C2A35127B0098F35C /* NostrSDKDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CB362B2A35127B0098F35C /* NostrSDKDemoApp.swift */; };
@@ -27,7 +27,7 @@
 		50BB70A02B4302F300EDD3B5 /* RelaysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaysView.swift; sourceTree = "<group>"; };
 		F78221C02A87FB39008D5AE8 /* ConnectRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectRelayView.swift; sourceTree = "<group>"; };
 		F78221C32A8803F3008D5AE8 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
-		F78221C52A898063008D5AE8 /* DirectMessageDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectMessageDemoView.swift; sourceTree = "<group>"; };
+		F78221C52A898063008D5AE8 /* NIP04DirectMessageDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIP04DirectMessageDemoView.swift; sourceTree = "<group>"; };
 		F78221CD2A8999F9008D5AE8 /* KeyInputSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyInputSectionView.swift; sourceTree = "<group>"; };
 		F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryRelayDemoView.swift; sourceTree = "<group>"; };
 		F7CB36282A35127B0098F35C /* NostrSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NostrSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,10 +55,10 @@
 		F78221BC2A87EF6C008D5AE8 /* Demo Views */ = {
 			isa = PBXGroup;
 			children = (
+				F78221C52A898063008D5AE8 /* NIP04DirectMessageDemoView.swift */,
 				F7CB36462A3B74380098F35C /* NIP05VerificationDemoView.swift */,
 				F7CB36402A3ACD530098F35C /* GenerateKeyDemoView.swift */,
 				F786D8F62A3BAED800A29915 /* QueryRelayDemoView.swift */,
-				F78221C52A898063008D5AE8 /* DirectMessageDemoView.swift */,
 			);
 			path = "Demo Views";
 			sourceTree = "<group>";
@@ -211,7 +211,7 @@
 				F78221C12A87FB39008D5AE8 /* ConnectRelayView.swift in Sources */,
 				50BB70A12B4302F300EDD3B5 /* RelaysView.swift in Sources */,
 				F786D8F72A3BAED800A29915 /* QueryRelayDemoView.swift in Sources */,
-				F78221C62A898063008D5AE8 /* DirectMessageDemoView.swift in Sources */,
+				F78221C62A898063008D5AE8 /* NIP04DirectMessageDemoView.swift in Sources */,
 				F78221CE2A8999F9008D5AE8 /* KeyInputSectionView.swift in Sources */,
 				F7CB36412A3ACD530098F35C /* GenerateKeyDemoView.swift in Sources */,
 				F7CB36432A3ACD7B0098F35C /* ListOptionView.swift in Sources */,
