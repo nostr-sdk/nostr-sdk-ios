@@ -29,6 +29,8 @@ public extension LegacyDirectMessageEncrypting {
     ///   - privateKey: The private key of the sender.
     ///   - publicKey: The public key of the intended recipient.
     /// - Returns: Encrypted content.
+    /// > Warning: Deprecated in favor of [NIP-44](https://github.com/nostr-protocol/nips/blob/master/44.md) encryption and [NIP-59](https://github.com/nostr-protocol/nips/blob/master/59.md) seals and gift wraps..
+    @available(*, deprecated, message: "Deprecated in favor of NIP-44 encryption and NIP-59 seals and gift wraps.")
     func legacyEncrypt(content: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
 
         let sharedSecret = try getSharedSecret(privateKey: privateKey, recipient: publicKey)
@@ -50,6 +52,8 @@ public extension LegacyDirectMessageEncrypting {
     ///   - privateKey: The private key of the receiver.
     ///   - publicKey: The public key of the sender.
     /// - Returns: The un-encrypted message.
+    /// > Warning: Deprecated in favor of [NIP-44](https://github.com/nostr-protocol/nips/blob/master/44.md) encryption and [NIP-59](https://github.com/nostr-protocol/nips/blob/master/59.md) seals and gift wraps..
+    @available(*, deprecated, message: "Deprecated in favor of NIP-44 encryption and NIP-59 seals and gift wraps.")
     func legacyDecrypt(encryptedContent message: String, privateKey: PrivateKey, publicKey: PublicKey) throws -> String {
         guard let sharedSecret = try? getSharedSecret(privateKey: privateKey, recipient: publicKey) else {
             throw EventCreatingError.invalidInput

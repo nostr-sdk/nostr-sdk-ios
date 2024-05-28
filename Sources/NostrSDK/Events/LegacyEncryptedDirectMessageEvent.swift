@@ -10,7 +10,8 @@ import Foundation
 /// An event that contains an encrypted message.
 ///
 /// > Note: [NIP-04 - Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
-/// > Warning: Deprecated in favor of [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/04.md).
+/// > Warning: Deprecated in favor of [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md).
+@available(*, deprecated, message: "Deprecated in favor of NIP-17 - Private Direct Messages.")
 public final class LegacyEncryptedDirectMessageEvent: NostrEvent, LegacyDirectMessageEncrypting {
 
     public required init(from decoder: Decoder) throws {
@@ -50,6 +51,8 @@ public extension EventCreating {
     /// - Returns: The signed ``LegacyEncryptedDirectMessageEvent``.
     ///
     /// See [NIP-04 - Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
+    /// > Warning: Deprecated in favor of [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md).
+    @available(*, deprecated, message: "Deprecated in favor of NIP-17 - Private Direct Messages.")
     func legacyEncryptedDirectMessage(withContent content: String, toRecipient pubkey: PublicKey, signedBy keypair: Keypair) throws -> LegacyEncryptedDirectMessageEvent {
         guard let encryptedMessage = try? legacyEncrypt(content: content, privateKey: keypair.privateKey, publicKey: pubkey) else {
             throw EventCreatingError.invalidInput

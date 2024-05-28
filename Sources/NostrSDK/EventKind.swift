@@ -31,7 +31,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// This kind of event should have a recipient pubkey tag.
     ///
     /// See [NIP-04 - Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md)
-    /// > Warning: Deprecated in favor of [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/04.md).
+    /// > Warning: Deprecated in favor of [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md).
+    @available(*, deprecated, message: "Deprecated in favor of NIP-17 - Private Direct Messages.")
     case legacyEncryptedDirectMessage
     
     /// This kind of event indicates that the author requests that the events in the included
