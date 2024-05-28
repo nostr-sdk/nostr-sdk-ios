@@ -62,7 +62,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [x] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-58: Badges](https://github.com/nostr-protocol/nips/blob/master/58.md)
-- [ ] [NIP-59: Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md)
+- [x] [NIP-59: Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md)
 - [ ] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
 - [ ] [NIP-72: Moderated Communities](https://github.com/nostr-protocol/nips/blob/master/72.md)
 - [ ] [NIP-75: Zap Goals](https://github.com/nostr-protocol/nips/blob/master/75.md)

@@ -40,7 +40,7 @@ public class NostrEvent: Codable, Equatable, Hashable {
     public let content: String
     
     /// 64-byte hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field
-    public let signature: String
+    public let signature: String?
 
     private enum CodingKeys: String, CodingKey {
         case id
@@ -52,7 +52,7 @@ public class NostrEvent: Codable, Equatable, Hashable {
         case signature = "sig"
     }
     
-    init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String) {
+    init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
         self.id = id
         self.pubkey = pubkey
         self.createdAt = createdAt
@@ -61,7 +61,7 @@ public class NostrEvent: Codable, Equatable, Hashable {
         self.content = content
         self.signature = signature
     }
-    
+
     init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         self.kind = kind
         self.content = content
@@ -108,7 +108,17 @@ public class NostrEvent: Codable, Equatable, Hashable {
                                            tags: tags,
                                            content: content)
     }
-    
+
+    /// The event is a rumor if it is an unsigned event, where `signature` is `nil`.
+    public var isRumor: Bool {
+        signature == nil
+    }
+
+    /// Creates a copy of this event and makes it into a rumor ``NostrEvent``, where `signature` is `nil`.
+    public var rumor: NostrEvent {
+        NostrEvent(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: nil)
+    }
+
     /// All tags with the provided name.
     public func allTags(withTagName tagName: TagName) -> [Tag] {
         tags.filter { $0.name == tagName.rawValue }
