@@ -97,7 +97,7 @@ struct QueryRelayDemoView: View {
         } else {
             authors = [authorPubkey]
         }
-        return Filter(authors: authors, kinds: [selectedKind])!
+        return Filter(authors: authors, kinds: [selectedKind])
     }
     
     private func updateSubscription() {
