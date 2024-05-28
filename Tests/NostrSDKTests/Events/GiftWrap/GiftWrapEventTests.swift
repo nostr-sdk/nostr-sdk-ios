@@ -20,7 +20,7 @@ final class GiftWrapEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let giftWrapEvent = try giftWrap(withRumor: rumor, toRecipient: GiftWrapEventTests.recipient.publicKey, signedBy: .test)
         try verifyEvent(giftWrapEvent)
 
-        let unsealedRumor = try giftWrapEvent.unseal(privateKey: GiftWrapEventTests.recipient.privateKey)
+        let unsealedRumor = try giftWrapEvent.unsealedRumor(using: GiftWrapEventTests.recipient.privateKey)
 
         XCTAssertEqual(rumor, unsealedRumor)
     }
@@ -45,12 +45,12 @@ final class GiftWrapEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         // Ensure that no other private key can unseal the message.
         let randomKeypair = try XCTUnwrap(Keypair())
-        XCTAssertThrowsError(try giftWrapEvent.unseal(privateKey: randomKeypair.privateKey))
+        XCTAssertThrowsError(try giftWrapEvent.unsealedRumor(using: randomKeypair.privateKey))
 
         // Ensure that if the author is not the recipient, the author cannot unseal the message either.
-        XCTAssertThrowsError(try giftWrapEvent.unseal(privateKey: GiftWrapEventTests.author.privateKey))
+        XCTAssertThrowsError(try giftWrapEvent.unsealedRumor(using: GiftWrapEventTests.author.privateKey))
 
-        let unsealedRumor = try XCTUnwrap(giftWrapEvent.unseal(privateKey: GiftWrapEventTests.recipient.privateKey))
+        let unsealedRumor = try XCTUnwrap(giftWrapEvent.unsealedRumor(using: GiftWrapEventTests.recipient.privateKey))
         XCTAssertEqual(unsealedRumor.id, "9dd003c6d3b73b74a85a9ab099469ce251653a7af76f523671ab828acd2a0ef9")
         XCTAssertEqual(unsealedRumor.pubkey, GiftWrapEventTests.author.publicKey.hex)
         XCTAssertEqual(unsealedRumor.createdAt, 1691518405)

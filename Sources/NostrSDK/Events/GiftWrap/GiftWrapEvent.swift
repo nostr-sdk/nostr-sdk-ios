@@ -58,9 +58,9 @@ public final class GiftWrapEvent: NostrEvent, NIP44v2Encrypting {
     /// - Parameters:
     ///   - privateKey: The `PrivateKey` to decrypt the rumor.
     /// - Returns: The decrypted ``NostrEvent`` rumor, where its `signature` is `nil`.
-    public func unseal(privateKey: PrivateKey) throws -> NostrEvent? {
-        let sealEvent = try unwrap(privateKey: privateKey)
-        return try sealEvent.unseal(privateKey: privateKey)
+    public func unsealedRumor(using privateKey: PrivateKey) throws -> NostrEvent? {
+        let sealEvent = try unwrappedSeal(using: privateKey)
+        return try sealEvent.unsealedRumor(using: privateKey)
     }
 }
 
