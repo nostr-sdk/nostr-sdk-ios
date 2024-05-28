@@ -11,4 +11,4 @@ enum EventCreatingError: Error {
     case invalidInput
 }
 
-public protocol EventCreating: DirectMessageEncrypting, RelayURLValidating {}
+public protocol EventCreating: DirectMessageEncrypting, NIP44v2Encrypting, RelayURLValidating {}
