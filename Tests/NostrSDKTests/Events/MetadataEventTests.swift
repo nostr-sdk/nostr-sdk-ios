@@ -1,5 +1,5 @@
 //
-//  SetMetadataEventTests.swift
+//  MetadataEventTests.swift
 //  
 //
 //  Created by Terry Yiu on 4/14/24.
@@ -8,9 +8,9 @@
 @testable import NostrSDK
 import XCTest
 
-final class SetMetadataEventTests: XCTestCase, EventCreating, EventVerifying, FixtureLoading {
+final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, FixtureLoading {
 
-    func testCreateSetMetadataEvent() throws {
+    func testCreateMetadataEvent() throws {
         let meta = UserMetadata(name: "Nostr SDK Test :ostrich:",
                                 displayName: "Nostr SDK Display Name",
                                 about: "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:",
@@ -31,8 +31,8 @@ final class SetMetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fi
             Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])
         ]
 
-        let event = try setMetadataEvent(withUserMetadata: meta, customEmojis: customEmojis, signedBy: Keypair.test)
-        let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .setMetadata, pubkey: Keypair.test.publicKey))
+        let event = try metadataEvent(withUserMetadata: meta, customEmojis: customEmojis, signedBy: Keypair.test)
+        let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .metadata, pubkey: Keypair.test.publicKey))
 
         XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test :ostrich:")
         XCTAssertEqual(event.userMetadata?.displayName, "Nostr SDK Display Name")
@@ -48,14 +48,14 @@ final class SetMetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fi
         try verifyEvent(event)
     }
 
-    func testDecodeSetMetadata() throws {
+    func testDecodeMetadata() throws {
 
-        let event: SetMetadataEvent = try decodeFixture(filename: "set_metadata")
+        let event: MetadataEvent = try decodeFixture(filename: "metadata")
 
         XCTAssertEqual(event.id, "d214c914b0ab49ec919fa5f60fabf746f421e432d96f941bd2573e4d22e36b51")
         XCTAssertEqual(event.pubkey, "00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700")
         XCTAssertEqual(event.createdAt, 1684370291)
-        XCTAssertEqual(event.kind, .setMetadata)
+        XCTAssertEqual(event.kind, .metadata)
         XCTAssertEqual(event.tags, [])
         XCTAssertTrue(event.content.hasPrefix("{\"banner\":\"https://nostr.build/i/nostr.build"))
         XCTAssertEqual(event.signature, "7bb7f031fbf41f49eeb44fdfb061bc8d143197d33fae8d29b017709adf2b17c76e78ccb2ee128ee93d0661cad4c626a747d48a178745c94944a693ff31ea7619")
@@ -79,14 +79,14 @@ final class SetMetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fi
         XCTAssertEqual(userMetadata.bannerPictureURL, URL(string: "https://nostr.build/i/nostr.build_90a51a2e50c9f42288260d01b3a2a4a1c7a9df085423abad7809e76429da7cdc.gif"))
     }
 
-    func testDecodeSetMetadataWithEmptyWebsite() throws {
+    func testDecodeMetadataWithEmptyWebsite() throws {
 
-        let event: SetMetadataEvent = try decodeFixture(filename: "set_metadata_alternate")
+        let event: MetadataEvent = try decodeFixture(filename: "metadata_alternate")
 
         XCTAssertEqual(event.id, "2883f411daaef3370f87dc4456fbe1184ab50ec97013249d7cdda4b8938d0b0a")
         XCTAssertEqual(event.pubkey, "58c741aa630c2da35a56a77c1d05381908bd10504fdd2d8b43f725efa6d23196")
         XCTAssertEqual(event.createdAt, 1676405699)
-        XCTAssertEqual(event.kind, .setMetadata)
+        XCTAssertEqual(event.kind, .metadata)
         XCTAssertEqual(event.tags, [])
         XCTAssertTrue(event.content.hasPrefix("{\"website\":\"\",\"nip05\":"))
         XCTAssertEqual(event.signature, "6f12e0090940bf923d96e9c1dce134c1c16c5fdb1e79efff3ed791bb6ff985b4dda609dc85e1ad15c752c6c5f4cbbf8949068731e1b881ac13b2eb1ce59fc578")
@@ -104,14 +104,14 @@ final class SetMetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fi
         XCTAssertEqual(userMetadata.nostrAddress, "gladstein@nostrplebs.com")
     }
 
-    func testDecodeSetMetadataWithCustomEmojis() throws {
+    func testDecodeMetadataWithCustomEmojis() throws {
 
-        let event: SetMetadataEvent = try decodeFixture(filename: "set_metadata_custom_emojis")
+        let event: MetadataEvent = try decodeFixture(filename: "metadata_custom_emojis")
 
         XCTAssertEqual(event.id, "290e0e02411669d8c6f31b95259020458bb1ad43cec8a4fdf87e5c8628ab3e54")
         XCTAssertEqual(event.pubkey, "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340")
         XCTAssertEqual(event.createdAt, 1699769361)
-        XCTAssertEqual(event.kind, .setMetadata)
+        XCTAssertEqual(event.kind, .metadata)
         XCTAssertEqual(event.tags, [Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"]), Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])])
         XCTAssertTrue(event.content.hasPrefix("{\"banner\":\"https://nostrsdk.com/banner.png"))
         XCTAssertEqual(event.signature, "9039249cca3b29208fade093a96c7929fa944dfe566ae77933efe738de75852d67e93cbe3c9321dbe95cabb705435071a5ce3116adadc135e493f5939e2e664c")

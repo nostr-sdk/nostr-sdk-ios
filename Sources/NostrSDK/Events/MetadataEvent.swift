@@ -1,5 +1,5 @@
 //
-//  SetMetadataEvent.swift
+//  MetadataEvent.swift
 //  
 //
 //  Created by Bryan Montz on 7/22/23.
@@ -67,7 +67,7 @@ public struct UserMetadata: Codable {
 /// An event that contains a user profile.
 /// 
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/b503f8a92b22be3037b8115fe3e644865a4fa155/01.md#basic-event-kinds)
-public final class SetMetadataEvent: NostrEvent, CustomEmojiInterpreting, NonParameterizedReplaceableEvent {
+public final class MetadataEvent: NostrEvent, CustomEmojiInterpreting, NonParameterizedReplaceableEvent {
 
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
@@ -79,7 +79,7 @@ public final class SetMetadataEvent: NostrEvent, CustomEmojiInterpreting, NonPar
     }
     
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
-        try super.init(kind: .setMetadata, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
+        try super.init(kind: .metadata, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
     
     /// A dictionary containing all of the properties in the `content` field of the ``NostrEvent``.
@@ -102,20 +102,20 @@ public final class SetMetadataEvent: NostrEvent, CustomEmojiInterpreting, NonPar
 
 public extension EventCreating {
     
-    /// Creates a ``SetMetadataEvent`` (kind 0) and signs it with the provided ``Keypair``.
+    /// Creates a ``MetadataEvent`` (kind 0) and signs it with the provided ``Keypair``.
     /// - Parameters:
     ///   - userMetadata: The metadata to set.
     ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the name or about fields.
     ///   - keypair: The Keypair to sign with.
-    /// - Returns: The signed ``SetMetadataEvent``.
+    /// - Returns: The signed ``MetadataEvent``.
     ///
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
-    func setMetadataEvent(withUserMetadata userMetadata: UserMetadata, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> SetMetadataEvent {
+    func metadataEvent(withUserMetadata userMetadata: UserMetadata, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> MetadataEvent {
         let metadataAsData = try JSONEncoder().encode(userMetadata)
         guard let metadataAsString = String(data: metadataAsData, encoding: .utf8) else {
             throw EventCreatingError.invalidInput
         }
         let customEmojiTags = customEmojis.map { $0.tag }
-        return try SetMetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
+        return try MetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
     }
 }

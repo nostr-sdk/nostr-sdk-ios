@@ -72,7 +72,7 @@ final class EventCoordinatesTests: XCTestCase {
     func testInitFailsOnNonParameterizedReplaceableEventWithIdentifier() throws {
         XCTAssertThrowsError(
             try EventCoordinates(
-                kind: .setMetadata,
+                kind: .metadata,
                 pubkey: Keypair.test.publicKey,
                 identifier: "should-fail"
             )
