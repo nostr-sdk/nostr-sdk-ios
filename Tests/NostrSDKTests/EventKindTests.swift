@@ -17,7 +17,7 @@ final class EventKindTests: XCTestCase {
     }
 
     func testIsNonParameterizedReplaceable() throws {
-        XCTAssertTrue(EventKind.setMetadata.isNonParameterizedReplaceable)
+        XCTAssertTrue(EventKind.metadata.isNonParameterizedReplaceable)
         XCTAssertTrue(EventKind.followList.isNonParameterizedReplaceable)
         XCTAssertTrue(EventKind.muteList.isNonParameterizedReplaceable)
         XCTAssertTrue(EventKind(rawValue: 19999).isNonParameterizedReplaceable)

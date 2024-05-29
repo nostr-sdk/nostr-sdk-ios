@@ -12,10 +12,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
 
     public typealias RawValue = Int
 
-    /// The content is set to a stringified JSON object `{name: <username>, about: <string>, picture: <url, string>}` describing the user who created the event. A relay may delete past `set_metadata` events once it gets a new one for the same pubkey.
+    /// The content is set to a stringified JSON object `{name: <username>, about: <string>, picture: <url, string>}` describing the user who created the event. A relay may delete past `metadata` events once it gets a new one for the same pubkey.
     ///
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
-    case setMetadata
+    case metadata
     
     /// The content is set to the plaintext content of a note (anything the user wants to say). Content that must be parsed, such as Markdown and HTML, should not be used. Clients should also not parse content as those.
     ///
@@ -126,7 +126,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
 
     /// List of all event kinds except for `unknown`.
     static public let allCases: AllCases = [
-        .setMetadata,
+        .metadata,
         .textNote,
         .followList,
         .legacyEncryptedDirectMessage,
@@ -158,7 +158,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
 
     public var rawValue: RawValue {
         switch self {
-        case .setMetadata:                  return 0
+        case .metadata:                     return 0
         case .textNote:                     return 1
         case .followList:                   return 3
         case .legacyEncryptedDirectMessage: return 4
@@ -184,7 +184,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// The ``NostrEvent`` subclass associated with the kind.
     public var classForKind: NostrEvent.Type {
         switch self {
-        case .setMetadata:                  return SetMetadataEvent.self
+        case .metadata:                     return MetadataEvent.self
         case .textNote:                     return TextNoteEvent.self
         case .followList:                   return FollowListEvent.self
         case .legacyEncryptedDirectMessage: return LegacyEncryptedDirectMessageEvent.self
