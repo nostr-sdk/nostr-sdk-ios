@@ -16,13 +16,19 @@ final class RelayTests: XCTestCase {
     private var cancellables = Set<AnyCancellable>()
     
     private var connectExpectation: XCTestExpectation?
-    private var receiveExpectation: XCTestExpectation?
+    private var receiveEventExpectation: XCTestExpectation?
     private var disconnectExpectation: XCTestExpectation?
-    
+
+    private var receiveResponseEventExpectation: XCTestExpectation?
+    private var receiveResponseOkExpectation: XCTestExpectation?
+    private var receiveResponseEoseExpectation: XCTestExpectation?
+
     func testConnectAndReceive() throws {
         connectExpectation = expectation(description: "connect")
-        receiveExpectation = expectation(description: "receive")
+        receiveEventExpectation = expectation(description: "receive")
         disconnectExpectation = expectation(description: "disconnect")
+
+        receiveResponseEventExpectation = expectation(description: "receiveResponseEvent")
 
         let relay = try Relay(url: RelayTests.RelayURL)
         XCTAssertEqual(relay.url, RelayTests.RelayURL)
@@ -51,11 +57,12 @@ final class RelayTests: XCTestCase {
             .sink { [unowned relay] _ in
                 // we have received an event from the relay. close the subscription.
                 try? relay.closeSubscription(with: subscriptionId)
-                self.receiveExpectation?.fulfill()
+                self.receiveResponseEventExpectation?.fulfill()
+                self.receiveEventExpectation?.fulfill()
             }
             .store(in: &cancellables)
         
-        wait(for: [receiveExpectation!], timeout: 10)
+        wait(for: [receiveResponseEventExpectation!, receiveEventExpectation!], timeout: 10)
         
         relay.disconnect()
         
@@ -81,8 +88,11 @@ final class RelayTests: XCTestCase {
     
     func testRelayDelegate() throws {
         connectExpectation = expectation(description: "connect")
-        receiveExpectation = expectation(description: "receive")
+        receiveEventExpectation = expectation(description: "receive")
         disconnectExpectation = expectation(description: "disconnect")
+
+        receiveResponseEventExpectation = expectation(description: "receiveResponseEvent")
+        receiveResponseEoseExpectation = expectation(description: "receiveResponseEose")
 
         let relay = try Relay(url: RelayTests.RelayURL)
         relay.delegate = self
@@ -93,8 +103,8 @@ final class RelayTests: XCTestCase {
         let filter = try XCTUnwrap(Filter(kinds: [1], limit: 1))
         let subscriptionId = try relay.subscribe(with: filter)
         
-        wait(for: [receiveExpectation!], timeout: 10)
-        
+        wait(for: [receiveResponseEventExpectation!, receiveEventExpectation!, receiveResponseEoseExpectation!], timeout: 10)
+
         try? relay.closeSubscription(with: subscriptionId)
         
         relay.disconnect()
@@ -117,6 +127,19 @@ extension RelayTests: RelayDelegate {
     }
     
     func relay(_ relay: Relay, didReceive event: RelayEvent) {
-        receiveExpectation?.fulfill()
+        receiveEventExpectation?.fulfill()
+    }
+
+    func relay(_ relay: NostrSDK.Relay, didReceive response: RelayResponse) {
+        switch response {
+        case .event:
+            receiveResponseEventExpectation?.fulfill()
+        case .ok:
+            receiveResponseOkExpectation?.fulfill()
+        case .eose:
+            receiveResponseEoseExpectation?.fulfill()
+        default:
+            break
+        }
     }
 }

@@ -21,7 +21,7 @@ fileprivate struct EventKindMapper: Decodable {     // swiftlint:disable:this pr
     }
 }
 
-enum RelayResponse: Decodable {
+public enum RelayResponse: Decodable {
 
     struct CountResponse: Codable {
         let count: Int
@@ -37,7 +37,7 @@ enum RelayResponse: Decodable {
         case count = "COUNT"
     }
     
-    struct Message {
+    public struct Message {
         let prefix: MessagePrefix
         let message: String
         
@@ -79,7 +79,7 @@ enum RelayResponse: Decodable {
     case auth(challenge: String)
     case count(subscriptionId: String, count: Int)
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         let responseType = try container.decode(MessageType.self)
         switch responseType {
