@@ -112,9 +112,7 @@ public extension EventCreating {
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
     func metadataEvent(withUserMetadata userMetadata: UserMetadata, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> MetadataEvent {
         let metadataAsData = try JSONEncoder().encode(userMetadata)
-        guard let metadataAsString = String(data: metadataAsData, encoding: .utf8) else {
-            throw EventCreatingError.invalidInput
-        }
+        let metadataAsString = String(decoding: metadataAsData, as: UTF8.self)
         let customEmojiTags = customEmojis.map { $0.tag }
         return try MetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
     }

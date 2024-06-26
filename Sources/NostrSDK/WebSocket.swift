@@ -80,7 +80,7 @@ final class WebSocket: NSObject, URLSessionWebSocketDelegate {
 
         let reasonString: String?
         if let reason {
-            reasonString = String(data: reason, encoding: .utf8)
+            reasonString = String(decoding: reason, as: UTF8.self)
         } else {
             reasonString = nil
         }
