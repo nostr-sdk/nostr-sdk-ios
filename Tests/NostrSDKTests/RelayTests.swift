@@ -62,8 +62,7 @@ final class RelayTests: XCTestCase {
             }
             .store(in: &cancellables)
         
-        wait(for: [receiveResponseEventExpectation!], timeout: 10)
-        wait(for: [receiveEventExpectation!], timeout: 10)
+        wait(for: [receiveResponseEventExpectation!, receiveEventExpectation!], timeout: 10)
         
         relay.disconnect()
         
@@ -104,9 +103,7 @@ final class RelayTests: XCTestCase {
         let filter = try XCTUnwrap(Filter(kinds: [1], limit: 1))
         let subscriptionId = try relay.subscribe(with: filter)
         
-        wait(for: [receiveResponseEventExpectation!], timeout: 10)
-        wait(for: [receiveEventExpectation!], timeout: 10)
-        wait(for: [receiveResponseEoseExpectation!], timeout: 10)
+        wait(for: [receiveResponseEventExpectation!, receiveEventExpectation!, receiveResponseEoseExpectation!], timeout: 10)
 
         try? relay.closeSubscription(with: subscriptionId)
         
