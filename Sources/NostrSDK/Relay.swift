@@ -57,7 +57,6 @@ public protocol RelayDelegate: AnyObject {
 
     func relay(_ relay: Relay, didReceive response: RelayResponse)
 
-    @available(*, deprecated, message: "`relay(Relay, didReceive: RelayEvent)` was replaced by `relay(Relay, didReceive: RelayResponse)` and will be removed shortly.")
     func relay(_ relay: Relay, didReceive event: RelayEvent)
 }
 
