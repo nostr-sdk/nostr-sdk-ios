@@ -77,12 +77,11 @@ public extension LegacyDirectMessageEncrypting {
         let ivContentTrimmed = ivContent.dropFirst(3)
 
         guard let ivContentData = Data(base64Encoded: String(ivContentTrimmed)),
-              let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, sharedSecret: sharedSecret),
-              let decryptedMessage = String(data: decryptedContentData, encoding: .utf8) else {
+              let decryptedContentData = AESDecrypt(data: encryptedContentData.bytes, iv: ivContentData.bytes, sharedSecret: sharedSecret) else {
             throw LegacyDirectMessageEncryptingError.decryptionError
         }
 
-        return decryptedMessage
+        return String(decoding: decryptedContentData, as: UTF8.self)
     }
 
     private func getSharedSecret(privateKey: PrivateKey, recipient pubkey: PublicKey) throws -> [UInt8] {

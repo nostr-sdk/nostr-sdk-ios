@@ -12,7 +12,7 @@ import Foundation
 /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#reposts).
 public final class TextNoteRepostEvent: GenericRepostEvent {
     
-    override class var kind: EventKind {
+    override static var kind: EventKind {
         .repost
     }
     

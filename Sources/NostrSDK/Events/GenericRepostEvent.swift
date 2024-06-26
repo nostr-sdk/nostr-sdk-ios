@@ -36,8 +36,8 @@ public class GenericRepostEvent: NostrEvent, RelayURLValidating {
     
     /// The note that is being reposted.
     var repostedEvent: NostrEvent? {
-        guard let jsonData = content.data(using: .utf8),
-              let note: NostrEvent = try? JSONDecoder().decode(NostrEvent.self, from: jsonData) else {
+        let jsonData = Data(content.utf8)
+        guard let note: NostrEvent = try? JSONDecoder().decode(NostrEvent.self, from: jsonData) else {
             return nil
         }
         return note
@@ -70,9 +70,7 @@ public extension EventCreating {
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#reposts).
     func repost(event: NostrEvent, signedBy keypair: Keypair) throws -> GenericRepostEvent {
         let jsonData = try JSONEncoder().encode(event)
-        guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
-            throw EventCreatingError.invalidInput
-        }
+        let stringifiedJSON = String(decoding: jsonData, as: UTF8.self)
         var tags: [Tag] = [
             .event(event.id),
             .pubkey(event.pubkey)
