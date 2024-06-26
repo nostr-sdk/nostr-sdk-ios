@@ -51,13 +51,17 @@ public protocol RelayOperating {
     var events: PassthroughSubject<RelayEvent, Never> { get }
 }
 
-/// An optional interface for receiving state updates and events
+/// An optional interface for receiving state updates and responses from relays.
 public protocol RelayDelegate: AnyObject {
     func relayStateDidChange(_ relay: Relay, state: Relay.State)
+
+    func relay(_ relay: Relay, didReceive response: RelayResponse)
+
+    @available(*, deprecated, message: "`relay(Relay, didReceive: RelayEvent)` was replaced by `relay(Relay, didReceive: RelayResponse)` and will be removed shortly.")
     func relay(_ relay: Relay, didReceive event: RelayEvent)
 }
 
-/// A struct containing a nostr event and the subscription ID
+/// A struct containing a Nostr event and the subscription ID
 public struct RelayEvent {
     public let event: NostrEvent
     public let subscriptionId: String
@@ -145,7 +149,12 @@ public final class Relay: ObservableObject, EventVerifying, RelayOperating, Hash
     
     private func receive(_ message: URLSessionWebSocketTask.Message) {
         func handle(messageData: Data) {
-            let response = RelayResponse.decode(data: messageData)
+            guard let response = RelayResponse.decode(data: messageData) else {
+                return
+            }
+
+            delegate?.relay(self, didReceive: response)
+
             switch response {
             case .event(let subscriptionId, let event):
                 let relayEvent = RelayEvent(event: event, subscriptionId: subscriptionId)
