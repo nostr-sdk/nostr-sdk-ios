@@ -39,25 +39,28 @@ public struct UserMetadata: Codable {
 
     /// A boolean to clarify that the content is entirely or partially the result of automation, such as with chatbots or newsfeeds.
     /// > Note: [NIP-24 Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#kind-0)
-    public let bot: Bool?
+    public let isBot: Bool?
 
     /// The user's LUD-06 Lightning URL (LNURL).
     /// > Note: [NIP-57 Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md#protocol-flow)
-    public let lud06: String?
+    public let lightningURLString: String?
 
     /// The user's LUD-16 Lightning address.
     /// > Note: [NIP-57 Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md#protocol-flow)
-    public let lud16: String?
+    public let lightningAddress: String?
 
     enum CodingKeys: String, CodingKey {
-        case name, about, website, bot, lud06, lud16
+        case name, about, website
         case nostrAddress = "nip05"
         case pictureURL = "picture"
         case bannerPictureURL = "banner"
         case displayName = "display_name"
+        case isBot = "bot"
+        case lightningURLString = "lud06"
+        case lightningAddress = "lud16"
     }
     
-    public init(name: String? = nil, displayName: String? = nil, about: String? = nil, website: URL? = nil, nostrAddress: String? = nil, pictureURL: URL? = nil, bannerPictureURL: URL? = nil, bot: Bool? = nil, lud06: String? = nil, lud16: String? = nil) {
+    public init(name: String? = nil, displayName: String? = nil, about: String? = nil, website: URL? = nil, nostrAddress: String? = nil, pictureURL: URL? = nil, bannerPictureURL: URL? = nil, isBot: Bool? = nil, lightningURLString: String? = nil, lightningAddress: String? = nil) {
         self.name = name
         self.displayName = displayName
         self.about = about
@@ -65,9 +68,9 @@ public struct UserMetadata: Codable {
         self.nostrAddress = nostrAddress
         self.pictureURL = pictureURL
         self.bannerPictureURL = bannerPictureURL
-        self.bot = bot
-        self.lud06 = lud06
-        self.lud16 = lud16
+        self.isBot = isBot
+        self.lightningURLString = lightningURLString
+        self.lightningAddress = lightningAddress
     }
 
     public init(from decoder: Decoder) throws {
@@ -79,9 +82,9 @@ public struct UserMetadata: Codable {
         nostrAddress = try container.decodeIfPresent(String.self, forKey: .nostrAddress)
         pictureURL = try? container.decodeIfPresent(URL.self, forKey: .pictureURL)
         bannerPictureURL = try? container.decodeIfPresent(URL.self, forKey: .bannerPictureURL)
-        bot = try? container.decodeIfPresent(Bool.self, forKey: .bot)
-        lud06 = try? container.decodeIfPresent(String.self, forKey: .lud06)
-        lud16 = try? container.decodeIfPresent(String.self, forKey: .lud16)
+        isBot = try? container.decodeIfPresent(Bool.self, forKey: .isBot)
+        lightningURLString = try? container.decodeIfPresent(String.self, forKey: .lightningURLString)
+        lightningAddress = try? container.decodeIfPresent(String.self, forKey: .lightningAddress)
     }
 }
 

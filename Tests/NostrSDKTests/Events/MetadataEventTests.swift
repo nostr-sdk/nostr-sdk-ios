@@ -18,9 +18,9 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
                                 nostrAddress: "test@nostr.com",
                                 pictureURL: URL(string: "https://nostrsdk.com/picture.png"),
                                 bannerPictureURL: URL(string: "https://nostrsdk.com/banner.png"),
-                                bot: true,
-                                lud06: "LNURL1234567890",
-                                lud16: "satoshi@bitcoin.org")
+                                isBot: true,
+                                lightningURLString: "LNURL1234567890",
+                                lightningAddress: "satoshi@bitcoin.org")
 
         let rawUserMetadata: [String: Any] = [
             "foo": "string",
@@ -51,9 +51,9 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.userMetadata?.nostrAddress, "test@nostr.com")
         XCTAssertEqual(event.userMetadata?.pictureURL, URL(string: "https://nostrsdk.com/picture.png"))
         XCTAssertEqual(event.userMetadata?.bannerPictureURL, URL(string: "https://nostrsdk.com/banner.png"))
-        XCTAssertEqual(event.userMetadata?.bot, true)
-        XCTAssertEqual(event.userMetadata?.lud06, "LNURL1234567890")
-        XCTAssertEqual(event.userMetadata?.lud16, "satoshi@bitcoin.org")
+        XCTAssertEqual(event.userMetadata?.isBot, true)
+        XCTAssertEqual(event.userMetadata?.lightningURLString, "LNURL1234567890")
+        XCTAssertEqual(event.userMetadata?.lightningAddress, "satoshi@bitcoin.org")
         XCTAssertEqual(event.rawUserMetadata["foo"] as? String, "string")
         XCTAssertEqual(event.rawUserMetadata["bool"] as? Bool, true)
         XCTAssertEqual(event.rawUserMetadata["number"] as? Int, 123)
