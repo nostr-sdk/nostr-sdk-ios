@@ -17,7 +17,17 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
                                 website: URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"),
                                 nostrAddress: "test@nostr.com",
                                 pictureURL: URL(string: "https://nostrsdk.com/picture.png"),
-                                bannerPictureURL: URL(string: "https://nostrsdk.com/banner.png"))
+                                bannerPictureURL: URL(string: "https://nostrsdk.com/banner.png"),
+                                bot: true,
+                                lud06: "LNURL1234567890",
+                                lud16: "satoshi@bitcoin.org")
+
+        let rawUserMetadata: [String: Any] = [
+            "foo": "string",
+            "bool": true,
+            "name": "This field should be ignored.",
+            "number": 123
+        ]
 
         let ostrichImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
         let appleImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/apple.png"))
@@ -31,7 +41,7 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])
         ]
 
-        let event = try metadataEvent(withUserMetadata: meta, customEmojis: customEmojis, signedBy: Keypair.test)
+        let event = try metadataEvent(withUserMetadata: meta, rawUserMetadata: rawUserMetadata, customEmojis: customEmojis, signedBy: Keypair.test)
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .metadata, pubkey: Keypair.test.publicKey))
 
         XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test :ostrich:")
@@ -41,6 +51,12 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.userMetadata?.nostrAddress, "test@nostr.com")
         XCTAssertEqual(event.userMetadata?.pictureURL, URL(string: "https://nostrsdk.com/picture.png"))
         XCTAssertEqual(event.userMetadata?.bannerPictureURL, URL(string: "https://nostrsdk.com/banner.png"))
+        XCTAssertEqual(event.userMetadata?.bot, true)
+        XCTAssertEqual(event.userMetadata?.lud06, "LNURL1234567890")
+        XCTAssertEqual(event.userMetadata?.lud16, "satoshi@bitcoin.org")
+        XCTAssertEqual(event.rawUserMetadata["foo"] as? String, "string")
+        XCTAssertEqual(event.rawUserMetadata["bool"] as? Bool, true)
+        XCTAssertEqual(event.rawUserMetadata["number"] as? Int, 123)
         XCTAssertEqual(event.customEmojis, customEmojis)
         XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
         XCTAssertEqual(event.tags, customEmojiTags)

@@ -8,41 +8,56 @@
 import Foundation
 
 /// An object that describes a user.
+/// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
 public struct UserMetadata: Codable {
     
     /// The user's name.
     public let name: String?
     
     /// The user's display name.
-    /// > Warning: This property is not part of the Nostr specifications.
+    /// > Note: [NIP-24 Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#kind-0)
     public let displayName: String?
 
     /// The user's description of themself.
     public let about: String?
     
     /// The user's website address.
+    /// > Note: [NIP-24 Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#kind-0)
     public let website: URL?
     
     /// The user's Nostr address.
     ///
-    /// > Note: [NIP-05 Specification](https://github.com/nostr-protocol/nips/blob/master/05.md#nip-05).
+    /// > Note: [NIP-05 Specification](https://github.com/nostr-protocol/nips/blob/master/05.md#finding-users-from-their-nip-05-identifier).
     public let nostrAddress: String?
     
     /// A URL to retrieve the user's picture.
     public let pictureURL: URL?
     
     /// A URL to retrieve the user's banner image.
+    /// > Note: [NIP-24 Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#kind-0)
     public let bannerPictureURL: URL?
-    
+
+    /// A boolean to clarify that the content is entirely or partially the result of automation, such as with chatbots or newsfeeds.
+    /// > Note: [NIP-24 Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md#kind-0)
+    public let bot: Bool?
+
+    /// The user's LUD-06 Lightning URL (LNURL).
+    /// > Note: [NIP-57 Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md#protocol-flow)
+    public let lud06: String?
+
+    /// The user's LUD-16 Lightning address.
+    /// > Note: [NIP-57 Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md#protocol-flow)
+    public let lud16: String?
+
     enum CodingKeys: String, CodingKey {
-        case name, about, website
+        case name, about, website, bot, lud06, lud16
         case nostrAddress = "nip05"
         case pictureURL = "picture"
         case bannerPictureURL = "banner"
         case displayName = "display_name"
     }
     
-    public init(name: String?, displayName: String?, about: String?, website: URL?, nostrAddress: String?, pictureURL: URL?, bannerPictureURL: URL?) {
+    public init(name: String? = nil, displayName: String? = nil, about: String? = nil, website: URL? = nil, nostrAddress: String? = nil, pictureURL: URL? = nil, bannerPictureURL: URL? = nil, bot: Bool? = nil, lud06: String? = nil, lud16: String? = nil) {
         self.name = name
         self.displayName = displayName
         self.about = about
@@ -50,6 +65,9 @@ public struct UserMetadata: Codable {
         self.nostrAddress = nostrAddress
         self.pictureURL = pictureURL
         self.bannerPictureURL = bannerPictureURL
+        self.bot = bot
+        self.lud06 = lud06
+        self.lud16 = lud16
     }
 
     public init(from decoder: Decoder) throws {
@@ -61,12 +79,15 @@ public struct UserMetadata: Codable {
         nostrAddress = try container.decodeIfPresent(String.self, forKey: .nostrAddress)
         pictureURL = try? container.decodeIfPresent(URL.self, forKey: .pictureURL)
         bannerPictureURL = try? container.decodeIfPresent(URL.self, forKey: .bannerPictureURL)
+        bot = try? container.decodeIfPresent(Bool.self, forKey: .bot)
+        lud06 = try? container.decodeIfPresent(String.self, forKey: .lud06)
+        lud16 = try? container.decodeIfPresent(String.self, forKey: .lud16)
     }
 }
 
 /// An event that contains a user profile.
 /// 
-/// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/b503f8a92b22be3037b8115fe3e644865a4fa155/01.md#basic-event-kinds)
+/// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
 public final class MetadataEvent: NostrEvent, CustomEmojiInterpreting, NonParameterizedReplaceableEvent {
 
     public required init(from decoder: Decoder) throws {
@@ -103,17 +124,31 @@ public final class MetadataEvent: NostrEvent, CustomEmojiInterpreting, NonParame
 public extension EventCreating {
     
     /// Creates a ``MetadataEvent`` (kind 0) and signs it with the provided ``Keypair``.
+    ///
     /// - Parameters:
-    ///   - userMetadata: The metadata to set.
+    ///   - userMetadata: The ``UserMetadata`` to set.
+    ///   - rawUserMetadata: The dictionary of raw metadata to set that can contain fields unknown to any implemented NIPs.
     ///   - customEmojis: The custom emojis to emojify with if the matching shortcodes are found in the name or about fields.
     ///   - keypair: The Keypair to sign with.
     /// - Returns: The signed ``MetadataEvent``.
     ///
-    /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
-    func metadataEvent(withUserMetadata userMetadata: UserMetadata, customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> MetadataEvent {
-        let metadataAsData = try JSONEncoder().encode(userMetadata)
-        let metadataAsString = String(decoding: metadataAsData, as: UTF8.self)
+    /// > Note: If `rawUserMetadata` has fields that conflict with `userMetadata`, `userMetadata` fields take precedence.
+    ///
+    /// > Note: [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
+    func metadataEvent(withUserMetadata userMetadata: UserMetadata, rawUserMetadata: [String: Any] = [:], customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> MetadataEvent {
+        let userMetadataAsData = try JSONEncoder().encode(userMetadata)
+
+        let allUserMetadataAsData: Data
+        if rawUserMetadata.isEmpty {
+            allUserMetadataAsData = userMetadataAsData
+        } else {
+            var userMetadataAsDictionary = try JSONSerialization.jsonObject(with: userMetadataAsData, options: []) as? [String: Any] ?? [:]
+            userMetadataAsDictionary.merge(rawUserMetadata) { (current, _) in current }
+            allUserMetadataAsData = try JSONSerialization.data(withJSONObject: userMetadataAsDictionary, options: .sortedKeys)
+        }
+
+        let allUserMetadataAsString = String(decoding: allUserMetadataAsData, as: UTF8.self)
         let customEmojiTags = customEmojis.map { $0.tag }
-        return try MetadataEvent(content: metadataAsString, tags: customEmojiTags, signedBy: keypair)
+        return try MetadataEvent(content: allUserMetadataAsString, tags: customEmojiTags, signedBy: keypair)
     }
 }
