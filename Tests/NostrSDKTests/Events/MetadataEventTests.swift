@@ -25,8 +25,9 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let rawUserMetadata: [String: Any] = [
             "foo": "string",
             "bool": true,
+            "number": 123,
             "name": "This field should be ignored.",
-            "number": 123
+            "lud16": "should@be.ignored"
         ]
 
         let ostrichImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
@@ -57,6 +58,8 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.rawUserMetadata["foo"] as? String, "string")
         XCTAssertEqual(event.rawUserMetadata["bool"] as? Bool, true)
         XCTAssertEqual(event.rawUserMetadata["number"] as? Int, 123)
+        XCTAssertEqual(event.rawUserMetadata["name"] as? String, "Nostr SDK Test :ostrich:")
+        XCTAssertEqual(event.rawUserMetadata["lud16"] as? String, "satoshi@bitcoin.org")
         XCTAssertEqual(event.customEmojis, customEmojis)
         XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
         XCTAssertEqual(event.tags, customEmojiTags)
@@ -84,6 +87,7 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.rawUserMetadata["nip05"] as? String, "cameri@elder.nostr.land")
         XCTAssertEqual(event.rawUserMetadata["picture"] as? String, "https://nostr.build/i/9396d5cd901304726883aea7363543f121e1d53964dd3149cadecd802608aebe.jpg")
         XCTAssertEqual(event.rawUserMetadata["banner"] as? String, "https://nostr.build/i/nostr.build_90a51a2e50c9f42288260d01b3a2a4a1c7a9df085423abad7809e76429da7cdc.gif")
+        XCTAssertEqual(event.rawUserMetadata["lud16"] as? String, "cameri@getalby.com")
 
         // access metadata properties from decoded object
         let userMetadata = try XCTUnwrap(event.userMetadata)
@@ -93,6 +97,7 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(userMetadata.nostrAddress, "cameri@elder.nostr.land")
         XCTAssertEqual(userMetadata.pictureURL, URL(string: "https://nostr.build/i/9396d5cd901304726883aea7363543f121e1d53964dd3149cadecd802608aebe.jpg"))
         XCTAssertEqual(userMetadata.bannerPictureURL, URL(string: "https://nostr.build/i/nostr.build_90a51a2e50c9f42288260d01b3a2a4a1c7a9df085423abad7809e76429da7cdc.gif"))
+        XCTAssertEqual(userMetadata.lightningAddress, "cameri@getalby.com")
     }
 
     func testDecodeMetadataWithEmptyWebsite() throws {
