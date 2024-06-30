@@ -50,7 +50,7 @@ final class ParameterizedReplaceableEventTests: XCTestCase, FixtureLoading, Meta
 
     func testShareableEventCoordinatesExcludeAuthor() throws {
         let event: LongformContentEvent = try decodeFixture(filename: "longform")
-        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(excludeAuthor: true))
+        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(includeAuthor: false))
         XCTAssertEqual(shareableEventCoordinates, "naddr1qq25vwznf9yj63e4f3z82m2ytfnhs36r2eg4xqcyqqq823cn0tk0s")
 
         let metadata = try XCTUnwrap(decodedMetadata(from: shareableEventCoordinates))
@@ -63,7 +63,7 @@ final class ParameterizedReplaceableEventTests: XCTestCase, FixtureLoading, Meta
 
     func testShareableEventCoordinatesExcludeKind() throws {
         let event: LongformContentEvent = try decodeFixture(filename: "longform")
-        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(excludeKind: true))
+        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(includeKind: false))
         XCTAssertEqual(shareableEventCoordinates, "naddr1qq25vwznf9yj63e4f3z82m2ytfnhs36r2eg4xq3qwjyk3rq9hdepztwc9420m0exhd0s8cw7fr5hscwcln3ffgh3d9rqncjtcg")
 
         let metadata = try XCTUnwrap(decodedMetadata(from: shareableEventCoordinates))

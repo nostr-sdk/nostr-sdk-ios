@@ -22,10 +22,10 @@ public protocol ReplaceableEvent: NostrEvent {
     /// identifier (if it is parameterized), optionally the relays, optionally the author's public key, and optionally the event kind number.
     /// - Parameters:
     ///   - relayURLStrings: The String representations of relay URLs in which the event is more likely to be found, encoded as ASCII.
-    ///   - excludeAuthor: Whether the author public key should be excluded from the identifier.
-    ///   - excludeKind: Whether the event kind number should be excluded from the identifier.
+    ///   - includeAuthor: Whether the author public key should be included in the identifier.
+    ///   - includeKind: Whether the event kind number should be included in the identifier.
     /// - Throws: `URLError.Code.badURL`, `RelayURLError.invalidScheme`, `TLVCodingError.failedToEncode`
     ///
     /// > Note: [NIP-19 bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
-    func shareableEventCoordinates(relayURLStrings: [String]?, excludeAuthor: Bool, excludeKind: Bool) throws -> String
+    func shareableEventCoordinates(relayURLStrings: [String]?, includeAuthor: Bool, includeKind: Bool) throws -> String
 }

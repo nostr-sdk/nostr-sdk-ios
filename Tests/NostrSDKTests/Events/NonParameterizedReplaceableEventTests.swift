@@ -50,7 +50,7 @@ final class NonParameterizedReplaceableEventTests: XCTestCase, FixtureLoading, M
 
     func testShareableEventCoordinatesExcludeAuthor() throws {
         let event: MuteListEvent = try decodeFixture(filename: "mute_list")
-        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(excludeAuthor: true))
+        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(includeAuthor: false))
         XCTAssertEqual(shareableEventCoordinates, "naddr1qqqqxpqqqqn3qat5qqg")
 
         let metadata = try XCTUnwrap(decodedMetadata(from: shareableEventCoordinates))
@@ -63,7 +63,7 @@ final class NonParameterizedReplaceableEventTests: XCTestCase, FixtureLoading, M
 
     func testShareableEventCoordinatesExcludeKind() throws {
         let event: MuteListEvent = try decodeFixture(filename: "mute_list")
-        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(excludeKind: true))
+        let shareableEventCoordinates = try XCTUnwrap(event.shareableEventCoordinates(includeKind: false))
         XCTAssertEqual(shareableEventCoordinates, "naddr1qqqqygyeglukt8wcpsmgysptvyh4g3lzsfyejlanwz2spse2tp0tp9mngq8y2x7g")
 
         let metadata = try XCTUnwrap(decodedMetadata(from: shareableEventCoordinates))

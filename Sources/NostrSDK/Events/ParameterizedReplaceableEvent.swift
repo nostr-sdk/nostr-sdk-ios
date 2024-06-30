@@ -23,16 +23,16 @@ public extension ParameterizedReplaceableEvent {
         return try? EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
     }
 
-    func shareableEventCoordinates(relayURLStrings: [String]? = nil, excludeAuthor: Bool = false, excludeKind: Bool = false) throws -> String {
+    func shareableEventCoordinates(relayURLStrings: [String]? = nil, includeAuthor: Bool = true, includeKind: Bool = true) throws -> String {
         let validatedRelayURLStrings = try relayURLStrings?.map {
             try validateRelayURLString($0)
         }.map { $0.absoluteString }
 
         var metadata = Metadata(relays: validatedRelayURLStrings, identifier: identifier)
-        if !excludeAuthor {
+        if includeAuthor {
             metadata.pubkey = pubkey
         }
-        if !excludeKind {
+        if includeKind {
             metadata.kind = UInt32(kind.rawValue)
         }
 
