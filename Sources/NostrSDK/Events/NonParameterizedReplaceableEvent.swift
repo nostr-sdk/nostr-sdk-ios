@@ -18,18 +18,6 @@ public extension NonParameterizedReplaceableEvent {
     }
 
     func shareableEventCoordinates(relayURLStrings: [String]? = nil, includeAuthor: Bool = true, includeKind: Bool = true) throws -> String {
-        let validatedRelayURLStrings = try relayURLStrings?.map {
-            try validateRelayURLString($0)
-        }.map { $0.absoluteString }
-
-        var metadata = Metadata(relays: validatedRelayURLStrings, identifier: "")
-        if includeAuthor {
-            metadata.pubkey = pubkey
-        }
-        if includeKind {
-            metadata.kind = UInt32(kind.rawValue)
-        }
-
-        return try encodedIdentifier(with: metadata, identifierType: .address)
+        try shareableEventCoordinates(relayURLStrings: relayURLStrings, includeAuthor: includeAuthor, includeKind: includeKind, identifier: "")
     }
 }

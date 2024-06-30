@@ -29,3 +29,21 @@ public protocol ReplaceableEvent: NostrEvent {
     /// > Note: [NIP-19 bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
     func shareableEventCoordinates(relayURLStrings: [String]?, includeAuthor: Bool, includeKind: Bool) throws -> String
 }
+
+extension ReplaceableEvent {
+    func shareableEventCoordinates(relayURLStrings: [String]?, includeAuthor: Bool, includeKind: Bool, identifier: String) throws -> String {
+        let validatedRelayURLStrings = try relayURLStrings?.map {
+            try validateRelayURLString($0)
+        }.map { $0.absoluteString }
+
+        var metadata = Metadata(relays: validatedRelayURLStrings, identifier: identifier)
+        if includeAuthor {
+            metadata.pubkey = pubkey
+        }
+        if includeKind {
+            metadata.kind = UInt32(kind.rawValue)
+        }
+
+        return try encodedIdentifier(with: metadata, identifierType: .address)
+    }
+}
