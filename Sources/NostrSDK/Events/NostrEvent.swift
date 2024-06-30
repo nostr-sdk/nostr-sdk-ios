@@ -143,7 +143,6 @@ public class NostrEvent: Codable, Equatable, Hashable {
 }
 
 extension NostrEvent: MetadataCoding, RelayURLValidating {
-    private static let bech32NoteIdPrefix = "note"
 
     /// Gets a bare `note`-prefixed bech32-formatted human-friendly id of this event, or `nil` if it could not be generated.
     /// It is not meant to be used inside the standard NIP-01 event formats or inside the filters.
