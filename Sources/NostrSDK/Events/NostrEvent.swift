@@ -155,12 +155,12 @@ extension NostrEvent: MetadataCoding, RelayURLValidating {
         guard let data = id.hexDecoded else {
             return nil
         }
-        return Bech32.encode(NostrEvent.bech32NoteIdPrefix, baseEightData: data)
+        return Bech32.encode(Bech32IdentifierType.note.rawValue, baseEightData: data)
     }
 
     /// Gets a shareable human-interactable event identifier for this event.
     /// The identifier is bech32-formatted with a prefix of `nevent` using a binary-encoded list of TLV (type-length-value).
-    /// The identifier have all the information needed for the event to be found, which includes the
+    /// The identifier has all the information needed for the event to be found, which includes the
     /// event id, optionally the relays, optionally the author's public key, and optionally the event kind number.
     /// - Parameters:
     ///   - relayURLs: The String representations of relay URLs in which the event is more likely to be found, encoded as ASCII.
