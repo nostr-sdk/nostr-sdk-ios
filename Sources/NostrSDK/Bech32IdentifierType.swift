@@ -7,7 +7,8 @@
 
 /// The type of Bech32-encoded identifier.
 /// These identifiers can be used to succinctly encapsulate metadata to aid in the discovery of events and users.
-/// See [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) for information about how these Bech32-encoded
+/// See [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) for information about how these
+/// identifiers are encoded and used.
 public enum Bech32IdentifierType: String {
     case publicKey = "npub"
     case privateKey = "nsec"
