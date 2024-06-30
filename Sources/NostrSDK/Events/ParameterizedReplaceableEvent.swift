@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol ParameterizedReplaceableEvent: ReplaceableEvent {}
+public protocol ParameterizedReplaceableEvent: ReplaceableEvent, MetadataCoding {}
 public extension ParameterizedReplaceableEvent {
     /// The identifier of the event. For parameterized replaceable events, this identifier remains stable across replacements.
     /// This identifier is represented by the "d" tag, which is distinctly different from the `id` field on ``NostrEvent``.
@@ -21,5 +21,21 @@ public extension ParameterizedReplaceableEvent {
         }
 
         return try? EventCoordinates(kind: kind, pubkey: publicKey, identifier: identifier, relayURL: relayURL)
+    }
+
+    func shareableEventCoordinates(relayURLStrings: [String]? = nil, excludeAuthor: Bool = false, excludeKind: Bool = false) throws -> String {
+        let validatedRelayURLStrings = try relayURLStrings?.map {
+            try validateRelayURLString($0)
+        }.map { $0.absoluteString }
+
+        var metadata = Metadata(relays: validatedRelayURLStrings, identifier: identifier)
+        if !excludeAuthor {
+            metadata.pubkey = pubkey
+        }
+        if !excludeKind {
+            metadata.kind = UInt32(kind.rawValue)
+        }
+
+        return try encodedIdentifier(with: metadata, identifierType: .address)
     }
 }

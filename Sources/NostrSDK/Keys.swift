@@ -63,8 +63,6 @@ public struct Keypair {
 }
 
 public struct PublicKey: Equatable {
-    static let humanReadablePrefix = "npub"
-
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.hex == rhs.hex
     }
@@ -74,7 +72,7 @@ public struct PublicKey: Equatable {
     public let dataRepresentation: Data
 
     public init?(dataRepresentation: Data) {
-        self.init(npub: Bech32.encode(PublicKey.humanReadablePrefix, baseEightData: dataRepresentation))
+        self.init(npub: Bech32.encode(Bech32IdentifierType.publicKey.rawValue, baseEightData: dataRepresentation))
     }
 
     public init?(hex: String) {
@@ -97,7 +95,7 @@ public struct PublicKey: Equatable {
            return nil
         }
 
-        guard humanReadablePart == PublicKey.humanReadablePrefix else {
+        guard humanReadablePart == Bech32IdentifierType.publicKey.rawValue else {
             Loggers.keypairs.error("Could not create public key because the human readable part, \(humanReadablePart), is not equal to npub.")
             return nil
         }
@@ -114,14 +112,12 @@ public struct PublicKey: Equatable {
 }
 
 public struct PrivateKey {
-    static let humanReadablePrefix = "nsec"
-
     public let hex: String
     public let nsec: String
     public let dataRepresentation: Data
 
     public init?(dataRepresentation: Data) {
-        self.init(nsec: Bech32.encode(PrivateKey.humanReadablePrefix, baseEightData: dataRepresentation))
+        self.init(nsec: Bech32.encode(Bech32IdentifierType.privateKey.rawValue, baseEightData: dataRepresentation))
     }
 
     public init?(hex: String) {
@@ -144,7 +140,7 @@ public struct PrivateKey {
            return nil
         }
 
-        guard humanReadablePart == PrivateKey.humanReadablePrefix else {
+        guard humanReadablePart == Bech32IdentifierType.privateKey.rawValue else {
             Loggers.keypairs.error("Could not create private key because the human readable part, \(humanReadablePart), is not equal to nsec.")
             return nil
         }

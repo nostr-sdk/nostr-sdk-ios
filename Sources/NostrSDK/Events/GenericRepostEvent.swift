@@ -10,7 +10,7 @@ import Foundation
 /// A generic repost event (kind 16) can include any kind of event inside other than kind 1.
 /// > Note: Generic reposts SHOULD contain a `k` tag with the stringified kind number of the reposted event as its value.
 /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#generic-reposts).
-public class GenericRepostEvent: NostrEvent, RelayURLValidating {
+public class GenericRepostEvent: NostrEvent {
     
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

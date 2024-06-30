@@ -141,3 +141,47 @@ public class NostrEvent: Codable, Equatable, Hashable {
         tags.filter { $0.name == tag.rawValue }.map { $0.value }
     }
 }
+
+extension NostrEvent: MetadataCoding, RelayURLValidating {
+    private static let bech32NoteIdPrefix = "note"
+
+    /// Gets a bare `note`-prefixed bech32-formatted human-friendly id of this event, or `nil` if it could not be generated.
+    /// It is not meant to be used inside the standard NIP-01 event formats or inside the filters.
+    /// They are meant for human-friendlier display and input only.
+    /// Clients should still accept keys in both hex and npub format and convert internally.
+    ///
+    /// > Note: [NIP-19 bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
+    public var bech32NoteId: String? {
+        guard let data = id.hexDecoded else {
+            return nil
+        }
+        return Bech32.encode(NostrEvent.bech32NoteIdPrefix, baseEightData: data)
+    }
+
+    /// Gets a shareable human-interactable event identifier for this event.
+    /// The identifier is bech32-formatted with a prefix of `nevent` using a binary-encoded list of TLV (type-length-value).
+    /// The identifier have all the information needed for the event to be found, which includes the
+    /// event id, optionally the relays, optionally the author's public key, and optionally the event kind number.
+    /// - Parameters:
+    ///   - relayURLs: The String representations of relay URLs in which the event is more likely to be found, encoded as ASCII.
+    ///   - excludeAuthor: Whether the author public key should be excluded from the identifier.
+    ///   - excludeKind: Whether the event kind number should be excluded from the identifier.
+    /// - Throws: `URLError.Code.badURL`, `RelayURLError.invalidScheme`, `TLVCodingError.failedToEncode`
+    ///
+    /// > Note: [NIP-19 bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
+    public func shareableEventIdentifier(relayURLStrings: [String]? = nil, excludeAuthor: Bool = false, excludeKind: Bool = false) throws -> String {
+        let validatedRelayURLStrings = try relayURLStrings?.map {
+            try validateRelayURLString($0)
+        }.map { $0.absoluteString }
+
+        var metadata = Metadata(relays: validatedRelayURLStrings, eventId: id)
+        if !excludeAuthor {
+            metadata.pubkey = pubkey
+        }
+        if !excludeKind {
+            metadata.kind = UInt32(kind.rawValue)
+        }
+
+        return try encodedIdentifier(with: metadata, identifierType: .event)
+    }
+}

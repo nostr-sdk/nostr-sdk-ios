@@ -7,16 +7,6 @@
 
 import Foundation
 
-/// The type of Bech32-encoded identifier.
-/// These identifiers can be used to succinctly encapsulate metadata to aid in the discovery of events and users.
-/// See [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) for information about how these Bech32-encoded
-public enum Bech32IdentifierType: String {
-    case profile = "nprofile"
-    case event = "nevent"
-    case relay = "nrelay"
-    case address = "naddr"
-}
-
 /// An error encountered while encoding or decoding TLV (Type-Length-Value) data.
 public enum TLVCodingError: Error {
     case unknownPrefix
@@ -70,7 +60,14 @@ public extension MetadataCoding {
         guard let identifierType = Bech32IdentifierType(rawValue: hrp) else {
             throw TLVCodingError.unknownPrefix
         }
-        
+
+        switch identifierType {
+        case .profile, .event, .relay, .address:
+            break
+        default:
+            throw TLVCodingError.unknownPrefix
+        }
+
         // Given the example profile identifier, the `hrp` will be "nprofile", and we'll use the computed checksum to extract the raw TLV data:
         guard let tlvString = checksum.base8FromBase5?.hexString else {
             throw TLVCodingError.missingExpectedData
@@ -155,6 +152,8 @@ public extension MetadataCoding {
                     if let decoded = content.decoded() {
                         identifier = decoded
                     }
+                default:
+                    throw TLVCodingError.unknownPrefix
                 }
             case .relay:
                 if let decoded = content.decoded(using: .ascii) {
@@ -220,6 +219,8 @@ public extension MetadataCoding {
             specialTypeValue = relay.data(using: .ascii)
         case .address:
             specialTypeValue = metadata.identifier?.data(using: .utf8)
+        default:
+            throw TLVCodingError.unknownPrefix
         }
         
         if let lengthByte = (specialTypeValue ?? Data()).byteLengthString {
