@@ -66,7 +66,31 @@ class MetadataCodingTests: XCTestCase, MetadataCoding {
         XCTAssertEqual(metadata.identifier, "1700730909108")
         XCTAssertEqual(metadata.kind, 30023)
     }
-    
+
+    func testNpubPrefixDecoding() throws {
+        let id = Keypair.test.publicKey.npub
+        let (hrp, _) = try Bech32.decode(id)
+        XCTAssertEqual(hrp, "npub")
+
+        XCTAssertThrowsError(try decodedMetadata(from: id))
+    }
+
+    func testNsecPrefixDecoding() throws {
+        let id = Keypair.test.privateKey.nsec
+        let (hrp, _) = try Bech32.decode(id)
+        XCTAssertEqual(hrp, "nsec")
+
+        XCTAssertThrowsError(try decodedMetadata(from: id))
+    }
+
+    func testNotePrefixDecoding() throws {
+        let id = "note1lf0dsn7ga6u4nlfe4k8yswyvlseswkv3a789qpjvlnk0myvthydshz7qeg"
+        let (hrp, _) = try Bech32.decode(id)
+        XCTAssertEqual(hrp, "note")
+
+        XCTAssertThrowsError(try decodedMetadata(from: id))
+    }
+
     func testIgnoreUnrecognizedType() throws {
         // start with the pubkey (type is "00", length is "20", the rest is the pubkey)
         var tlvString = "00203bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"
@@ -151,5 +175,40 @@ class MetadataCodingTests: XCTestCase, MetadataCoding {
         let identifier = try encodedIdentifier(with: metadata, identifierType: .address)
         let expected = "naddr1qqxnzdesxqmnxvpexqunzvpcqyt8wumn8ghj7un9d3shjtnwdaehgu3wvfskueqzypve7elhmamff3sr5mgxxms4a0rppkmhmn7504h96pfcdkpplvl2jqcyqqq823cnmhuld"
         XCTAssertEqual(identifier, expected)
+    }
+
+    func testNpubEncoding() throws {
+        var metadata = Metadata()
+        metadata.pubkey = "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"
+
+        metadata.relays = [
+            "wss://r.x.com",
+            "wss://djbas.sadkb.com"
+        ]
+
+        XCTAssertThrowsError(try encodedIdentifier(with: metadata, identifierType: .publicKey))
+    }
+
+    func testNsecEncoding() throws {
+        var metadata = Metadata()
+        metadata.pubkey = "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"
+
+        metadata.relays = [
+            "wss://r.x.com",
+            "wss://djbas.sadkb.com"
+        ]
+
+        XCTAssertThrowsError(try encodedIdentifier(with: metadata, identifierType: .privateKey))
+    }
+
+    func testNoteEncoding() throws {
+        var metadata = Metadata()
+        metadata.eventId = "b9f5441e45ca39179320e0031cfb18e34078673dcc3d3e3a3b3a981760aa5696"
+        metadata.relays = [
+            "wss://nostr-relay.untethr.me",
+            "wss://nostr-pub.wellorder.net"
+        ]
+
+        XCTAssertThrowsError(try encodedIdentifier(with: metadata, identifierType: .note))
     }
 }

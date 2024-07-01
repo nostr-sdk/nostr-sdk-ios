@@ -16,4 +16,8 @@ public extension NonParameterizedReplaceableEvent {
 
         return try? EventCoordinates(kind: kind, pubkey: publicKey, relayURL: relayURL)
     }
+
+    func shareableEventCoordinates(relayURLStrings: [String]? = nil, includeAuthor: Bool = true, includeKind: Bool = true) throws -> String {
+        try shareableEventCoordinates(relayURLStrings: relayURLStrings, includeAuthor: includeAuthor, includeKind: includeKind, identifier: "")
+    }
 }

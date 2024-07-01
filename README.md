@@ -30,7 +30,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-15: Nostr Marketplace (for resilient marketplaces)](https://github.com/nostr-protocol/nips/blob/master/15.md)
 - [ ] [NIP-17: Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
 - [x] [NIP-18: Reposts](https://github.com/nostr-protocol/nips/blob/master/18.md)
-- [ ] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
+- [x] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
 - [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
 - [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
