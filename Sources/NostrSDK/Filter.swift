@@ -11,10 +11,10 @@ import Foundation
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#communication-between-clients-and-relays)
 public struct Filter: Codable, Hashable, Equatable {
-    /// a list of event ids or prefixes
+    /// a list of event ids
     public let ids: [String]?
     
-    /// a list of pubkeys or prefixes, the pubkey of an event must be one of these
+    /// a list of lowercase pubkeys, the pubkey of an event must be one of these
     public let authors: [String]?
     
     /// a list of a kind numbers
@@ -23,10 +23,10 @@ public struct Filter: Codable, Hashable, Equatable {
     /// a list of tag values that are referenced by single basic Latin letter tag names
     public let tags: [Character: [String]]?
 
-    /// an integer unix timestamp, events must be newer than this to pass
+    /// an integer unix timestamp, `created_at` timestamps on events must be greater than or equal to this to pass
     public let since: Int?
     
-    /// an integer unix timestamp, events must be older than this to pass
+    /// an integer unix timestamp, `created_at` timestamps on events must be less than or equal to this to pass
     public let until: Int?
     
     /// maximum number of events to be returned in the initial query
@@ -58,14 +58,14 @@ public struct Filter: Codable, Hashable, Equatable {
     /// Creates and returns a filter with the specified parameters.
     ///
     /// - Parameters:
-    ///   - ids: a list of event ids or prefixes
-    ///   - authors: a list of pubkeys or prefixes, the pubkey of an event must be one of these
+    ///   - ids: a list of event ids
+    ///   - authors: a list of lowercase pubkeys, the pubkey of an event must be one of these
     ///   - kinds: a list of a kind numbers
     ///   - events: a list of event ids that are referenced in an "e" tag
     ///   - pubkeys: a list of pubkeys that are referenced in a "p" tag
     ///   - tags: a list of tag values that are referenced by single basic Latin letter tag names
-    ///   - since: an integer unix timestamp, events must be newer than this to pass
-    ///   - until: an integer unix timestamp, events must be older than this to pass
+    ///   - since: an integer unix timestamp, `created_at` timestamps on events must be greater than or equal to this to pass
+    ///   - until: an integer unix timestamp,`created_at` timestamps on events must be less than or equal to this to pass
     ///   - limit: maximum number of events to be returned in the initial query
     ///
     /// If `tags` contains an `e` tag and `events` is also provided, `events` takes precedence.
@@ -73,7 +73,7 @@ public struct Filter: Codable, Hashable, Equatable {
     ///
     /// Returns `nil` if `tags` contains tag names that are not in the basic Latin alphabet of A-Z or a-z.
     ///
-    /// > Important: Event ids and pubkeys should be in the 32-byte hexadecimal format, not the `note...` and `npub...` formats.
+    /// > Important: The `ids`, `authors`, `events`, and `pubkeys` filter lists MUST contain exact 64-character lowercase hex values.
     public init?(ids: [String]? = nil, authors: [String]? = nil, kinds: [Int]? = nil, events: [String]? = nil, pubkeys: [String]? = nil, tags: [Character: [String]]? = nil, since: Int? = nil, until: Int? = nil, limit: Int? = nil) {
         self.ids = ids
         self.authors = authors
