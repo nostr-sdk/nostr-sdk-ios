@@ -86,7 +86,12 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     ///
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
     case muteList
-    
+
+    /// This kind of replaceable event advertises preferred relays for discovering a user's content and receiving fresh content from others.
+    ///
+    /// See [NIP-65 - Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
+    case relayListMetadata
+
     /// This kind of event contains an uncategorized, "global" list of things a user wants to save.
     ///
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
@@ -138,6 +143,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .giftWrap,
         .report,
         .muteList,
+        .relayListMetadata,
         .bookmarksList,
         .authentication,
         .longformContent,
@@ -170,6 +176,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .giftWrap:                     return 1059
         case .report:                       return 1984
         case .muteList:                     return 10000
+        case .relayListMetadata:            return 10002
         case .bookmarksList:                return 10003
         case .authentication:               return 22242
         case .longformContent:              return 30023
@@ -196,6 +203,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .giftWrap:                     return GiftWrapEvent.self
         case .report:                       return ReportEvent.self
         case .muteList:                     return MuteListEvent.self
+        case .relayListMetadata:            return RelayListMetadataEvent.self
         case .bookmarksList:                return BookmarksListEvent.self
         case .authentication:               return AuthenticationEvent.self
         case .longformContent:              return LongformContentEvent.self

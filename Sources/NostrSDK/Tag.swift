@@ -180,6 +180,6 @@ extension Tag {
 
 extension Tag: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "Tag(name: \"\(name)\", value: \"\(value)\")"
+        "Tag(name: \"\(name)\", value: \"\(value)\", otherParameters: \(otherParameters)"
     }
 }
