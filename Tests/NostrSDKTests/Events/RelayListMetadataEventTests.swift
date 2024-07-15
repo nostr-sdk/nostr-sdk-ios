@@ -137,4 +137,29 @@ final class RelayListMetadataEventTests: XCTestCase, EventCreating, EventVerifyi
         XCTAssertEqual(event.relayMetadataList[2].tag, tag3)
     }
 
+    func testDecodeRelayListMetadataWithInvalidTags() throws {
+        let event: RelayListMetadataEvent = try decodeFixture(filename: "relay_list_metadata_invalid_tags")
+        XCTAssertEqual(event.id, "68962e8499c2067306b2daaa8811b95f38d5e7b8954976d15a8419751a96757a")
+        XCTAssertEqual(event.pubkey, "cb9f20cbd8616dcb79ce1dbdcec702b9b1549e678225ce035b31db4d820f4418")
+        XCTAssertEqual(event.createdAt, 1720822990)
+        XCTAssertEqual(event.kind, .relayListMetadata)
+        XCTAssertEqual(event.content, "")
+        XCTAssertEqual(event.signature, "0b40f4f5de3f6cb2223a7961d7b2a3c8f3b5944a275dc27ba3cea765f6be127fb311f10218e25001bee0e30ac6a2ed7dfa45d8c77e3973ce599eaa0bd1e2423b")
+
+        let publicKey = try XCTUnwrap(PublicKey(hex: event.pubkey))
+        let expectedEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .relayListMetadata, pubkey: publicKey))
+        XCTAssertEqual(event.replaceableEventCoordinates(), expectedEventCoordinates)
+
+        let tag1 = Tag(name: "r", value: "wss://relay.momostr.pink/", otherParameters: ["invalid-marker"])
+        let tag2 = Tag(name: "r", value: "wss://relay.primal.net/", otherParameters: ["read", "this-should-be-ignored"])
+        let tag3 = Tag(name: "r", value: "https://invalid-nostr-relay.com/", otherParameters: ["read"])
+
+        XCTAssertEqual(event.tags, [tag1, tag2, tag3])
+
+        XCTAssertEqual(event.relayMetadataList.count, 1)
+        XCTAssertEqual(event.relayMetadataList[0].relayURL.absoluteString, "wss://relay.primal.net/")
+        XCTAssertEqual(event.relayMetadataList[0].marker, .read)
+        XCTAssertEqual(event.relayMetadataList[0].tag, Tag(name: "r", value: "wss://relay.primal.net/", otherParameters: ["read"]))
+    }
+
 }

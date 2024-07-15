@@ -104,6 +104,11 @@ public struct UserRelayMetadata: Equatable {
     }
 
     /// The ``Tag`` that represents the user relay metadata that can be used in a ``RelayListMetadataEvent``.
+    ///
+    /// Note that if this ``UserRelayMetadata`` was initialized with a ``Tag``, the tag returned by this property
+    /// may not be the same as the original tag.
+    /// For example, if there are extra parameters in the original tag that is not recognized by [NIP-65](https://github.com/nostr-protocol/nips/blob/master/65.md),
+    /// they will not be returned by this property.
     public var tag: Tag {
         let otherParameters: [String]
         switch marker {
@@ -129,19 +134,18 @@ public extension EventCreating {
 
         for metadata in relayMetadataList {
             if let existingMetadata = deduplicatedMetadata[metadata.relayURL] {
-                // If the user relay metadata is identical between the duplicates,
+                // If the user relay metadata marker is identical between the duplicates,
                 // or if the existing one already has a read and write marker, skip it.
                 if existingMetadata.marker == metadata.marker || existingMetadata.marker == .readAndWrite {
                     continue
                 }
 
                 // Any other permutation of markers will result in a combined marker of read and write.
-                switch metadata.marker {
-                case .readAndWrite:
+                if metadata.marker == .readAndWrite {
                     // If the marker on `metadata` is set to read and write, just use that as the value
                     // instead of creating a new object (as a micro-optimization).
                     deduplicatedMetadata[metadata.relayURL] = metadata
-                default:
+                } else {
                     deduplicatedMetadata[metadata.relayURL] = UserRelayMetadata(relayURL: metadata.relayURL, marker: .readAndWrite)
                 }
             } else {
