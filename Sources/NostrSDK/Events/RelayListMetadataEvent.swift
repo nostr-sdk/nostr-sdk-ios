@@ -95,7 +95,7 @@ public struct UserRelayMetadata: Equatable {
     /// A `nil` value is returned if the relay URL string is invalid.
     ///
     /// > Note: [NIP 65 - Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
-    public init?(relayURL: URL, marker: Marker) {
+    public init?(relayURL: URL, marker: Marker = .readAndWrite) {
         guard let validatedRelayURL = try? RelayURLValidator.shared.validateRelayURL(relayURL) else {
             return nil
         }
@@ -131,7 +131,7 @@ public extension EventCreating {
             if let existingMetadata = deduplicatedMetadata[metadata.relayURL] {
                 // If the user relay metadata is identical between the duplicates,
                 // or if the existing one already has a read and write marker, skip it.
-                guard existingMetadata.marker != metadata.marker && existingMetadata.marker != .readAndWrite else {
+                if existingMetadata.marker == metadata.marker || existingMetadata.marker == .readAndWrite {
                     continue
                 }
 
