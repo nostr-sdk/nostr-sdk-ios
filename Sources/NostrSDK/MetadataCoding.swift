@@ -41,6 +41,14 @@ public struct Metadata {
     
     /// The kind of the event, as an integer.
     public var kind: UInt32?
+
+    public init(pubkey: String? = nil, relays: [String]? = nil, eventId: String? = nil, identifier: String? = nil, kind: UInt32? = nil) {
+        self.pubkey = pubkey
+        self.relays = relays
+        self.eventId = eventId
+        self.identifier = identifier
+        self.kind = kind
+    }
 }
 
 /// A protocol containing a set of functions for encoding and decoding identifiers.
