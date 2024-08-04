@@ -13,7 +13,9 @@ final class TimeBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
     func testCreateTimeBasedCalendarEvent() throws {
         let identifier = "flight-from-new-york-jfk-to-san-jose-costa-rica-sjo-12345"
         let title = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
-        let description = "Flight to Nostrica"
+        let summary = "Flight to Nostrica summary."
+        let imageString = "https://nostrsdk.com/image.png"
+        let description = "Flight to Nostrica description."
 
         let startTimeZone = TimeZone(identifier: "America/New_York")
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
@@ -40,6 +42,8 @@ final class TimeBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let timeBasedCalendarEvent = try timeBasedCalendarEvent(
             withIdentifier: identifier,
             title: title,
+            summary: summary,
+            imageURL: URL(string: imageString),
             description: description,
             startTimestamp: startTimestamp,
             endTimestamp: endTimestamp,
@@ -55,6 +59,8 @@ final class TimeBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
 
         XCTAssertEqual(timeBasedCalendarEvent.identifier, identifier)
         XCTAssertEqual(timeBasedCalendarEvent.title, title)
+        XCTAssertEqual(timeBasedCalendarEvent.summary, summary)
+        XCTAssertEqual(timeBasedCalendarEvent.imageURL?.absoluteString, imageString)
         XCTAssertEqual(timeBasedCalendarEvent.content, description)
         XCTAssertEqual(timeBasedCalendarEvent.startTimestamp, startTimestamp)
         XCTAssertEqual(timeBasedCalendarEvent.endTimestamp, endTimestamp)

@@ -14,7 +14,7 @@ import Foundation
 ///              * MUST NOT support adding HTML to Markdown.
 ///
 /// > Note: [NIP-23 Specification](https://github.com/nostr-protocol/nips/blob/master/23.md)
-public final class LongformContentEvent: NostrEvent, HashtagInterpreting, ParameterizedReplaceableEvent, TitleTagInterpreting {
+public final class LongformContentEvent: NostrEvent, HashtagInterpreting, ImageTagInterpreting, ParameterizedReplaceableEvent, SummaryTagInterpreting, TitleTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -35,19 +35,6 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting, Parame
             return nil
         }
         return Date(timeIntervalSince1970: unixSeconds)
-    }
-
-    /// A summary of the content.
-    var summary: String? {
-        firstValueForTagName(.summary)
-    }
-    
-    /// A URL pointing to an image to be shown along with the title.
-    var imageURL: URL? {
-        guard let imageURLString = firstValueForTagName(.image) else {
-            return nil
-        }
-        return URL(string: imageURLString)
     }
 }
 

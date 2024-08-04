@@ -13,7 +13,9 @@ final class DateBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
     func testCreateDateBasedCalendarEvent() throws {
         let identifier = "nostrica-12345"
         let title = "Nostrica"
-        let description = "First Nostr unconference"
+        let summary = "First Nostr unconference summary"
+        let imageString = "https://nostrsdk.com/image.png"
+        let description = "First Nostr unconference description"
 
         let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
         let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 21))
@@ -34,6 +36,8 @@ final class DateBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let dateBasedCalendarEvent = try dateBasedCalendarEvent(
             withIdentifier: identifier,
             title: title,
+            summary: summary,
+            imageURL: URL(string: imageString),
             description: description,
             startDate: startDate,
             endDate: endDate,
@@ -47,6 +51,8 @@ final class DateBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
 
         XCTAssertEqual(dateBasedCalendarEvent.identifier, identifier)
         XCTAssertEqual(dateBasedCalendarEvent.title, title)
+        XCTAssertEqual(dateBasedCalendarEvent.summary, summary)
+        XCTAssertEqual(dateBasedCalendarEvent.imageURL?.absoluteString, imageString)
         XCTAssertEqual(dateBasedCalendarEvent.content, description)
         XCTAssertEqual(dateBasedCalendarEvent.startDate, startDate)
         XCTAssertEqual(dateBasedCalendarEvent.endDate, endDate)

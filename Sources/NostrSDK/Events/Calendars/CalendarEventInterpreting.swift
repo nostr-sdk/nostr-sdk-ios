@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol CalendarEventInterpreting: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, ParameterizedReplaceableEvent, ReferenceTagInterpreting, TitleTagInterpreting {}
+public protocol CalendarEventInterpreting: NostrEvent, CalendarEventParticipantInterpreting, HashtagInterpreting, ImageTagInterpreting, ParameterizedReplaceableEvent, ReferenceTagInterpreting, SummaryTagInterpreting, TitleTagInterpreting {}
 public extension CalendarEventInterpreting {
     /// The locations of the calendar event. e.g. address, GPS coordinates, meeting room name, link to video call.
     var locations: [String] {

@@ -70,6 +70,8 @@ public extension EventCreating {
     /// - Parameters:
     ///   - identifier: A unique identifier for the calendar event. Can be reused in the future for replacing the calendar event. If an identifier is not provided, a ``UUID`` string is used.
     ///   - title: The title of the calendar event.
+    ///   - summary: A brief summary of the calendar event.
+    ///   - imageURL: A ``URL`` pointing to an image to be shown along with the title.
     ///   - description: A detailed description of the calendar event.
     ///   - startTimestamp: An inclusive start timestamp.
     ///   - endTimestamp: An exclusive end timestamp. If omitted, the calendar event ends instantaneously.
@@ -84,8 +86,8 @@ public extension EventCreating {
     /// - Returns: The signed ``TimeBasedCalendarEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func timeBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", startTimestamp: Date, endTimestamp: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEvent {
-        
+    func timeBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, summary: String? = nil, imageURL: URL? = nil, description: String = "", startTimestamp: Date, endTimestamp: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEvent {
+
         // If the end timestamp is omitted, the calendar event ends instantaneously.
         if let endTimestamp {
             // The start timestamp must occur before the end timestamp, if it exists.
@@ -93,13 +95,21 @@ public extension EventCreating {
                 throw EventCreatingError.invalidInput
             }
         }
-        
+
         var tags: [Tag] = [
             Tag(name: .identifier, value: identifier),
             Tag(name: .title, value: title),
             Tag(name: "start", value: String(Int64(startTimestamp.timeIntervalSince1970)))
         ]
-        
+
+        if let summary {
+            tags.append(Tag(name: .summary, value: summary))
+        }
+
+        if let imageURL {
+            tags.append(Tag(name: .image, value: imageURL.absoluteString))
+        }
+
         if let endTimestamp {
             tags.append(Tag(name: "end", value: String(Int64(endTimestamp.timeIntervalSince1970))))
         }

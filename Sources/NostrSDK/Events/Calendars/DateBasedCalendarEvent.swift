@@ -54,6 +54,8 @@ public extension EventCreating {
     /// - Parameters:
     ///   - identifier: A unique identifier for the calendar event. Can be reused in the future for replacing the calendar event. If an identifier is not provided, a ``UUID`` string is used.
     ///   - title: The title of the calendar event.
+    ///   - summary: A brief summary of the calendar event.
+    ///   - imageURL: A ``URL`` pointing to an image to be shown along with the title.
     ///   - description: A detailed description of the calendar event.
     ///   - startDate: An inclusive start date. Must be less than end, if it exists. If there are any components other than year, month,
     ///   - endDate: An exclusive end date. If omitted, the calendar event ends on the same date as start.
@@ -66,8 +68,8 @@ public extension EventCreating {
     /// - Returns: The signed ``DateBasedCalendarEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func dateBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", startDate: TimeOmittedDate, endDate: TimeOmittedDate? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEvent {
-        
+    func dateBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, summary: String? = nil, imageURL: URL? = nil, description: String = "", startDate: TimeOmittedDate, endDate: TimeOmittedDate? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEvent {
+
         var tags: [Tag] = []
         
         // If the end date is omitted, the calendar event ends on the same date as the start date.
@@ -79,7 +81,7 @@ public extension EventCreating {
             
             tags.append(Tag(name: "end", value: endDate.dateString))
         }
-        
+
         // Re-arrange tags so that it's easier to read with the identifier and name appearing first in the list of tags,
         // and the end date being placed next to the start date.
         tags = [
@@ -87,7 +89,15 @@ public extension EventCreating {
             Tag(name: .title, value: title),
             Tag(name: "start", value: startDate.dateString)
         ] + tags
-        
+
+        if let summary {
+            tags.append(Tag(name: .summary, value: summary))
+        }
+
+        if let imageURL {
+            tags.append(Tag(name: .image, value: imageURL.absoluteString))
+        }
+
         if let locations, !locations.isEmpty {
             tags += locations.map { Tag(name: "location", value: $0) }
         }
