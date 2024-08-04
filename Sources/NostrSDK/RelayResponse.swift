@@ -38,9 +38,9 @@ public enum RelayResponse: Decodable {
     }
     
     public struct Message {
-        let prefix: MessagePrefix
-        let message: String
-        
+        public let prefix: MessagePrefix
+        public let message: String
+
         init(rawMessage: String) {
             let components = rawMessage.split(separator: ":", maxSplits: 1)
             if let firstComponent = components.first {
@@ -59,7 +59,7 @@ public enum RelayResponse: Decodable {
         }
     }
     
-    enum MessagePrefix: String, Codable {
+    public enum MessagePrefix: String, Codable {
         case unknown
         case duplicate
         case pow
