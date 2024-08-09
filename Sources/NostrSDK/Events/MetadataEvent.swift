@@ -98,10 +98,21 @@ public final class MetadataEvent: NostrEvent, CustomEmojiInterpreting, NonParame
     }
     
     @available(*, unavailable, message: "This initializer is unavailable for this class.")
-    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), pubkey: String) {
+        super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, pubkey: pubkey)
+    }
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    override init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
+        super.init(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: signature)
+    }
+
+    @available(*, deprecated, message: "Deprecated in favor of MetadataEvent.Builder.")
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .metadata, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
@@ -138,20 +149,45 @@ public extension EventCreating {
     /// > Note: If `rawUserMetadata` has fields that conflict with `userMetadata`, `userMetadata` fields take precedence.
     ///
     /// > Note: [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
+    @available(*, deprecated, message: "Deprecated in favor of MetadataEvent.Builder.")
     func metadataEvent(withUserMetadata userMetadata: UserMetadata, rawUserMetadata: [String: Any] = [:], customEmojis: [CustomEmoji] = [], signedBy keypair: Keypair) throws -> MetadataEvent {
-        let userMetadataAsData = try JSONEncoder().encode(userMetadata)
+        try MetadataEvent.Builder()
+            .userMetadata(userMetadata, merging: rawUserMetadata)
+            .customEmojis(customEmojis)
+            .build(signedBy: keypair)
+    }
+}
 
-        let allUserMetadataAsData: Data
-        if rawUserMetadata.isEmpty {
-            allUserMetadataAsData = userMetadataAsData
-        } else {
-            var userMetadataAsDictionary = try JSONSerialization.jsonObject(with: userMetadataAsData, options: []) as? [String: Any] ?? [:]
-            userMetadataAsDictionary.merge(rawUserMetadata) { (current, _) in current }
-            allUserMetadataAsData = try JSONSerialization.data(withJSONObject: userMetadataAsDictionary, options: .sortedKeys)
+public extension MetadataEvent {
+    /// Builder of ``MetadataEvent``.
+    final class Builder: NostrEvent.Builder<MetadataEvent>, CustomEmojiBuilding {
+        public init() {
+            super.init(kind: .metadata)
         }
 
-        let allUserMetadataAsString = String(decoding: allUserMetadataAsData, as: UTF8.self)
-        let customEmojiTags = customEmojis.map { $0.tag }
-        return try MetadataEvent(content: allUserMetadataAsString, tags: customEmojiTags, signedBy: keypair)
+        /// Sets the user metadata by merging ``UserMetadata`` with a dictionary of raw metadata.
+        ///
+        /// - Parameters:
+        ///   - userMetadata: The ``UserMetadata`` to set.
+        ///   - rawUserMetadata: The dictionary of raw metadata to set that can contain fields unknown to any implemented NIPs.
+        ///
+        /// > Note: If `rawUserMetadata` has fields that conflict with `userMetadata`, `userMetadata` fields take precedence.
+        public final func userMetadata(_ userMetadata: UserMetadata, merging rawUserMetadata: [String: Any] = [:]) throws -> Self {
+            let userMetadataAsData = try JSONEncoder().encode(userMetadata)
+
+            let allUserMetadataAsData: Data
+            if rawUserMetadata.isEmpty {
+                allUserMetadataAsData = userMetadataAsData
+            } else {
+                var userMetadataAsDictionary = try JSONSerialization.jsonObject(with: userMetadataAsData, options: []) as? [String: Any] ?? [:]
+                userMetadataAsDictionary.merge(rawUserMetadata) { (current, _) in current }
+                allUserMetadataAsData = try JSONSerialization.data(withJSONObject: userMetadataAsDictionary, options: .sortedKeys)
+            }
+
+            let allUserMetadataAsString = String(decoding: allUserMetadataAsData, as: UTF8.self)
+            content(allUserMetadataAsString)
+
+            return self
+        }
     }
 }

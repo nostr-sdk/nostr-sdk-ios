@@ -11,7 +11,25 @@ import XCTest
 final class RumorEventTests: XCTestCase, EventCreating, EventVerifying, FixtureLoading {
 
     func testCreateRumor() throws {
-        let signedEvent = try textNote(withContent: "Are you going to the party tonight?", signedBy: .test)
+        let signedEvent = TextNoteEvent.Builder()
+            .content("Are you going to the party tonight?")
+            .build(pubkey: Keypair.test.publicKey)
+        let rumor = signedEvent.rumor
+
+        XCTAssertEqual(rumor.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(rumor.kind, .textNote)
+        XCTAssertEqual(rumor.tags, [])
+        XCTAssertNil(rumor.signature)
+        XCTAssertTrue(rumor.isRumor)
+        XCTAssertEqual(rumor.content, "Are you going to the party tonight?")
+
+        XCTAssertThrowsError(try verifyEvent(rumor))
+    }
+
+    func testCreateRumorFromSignedEvent() throws {
+        let signedEvent = try TextNoteEvent.Builder()
+            .content("Are you going to the party tonight?")
+            .build(signedBy: .test)
         let rumor = signedEvent.rumor
 
         XCTAssertEqual(rumor.pubkey, Keypair.test.publicKey.hex)

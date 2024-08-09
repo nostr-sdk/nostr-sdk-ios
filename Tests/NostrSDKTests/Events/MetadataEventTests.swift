@@ -42,7 +42,70 @@ final class MetadataEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])
         ]
 
-        let event = try metadataEvent(withUserMetadata: meta, rawUserMetadata: rawUserMetadata, customEmojis: customEmojis, signedBy: Keypair.test)
+        let event = try XCTUnwrap(
+            MetadataEvent.Builder()
+                .userMetadata(meta, merging: rawUserMetadata)
+                .customEmojis(customEmojis)
+                .build(signedBy: .test)
+        )
+
+        let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .metadata, pubkey: Keypair.test.publicKey))
+
+        XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test :ostrich:")
+        XCTAssertEqual(event.userMetadata?.displayName, "Nostr SDK Display Name")
+        XCTAssertEqual(event.userMetadata?.about, "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:")
+        XCTAssertEqual(event.userMetadata?.website, URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"))
+        XCTAssertEqual(event.userMetadata?.nostrAddress, "test@nostr.com")
+        XCTAssertEqual(event.userMetadata?.pictureURL, URL(string: "https://nostrsdk.com/picture.png"))
+        XCTAssertEqual(event.userMetadata?.bannerPictureURL, URL(string: "https://nostrsdk.com/banner.png"))
+        XCTAssertEqual(event.userMetadata?.isBot, true)
+        XCTAssertEqual(event.userMetadata?.lightningURLString, "LNURL1234567890")
+        XCTAssertEqual(event.userMetadata?.lightningAddress, "satoshi@bitcoin.org")
+        XCTAssertEqual(event.rawUserMetadata["foo"] as? String, "string")
+        XCTAssertEqual(event.rawUserMetadata["bool"] as? Bool, true)
+        XCTAssertEqual(event.rawUserMetadata["number"] as? Int, 123)
+        XCTAssertEqual(event.rawUserMetadata["name"] as? String, "Nostr SDK Test :ostrich:")
+        XCTAssertEqual(event.rawUserMetadata["lud16"] as? String, "satoshi@bitcoin.org")
+        XCTAssertEqual(event.customEmojis, customEmojis)
+        XCTAssertEqual(event.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
+        XCTAssertEqual(event.tags, customEmojiTags)
+
+        try verifyEvent(event)
+    }
+
+    func testCreateMetadataEventDeprecated() throws {
+        let meta = UserMetadata(name: "Nostr SDK Test :ostrich:",
+                                displayName: "Nostr SDK Display Name",
+                                about: "I'm a test account. I'm used to test the Nostr SDK for Apple platforms. :apple:",
+                                website: URL(string: "https://github.com/nostr-sdk/nostr-sdk-ios"),
+                                nostrAddress: "test@nostr.com",
+                                pictureURL: URL(string: "https://nostrsdk.com/picture.png"),
+                                bannerPictureURL: URL(string: "https://nostrsdk.com/banner.png"),
+                                isBot: true,
+                                lightningURLString: "LNURL1234567890",
+                                lightningAddress: "satoshi@bitcoin.org")
+
+        let rawUserMetadata: [String: Any] = [
+            "foo": "string",
+            "bool": true,
+            "number": 123,
+            "name": "This field should be ignored.",
+            "lud16": "should@be.ignored"
+        ]
+
+        let ostrichImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/ostrich.png"))
+        let appleImageURL = try XCTUnwrap(URL(string: "https://nostrsdk.com/apple.png"))
+
+        let customEmojis = [
+            try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: ostrichImageURL)),
+            try XCTUnwrap(CustomEmoji(shortcode: "apple", imageURL: appleImageURL))
+        ]
+        let customEmojiTags = [
+            Tag(name: .emoji, value: "ostrich", otherParameters: ["https://nostrsdk.com/ostrich.png"]),
+            Tag(name: .emoji, value: "apple", otherParameters: ["https://nostrsdk.com/apple.png"])
+        ]
+
+        let event = try metadataEvent(withUserMetadata: meta, rawUserMetadata: rawUserMetadata, customEmojis: customEmojis, signedBy: .test)
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .metadata, pubkey: Keypair.test.publicKey))
 
         XCTAssertEqual(event.userMetadata?.name, "Nostr SDK Test :ostrich:")
