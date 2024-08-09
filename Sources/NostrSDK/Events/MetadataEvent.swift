@@ -98,10 +98,16 @@ public final class MetadataEvent: NostrEvent, CustomEmojiInterpreting, NonParame
     }
     
     @available(*, unavailable, message: "This initializer is unavailable for this class.")
-    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    required init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
+        super.init(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: signature)
+    }
+
+    @available(*, deprecated, message: "Deprecated in favor of MetadataEvent.Builder.")
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .metadata, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
@@ -153,5 +159,33 @@ public extension EventCreating {
         let allUserMetadataAsString = String(decoding: allUserMetadataAsData, as: UTF8.self)
         let customEmojiTags = customEmojis.map { $0.tag }
         return try MetadataEvent(content: allUserMetadataAsString, tags: customEmojiTags, signedBy: keypair)
+    }
+}
+
+public extension MetadataEvent {
+    final class Builder: NostrEvent.Builder<MetadataEvent>, CustomEmojiBuilding {
+        public typealias EventType = MetadataEvent
+
+        init() {
+            super.init(kind: .metadata)
+        }
+
+        public func userMetadata(_ userMetadata: UserMetadata, rawUserMetadata: [String: Any] = [:]) throws -> Self {
+            let userMetadataAsData = try JSONEncoder().encode(userMetadata)
+
+            let allUserMetadataAsData: Data
+            if rawUserMetadata.isEmpty {
+                allUserMetadataAsData = userMetadataAsData
+            } else {
+                var userMetadataAsDictionary = try JSONSerialization.jsonObject(with: userMetadataAsData, options: []) as? [String: Any] ?? [:]
+                userMetadataAsDictionary.merge(rawUserMetadata) { (current, _) in current }
+                allUserMetadataAsData = try JSONSerialization.data(withJSONObject: userMetadataAsDictionary, options: .sortedKeys)
+            }
+
+            let allUserMetadataAsString = String(decoding: allUserMetadataAsData, as: UTF8.self)
+            content = allUserMetadataAsString
+
+            return self
+        }
     }
 }

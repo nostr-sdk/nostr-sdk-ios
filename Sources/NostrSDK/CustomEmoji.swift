@@ -39,6 +39,14 @@ public class CustomEmoji: CustomEmojiValidating, Equatable {
     }
 }
 
+public protocol CustomEmojiBuilding: NostrEventBuilding {}
+public extension CustomEmojiBuilding {
+    func customEmojis(_ customEmojis: [CustomEmoji]) -> Self {
+        _ = tags(customEmojis.map { $0.tag }, at: 0)
+        return self
+    }
+}
+
 public protocol CustomEmojiInterpreting: NostrEvent, CustomEmojiValidating {}
 public extension CustomEmojiInterpreting {
     /// Returns the list of well-formatted custom emojis derived from NostrEvent tags.

@@ -17,14 +17,19 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     }
     
     @available(*, unavailable, message: "This initializer is unavailable for this class.")
-    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
+    @available(*, deprecated, message: "Deprecated in favor of TextNote.Builder.")
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .textNote, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
+    required init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
+        super.init(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: signature)
+    }
+
     /// Pubkeys mentioned in the note content.
     public var mentionedPubkeys: [String] {
         allValues(forTagName: .pubkey)
@@ -131,66 +136,99 @@ public extension EventCreating {
     ///
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
     /// See [NIP-10 - On "e" and "p" tags in Text Events (kind 1)](https://github.com/nostr-protocol/nips/blob/master/10.md)
+    @available(*, deprecated, message: "Deprecated in favor of TextNote.Builder.")
     func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
+        let builder = try TextNoteEvent.Builder()
+            .content(content)
+            .repliedEvent(repliedEvent)
+            .subject(subject)
+
+        if let customEmojis {
+            _ = builder.customEmojis(customEmojis)
+        }
+
         if let mentionedEventTags {
+            _ = try builder.mentionedEventTags(mentionedEventTags)
+        }
+
+        guard let textNoteEvent = try builder.build(signedBy: keypair) else {
+            throw EventCreatingError.invalidInput
+        }
+
+        return textNoteEvent
+    }
+}
+
+public extension TextNoteEvent {
+    final class Builder: NostrEvent.Builder<TextNoteEvent>, CustomEmojiBuilding {
+        public typealias EventType = TextNoteEvent
+
+        init() {
+            super.init(kind: .textNote)
+        }
+
+        public func repliedEvent(_ repliedEvent: TextNoteEvent?) throws -> Self {
+            guard let repliedEvent else {
+                return self
+            }
+
+            guard let rootEventTag = repliedEvent.rootEventTag else {
+                throw EventCreatingError.invalidInput
+            }
+
+            // Maximize backwards compatibility with NIP-10 deprecated positional event tags
+            // by ensuring ordering of types of event tags.
+
+            // Root tag comes first.
+            if rootEventTag.marker == .root {
+                tags.insert(rootEventTag.tag, at: 0)
+            } else {
+                // Recreate the event tag with a root marker if the one being read does not have a marker.
+                let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root)
+                tags.insert(rootEventTagWithMarker.tag, at: 0)
+            }
+
+            // Reply tag comes last.
+            tags.append(try EventTag(eventId: repliedEvent.id, marker: .reply).tag)
+
+            // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
+            // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
+            tags += repliedEvent.tags.filter { $0.name == TagName.pubkey.rawValue }
+
+            // Add the author "p" tag if it was not already added.
+            if !tags.contains(where: { $0.name == TagName.pubkey.rawValue && $0.value == repliedEvent.pubkey }) {
+                tags.append(Tag(name: .pubkey, value: repliedEvent.pubkey))
+            }
+
+            return self
+        }
+
+        public func mentionedEventTags(_ mentionedEventTags: [EventTag]) throws -> Builder {
+            guard !mentionedEventTags.isEmpty else {
+                return self
+            }
+
             guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
                 throw EventCreatingError.invalidInput
             }
-        }
 
-        var tags: [Tag] = []
-
-        if let repliedEvent {
-            if let rootEventTag = repliedEvent.rootEventTag {
-                // Maximize backwards compatibility with NIP-10 deprecated positional event tags
-                // by ensuring ordering of types of event tags.
-
-                // 1. Root tag comes first.
-                if rootEventTag.marker == .root {
-                    tags.append(rootEventTag.tag)
-                } else {
-                    // Recreate the event tag with a root marker if the one being read does not have a marker.
-                    let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root)
-                    tags.append(rootEventTagWithMarker.tag)
-                }
-
-                // 2. Mentions go in between.
-                if let mentionedEventTags {
-                    tags += mentionedEventTags.map { $0.tag }
-                }
-
-                // 3. Reply tag comes last.
-                tags.append(try EventTag(eventId: repliedEvent.id, marker: .reply).tag)
-
-                // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
-                // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
-                tags += repliedEvent.tags.filter { $0.name == TagName.pubkey.rawValue }
-
-                // Add the author "p" tag if it was not already added.
-                if !tags.contains(where: { $0.name == TagName.pubkey.rawValue && $0.value == repliedEvent.pubkey }) {
-                    tags.append(Tag(name: .pubkey, value: repliedEvent.pubkey))
-                }
+            let newTags = mentionedEventTags.map { $0.tag }
+            if let rootMarkerIndex = tags.firstIndex(where: { $0.otherParameters[1] == EventTagMarker.root.rawValue }) {
+                tags.insert(contentsOf: newTags, at: rootMarkerIndex + 1)
             } else {
-                if let mentionedEventTags {
-                    tags += mentionedEventTags.map { $0.tag }
-                }
-
-                // If the event being replied to has no root marker event tag,
-                // the event being replied to is the root.
-                tags.append(try EventTag(eventId: repliedEvent.id, marker: .root).tag)
+                tags.append(contentsOf: newTags)
             }
-        } else if let mentionedEventTags {
-            tags += mentionedEventTags.map { $0.tag }
+
+            return self
         }
 
-        if let customEmojis {
-            tags += customEmojis.map { $0.tag }
-        }
+        public func subject(_ subject: String?) -> Builder {
+            guard let subject else {
+                return self
+            }
 
-        if let subject {
             tags.append(Tag(name: .subject, value: subject))
+            return self
         }
-
-        return try TextNoteEvent(content: content, tags: tags, signedBy: keypair)
     }
 }

@@ -52,7 +52,7 @@ public class NostrEvent: Codable, Equatable, Hashable {
         case signature = "sig"
     }
     
-    init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
+    required init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
         self.id = id
         self.pubkey = pubkey
         self.createdAt = createdAt
@@ -62,7 +62,7 @@ public class NostrEvent: Codable, Equatable, Hashable {
         self.signature = signature
     }
 
-    init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         self.kind = kind
         self.content = content
         self.tags = tags
@@ -182,5 +182,110 @@ extension NostrEvent: MetadataCoding, RelayURLValidating {
         }
 
         return try encodedIdentifier(with: metadata, identifierType: .event)
+    }
+}
+
+public protocol NostrEventBuilding {
+    associatedtype EventType
+
+    /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data
+    func id(_ id: String?) -> Self
+
+    /// 32-byte, lowercase, hex-encoded public key of the event creator
+    func pubkey(_ pubkey: String?) -> Self
+
+    /// unix timestamp in seconds
+    func createdAt(_ createdAt: Int64?) -> Self
+
+    /// list of tags, see ``Tag``
+    func tags(_ tags: [Tag], at: Int?) -> Self
+
+    /// arbitrary string
+    func content(_ content: String?) -> Self
+
+    /// 64-byte hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field
+    func signature(_ signature: String?) -> Self
+
+    func build() -> EventType?
+    func build(signedBy keypair: Keypair) throws -> EventType?
+}
+
+public extension NostrEvent {
+    class Builder<T: NostrEvent>: NostrEventBuilding {
+        public typealias EventType = T
+
+        var id: String?
+        var pubkey: String?
+        var createdAt: Int64?
+        let kind: EventKind
+        var tags: [Tag] = []
+        var content: String?
+        var signature: String?
+
+        public init(kind: EventKind) {
+            self.kind = kind
+        }
+
+        public func id(_ id: String?) -> Self {
+            self.id = id
+            return self
+        }
+
+        public func pubkey(_ pubkey: String?) -> Self {
+            self.pubkey = pubkey
+            return self
+        }
+
+        public func createdAt(_ createdAt: Int64?) -> Self {
+            self.createdAt = createdAt
+            return self
+        }
+
+        public func tags(_ tags: [Tag], at: Int? = nil) -> Self {
+            if let at {
+                self.tags.insert(contentsOf: tags, at: at)
+            } else {
+                self.tags.append(contentsOf: tags)
+            }
+            return self
+        }
+
+        public func content(_ content: String?) -> Self {
+            self.content = content
+            return self
+        }
+
+        public func signature(_ signature: String?) -> Self {
+            self.signature = signature
+            return self
+        }
+
+        public func build() -> T? {
+            guard let id, let pubkey, let content else {
+                return nil
+            }
+            return T(
+                id: id,
+                pubkey: pubkey,
+                createdAt: createdAt ?? Int64(Date.now.timeIntervalSince1970),
+                kind: kind,
+                tags: tags,
+                content: content,
+                signature: signature
+            )
+        }
+
+        public func build(signedBy keypair: Keypair) throws -> T? {
+            guard let content else {
+                return nil
+            }
+            return try T(
+                kind: kind,
+                content: content,
+                tags: tags,
+                createdAt: createdAt ?? Int64(Date.now.timeIntervalSince1970),
+                signedBy: keypair
+            )
+        }
     }
 }
