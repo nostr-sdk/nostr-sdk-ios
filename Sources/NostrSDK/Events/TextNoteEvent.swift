@@ -145,10 +145,13 @@ public extension EventCreating {
     @available(*, deprecated, message: "Deprecated in favor of TextNote.Builder.")
     func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
 
-        let builder = try TextNoteEvent.Builder()
+        let builder = TextNoteEvent.Builder()
             .content(content)
-            .repliedEvent(repliedEvent)
             .subject(subject)
+
+        if let repliedEvent {
+            try builder.repliedEvent(repliedEvent)
+        }
 
         if let customEmojis {
             builder.customEmojis(customEmojis)
@@ -171,29 +174,27 @@ public extension TextNoteEvent {
 
         /// Sets the ``TextNoteEvent`` that is being replied to from this text note that is being built.
         @discardableResult
-        public final func repliedEvent(_ repliedEvent: TextNoteEvent?) throws -> Self {
-            guard let repliedEvent else {
-                return self
-            }
+        public final func repliedEvent(_ repliedEvent: TextNoteEvent, relayURL: URL? = nil) throws -> Self {
+            if let rootEventTag = repliedEvent.rootEventTag {
+                // Maximize backwards compatibility with NIP-10 deprecated positional event tags
+                // by ensuring ordering of types of event tags.
 
-            guard let rootEventTag = repliedEvent.rootEventTag else {
-                throw EventCreatingError.invalidInput
-            }
+                // Root tag comes first.
+                if rootEventTag.marker == .root {
+                    insertTags(rootEventTag.tag, at: 0)
+                } else {
+                    // Recreate the event tag with a root marker if the one being read does not have a marker.
+                    let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root, pubkey: rootEventTag.pubkey)
+                    insertTags(rootEventTagWithMarker.tag, at: 0)
+                }
 
-            // Maximize backwards compatibility with NIP-10 deprecated positional event tags
-            // by ensuring ordering of types of event tags.
-
-            // Root tag comes first.
-            if rootEventTag.marker == .root {
-                insertTags(rootEventTag.tag, at: 0)
+                // Reply tag comes last.
+                appendTags(try EventTag(eventId: repliedEvent.id, relayURL: relayURL, marker: .reply, pubkey: repliedEvent.pubkey).tag)
             } else {
-                // Recreate the event tag with a root marker if the one being read does not have a marker.
-                let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root)
-                insertTags(rootEventTagWithMarker.tag, at: 0)
+                // If the event being replied to has no root marker event tag,
+                // the event being replied to is the root.
+                insertTags(try EventTag(eventId: repliedEvent.id, relayURL: relayURL, marker: .root, pubkey: repliedEvent.pubkey).tag, at: 0)
             }
-
-            // Reply tag comes last.
-            appendTags(try EventTag(eventId: repliedEvent.id, marker: .reply).tag)
 
             // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
             // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
@@ -220,7 +221,7 @@ public extension TextNoteEvent {
 
             let newTags = mentionedEventTags.map { $0.tag }
             // Mentions go in between root markers and reply markers.
-            if let replyMarkerIndex = tags.firstIndex(where: { $0.otherParameters[1] == EventTagMarker.reply.rawValue }) {
+            if let replyMarkerIndex = tags.firstIndex(where: { $0.otherParameters.count >= 2 &&  $0.otherParameters[1] == EventTagMarker.reply.rawValue }) {
                 insertTags(contentsOf: newTags, at: replyMarkerIndex)
             } else {
                 appendTags(contentsOf: newTags)
