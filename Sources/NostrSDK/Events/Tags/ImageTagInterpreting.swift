@@ -1,6 +1,6 @@
 //
 //  ImageTagInterpreting.swift
-//  
+//
 //
 //  Created by Terry Yiu on 8/4/24.
 //

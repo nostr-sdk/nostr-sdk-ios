@@ -24,11 +24,13 @@ final class CalendarListEventTests: XCTestCase, EventCreating, EventVerifying, F
         let identifier = "family-calendar"
         let title = "Family Calendar"
         let description = "All family events."
-        let calendar = try calendarListEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates], signedBy: Keypair.test)
+        let imageString = "https://nostrsdk.com/image.png"
+        let calendar = try calendarListEvent(withIdentifier: identifier, title: title, description: description, calendarEventsCoordinates: [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates], imageURL: URL(string: imageString), signedBy: Keypair.test)
 
         XCTAssertEqual(calendar.identifier, identifier)
         XCTAssertEqual(calendar.title, title)
         XCTAssertEqual(calendar.content, description)
+        XCTAssertEqual(calendar.imageURL?.absoluteString, imageString)
         XCTAssertEqual(calendar.calendarEventCoordinateList, [dateBasedCalendarEventCoordinates, timeBasedCalendarEventCoordinates])
 
         let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .calendar, pubkey: Keypair.test.publicKey, identifier: identifier))
@@ -71,6 +73,8 @@ final class CalendarListEventTests: XCTestCase, EventCreating, EventVerifying, F
         XCTAssertEqual(event.identifier, "family-calendar")
         XCTAssertEqual(event.title, "Family Calendar")
         XCTAssertEqual(event.content, "All family events.")
+
+        XCTAssertEqual(event.imageURL?.absoluteString, "https://nostrsdk.com/image.png")
 
         let pubkey = try XCTUnwrap(PublicKey(hex: "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340"))
         let dateBasedCalendarEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: pubkey, identifier: "D5EB0A5A-0B36-44DB-95C3-DB51799894E6"))

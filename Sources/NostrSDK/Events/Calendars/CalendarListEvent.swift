@@ -12,7 +12,7 @@ import Foundation
 /// One may create a calendar to segment calendar events for specific purposes. e.g., personal, work, travel, meetups, and conferences.
 ///
 /// See [NIP-52 - Calendar](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar).
-public final class CalendarListEvent: NostrEvent, ParameterizedReplaceableEvent, TitleTagInterpreting {
+public final class CalendarListEvent: NostrEvent, ParameterizedReplaceableEvent, ImageTagInterpreting, TitleTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -45,7 +45,7 @@ public extension EventCreating {
     /// - Returns: The signed ``CalendarListEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
-    func calendarListEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], signedBy keypair: Keypair) throws -> CalendarListEvent {
+    func calendarListEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", calendarEventsCoordinates: [EventCoordinates], imageURL: URL? = nil, signedBy keypair: Keypair) throws -> CalendarListEvent {
         guard calendarEventsCoordinates.allSatisfy({ $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }) else {
             throw EventCreatingError.invalidInput
         }
@@ -54,7 +54,11 @@ public extension EventCreating {
             Tag(name: .identifier, value: identifier),
             Tag(name: .title, value: title)
         ]
-        
+
+        if let imageURL {
+            tags.append(Tag(name: .image, value: imageURL.absoluteString))
+        }
+
         calendarEventsCoordinates
             .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
             .forEach { tags.append($0.tag) }
