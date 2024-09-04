@@ -15,10 +15,13 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let imageURL = try XCTUnwrap(URL(string: imageURLString))
         let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
 
-        let note = try textNote(withContent: "Hello world! :ostrich:",
-                                subject: "test-subject",
-                                customEmojis: [customEmoji],
-                                signedBy: Keypair.test)
+        let note = try XCTUnwrap(
+            TextNoteEvent.Builder()
+                .content("Hello world! :ostrich:")
+                .customEmojis([customEmoji])
+                .subject("test-subject")
+                .build(signedBy: .test)
+        )
 
         XCTAssertEqual(note.kind, .textNote)
         XCTAssertEqual(note.content, "Hello world! :ostrich:")
@@ -26,17 +29,149 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
         XCTAssertEqual(note.tags, [Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString]), Tag(name: .subject, value: "test-subject")])
         XCTAssertEqual(note.customEmojis, [customEmoji])
+        XCTAssertNil(note.rootEventTag)
+        XCTAssertNil(note.replyEventTag)
+        XCTAssertEqual(note.mentionedEventTags, [])
+        XCTAssertEqual(note.mentionedEventIds, [])
+        XCTAssertEqual(note.mentionedPubkeys, [])
 
         try verifyEvent(note)
     }
 
-    func testCreateTextNoteReply() throws {
+    func testCreateSignedTextNoteDeprecated() throws {
+        let imageURLString = "https://nostrsdk.com/ostrich.png"
+        let imageURL = try XCTUnwrap(URL(string: imageURLString))
+        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
+
+        let note = try textNote(withContent: "Hello world! :ostrich:",
+                                subject: "test-subject",
+                                customEmojis: [customEmoji],
+                                signedBy: .test)
+
+        XCTAssertEqual(note.kind, .textNote)
+        XCTAssertEqual(note.content, "Hello world! :ostrich:")
+        XCTAssertEqual(note.subject, "test-subject")
+        XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(note.tags, [Tag(name: .subject, value: "test-subject"), Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString])])
+        XCTAssertEqual(note.customEmojis, [customEmoji])
+        XCTAssertNil(note.rootEventTag)
+        XCTAssertNil(note.replyEventTag)
+        XCTAssertEqual(note.mentionedEventTags, [])
+        XCTAssertEqual(note.mentionedEventIds, [])
+        XCTAssertEqual(note.mentionedPubkeys, [])
+
+        try verifyEvent(note)
+    }
+
+    func testCreateTextNoteTopLevelReply() throws {
+        let rootEvent = try TextNoteEvent.Builder()
+            .content("This is the note to reply.")
+            .build(signedBy: .test)
+        let rootRelayURL = try XCTUnwrap(URL(string: "wss://relay.damus.io"))
+
+        let replyRelayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
+        let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: replyRelayURL, marker: .mention))
+        let mentionedEventTag2 = try XCTUnwrap(EventTag(eventId: "mentionednote2", relayURL: replyRelayURL, marker: .mention))
+
+        let note = try XCTUnwrap(
+            TextNoteEvent.Builder()
+                .content("This is a reply to a note in a thread.")
+                .repliedEvent(rootEvent, relayURL: rootRelayURL)
+                .mentionedEventTags([mentionedEventTag1, mentionedEventTag2])
+                .build(signedBy: .test)
+        )
+
+        XCTAssertEqual(note.kind, .textNote)
+        XCTAssertEqual(note.content, "This is a reply to a note in a thread.")
+        XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
+
+        let rootEventTag = try XCTUnwrap(note.rootEventTag)
+        XCTAssertEqual(rootEventTag.eventId, rootEvent.id)
+        XCTAssertEqual(rootEventTag.relayURL, rootRelayURL)
+        XCTAssertEqual(rootEventTag.marker, .root)
+        XCTAssertEqual(rootEventTag.pubkey, Keypair.test.publicKey.hex)
+
+        let replyEventTag = try XCTUnwrap(note.replyEventTag)
+        XCTAssertEqual(replyEventTag.eventId, rootEvent.id)
+        XCTAssertEqual(replyEventTag.relayURL, rootRelayURL)
+        XCTAssertEqual(replyEventTag.marker, .root)
+        XCTAssertEqual(replyEventTag.pubkey, Keypair.test.publicKey.hex)
+
+        XCTAssertEqual(note.mentionedEventTags.count, 2)
+        XCTAssertEqual(note.mentionedEventTags[0], mentionedEventTag1)
+        XCTAssertEqual(note.mentionedEventTags[1], mentionedEventTag2)
+
+        XCTAssertEqual(note.mentionedEventIds, [rootEvent.id, "mentionednote1", "mentionednote2"])
+        XCTAssertEqual(note.mentionedPubkeys, [Keypair.test.publicKey.hex])
+
+        let expectedTags: [Tag] = [
+            rootEventTag.tag,
+            .pubkey(Keypair.test.publicKey.hex),
+            mentionedEventTag1.tag,
+            mentionedEventTag2.tag
+        ]
+        XCTAssertEqual(note.tags, expectedTags)
+
+        try verifyEvent(note)
+    }
+
+    func testCreateTextNoteTopLevelReplyDeprecated() throws {
+        let rootEvent: TextNoteEvent = try textNote(withContent: "This is the note to reply.", signedBy: .test)
+
+        let replyRelayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
+        let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: replyRelayURL, marker: .mention))
+        let mentionedEventTag2 = try XCTUnwrap(EventTag(eventId: "mentionednote2", relayURL: replyRelayURL, marker: .mention))
+
+        let note = try textNote(withContent: "This is a reply to a note in a thread.", replyingTo: rootEvent, mentionedEventTags: [mentionedEventTag1, mentionedEventTag2], signedBy: .test)
+
+        XCTAssertEqual(note.kind, .textNote)
+        XCTAssertEqual(note.content, "This is a reply to a note in a thread.")
+        XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
+
+        let rootEventTag = try XCTUnwrap(note.rootEventTag)
+        XCTAssertEqual(rootEventTag.eventId, rootEvent.id)
+        XCTAssertNil(rootEventTag.relayURL)
+        XCTAssertEqual(rootEventTag.marker, .root)
+        XCTAssertEqual(rootEventTag.pubkey, Keypair.test.publicKey.hex)
+
+        let replyEventTag = try XCTUnwrap(note.replyEventTag)
+        XCTAssertEqual(replyEventTag.eventId, rootEvent.id)
+        XCTAssertNil(replyEventTag.relayURL)
+        XCTAssertEqual(replyEventTag.marker, .root)
+        XCTAssertEqual(replyEventTag.pubkey, Keypair.test.publicKey.hex)
+
+        XCTAssertEqual(note.mentionedEventTags.count, 2)
+        XCTAssertEqual(note.mentionedEventTags[0], mentionedEventTag1)
+        XCTAssertEqual(note.mentionedEventTags[1], mentionedEventTag2)
+
+        XCTAssertEqual(note.mentionedEventIds, [rootEvent.id, "mentionednote1", "mentionednote2"])
+        XCTAssertEqual(note.mentionedPubkeys, [Keypair.test.publicKey.hex])
+
+        let expectedTags: [Tag] = [
+            rootEventTag.tag,
+            .pubkey(Keypair.test.publicKey.hex),
+            mentionedEventTag1.tag,
+            mentionedEventTag2.tag
+        ]
+        XCTAssertEqual(note.tags, expectedTags)
+
+        try verifyEvent(note)
+    }
+
+    func testCreateTextNoteThreadedReply() throws {
         let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
 
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
         let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
         let mentionedEventTag2 = try XCTUnwrap(EventTag(eventId: "mentionednote2", relayURL: relayURL, marker: .mention))
-        let note = try textNote(withContent: "This is a reply to a note in a thread.", replyingTo: noteToReply, mentionedEventTags: [mentionedEventTag1, mentionedEventTag2], signedBy: Keypair.test)
+
+        let note = try XCTUnwrap(
+            TextNoteEvent.Builder()
+                .content("This is a reply to a note in a thread.")
+                .repliedEvent(noteToReply)
+                .mentionedEventTags([mentionedEventTag1, mentionedEventTag2])
+                .build(signedBy: .test)
+        )
 
         XCTAssertEqual(note.kind, .textNote)
         XCTAssertEqual(note.content, "This is a reply to a note in a thread.")
@@ -44,7 +179,36 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
         let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
-        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"))
+        let expectedTags: [Tag] = [
+            expectedRootEventTag.tag,
+            mentionedEventTag1.tag,
+            mentionedEventTag2.tag,
+            replyEventTag.tag,
+            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
+            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
+
+        ]
+        XCTAssertEqual(note.tags, expectedTags)
+
+        try verifyEvent(note)
+    }
+
+    func testCreateTextNoteThreadedReplyDeprecated() throws {
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
+        let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
+        let mentionedEventTag2 = try XCTUnwrap(EventTag(eventId: "mentionednote2", relayURL: relayURL, marker: .mention))
+        let note = try textNote(withContent: "This is a reply to a note in a thread.", replyingTo: noteToReply, mentionedEventTags: [mentionedEventTag1, mentionedEventTag2], signedBy: .test)
+
+        XCTAssertEqual(note.kind, .textNote)
+        XCTAssertEqual(note.content, "This is a reply to a note in a thread.")
+        XCTAssertEqual(note.pubkey, Keypair.test.publicKey.hex)
+
+        let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
+        let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"))
         let expectedTags: [Tag] = [
             expectedRootEventTag.tag,
             mentionedEventTag1.tag,

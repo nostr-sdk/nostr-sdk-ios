@@ -26,7 +26,9 @@ final class GiftWrapEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateGiftWrapFailsWithSignedEvent() throws {
-        let signedEvent = try textNote(withContent: "Are you going to the party tonight?", signedBy: .test)
+        let signedEvent = try TextNoteEvent.Builder()
+            .content("Are you going to the party tonight?")
+            .build(signedBy: .test)
         XCTAssertThrowsError(try giftWrap(withRumor: signedEvent, toRecipient: GiftWrapEventTests.recipient.publicKey, signedBy: .test))
     }
 

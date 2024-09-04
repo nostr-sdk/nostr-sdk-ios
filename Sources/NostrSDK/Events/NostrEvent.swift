@@ -21,25 +21,25 @@ public class NostrEvent: Codable, Equatable, Hashable {
         lhs.signature == rhs.signature
     }
     
-    /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data
+    /// 32-byte, lowercase, hex-encoded sha256 of the serialized event data.
     public let id: String
     
-    /// 32-byte, lowercase, hex-encoded public key of the event creator
+    /// 32-byte, lowercase, hex-encoded public key of the event creator.
     public let pubkey: String
     
-    /// unix timestamp in seconds
+    /// Unix timestamp in seconds of when the event is created.
     public let createdAt: Int64
     
-    /// integer
+    /// The event kind.
     public let kind: EventKind
     
-    /// list of tags, see ``Tag``
+    /// List of ``Tag`` objects.
     public let tags: [Tag]
     
-    /// arbitrary string
+    /// Arbitrary string.
     public let content: String
     
-    /// 64-byte hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field
+    /// 64-byte hex of the signature of the sha256 hash of the serialized event data, which is the same as the `id` field.
     public let signature: String?
 
     private enum CodingKeys: String, CodingKey {
@@ -51,7 +51,7 @@ public class NostrEvent: Codable, Equatable, Hashable {
         case content
         case signature = "sig"
     }
-    
+
     init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
         self.id = id
         self.pubkey = pubkey
@@ -62,7 +62,23 @@ public class NostrEvent: Codable, Equatable, Hashable {
         self.signature = signature
     }
 
-    init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    /// Creates a ``NostrEvent`` rumor, which is an event with a `nil` signature.
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), pubkey: String) {
+        self.kind = kind
+        self.content = content
+        self.tags = tags
+        self.createdAt = createdAt
+        self.pubkey = pubkey
+        id = EventSerializer.identifierForEvent(withPubkey: pubkey,
+                                                createdAt: createdAt,
+                                                kind: kind.rawValue,
+                                                tags: tags,
+                                                content: content)
+        signature = nil
+    }
+
+    /// Creates a signed ``NostrEvent``.
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         self.kind = kind
         self.content = content
         self.tags = tags
@@ -182,5 +198,165 @@ extension NostrEvent: MetadataCoding, RelayURLValidating {
         }
 
         return try encodedIdentifier(with: metadata, identifierType: .event)
+    }
+}
+
+/// This protocol describes a builder that is able to build a ``NostrEvent``.
+public protocol NostrEventBuilding {
+    /// The type of ``NostrEvent`` that this builder constructs.
+    associatedtype EventType: NostrEvent
+
+    /// Sets the unix timestamp in seconds of when the event is created.
+    func createdAt(_ createdAt: Int64?) -> Self
+
+    /// Appends the given list of tags to the end of the existing tags list.
+    /// - Parameters:
+    ///   - tags: The list of ``Tag`` objects.
+    func appendTags(_ tags: Tag...) -> Self
+
+    /// Appends the given list of tags to the end of the existing tags list.
+    /// - Parameters:
+    ///   - tags: The list of ``Tag`` objects.
+    func appendTags(contentsOf tags: [Tag]) -> Self
+
+    /// Inserts the given list of tags at a given index of the list.
+    /// - Parameters:
+    ///   - tags: The list of `Tag` objects to insert.
+    ///   - index: The index of the existing list to insert the new tags into.
+    ///       The tags are appended to the end of the list if the index is `nil`.
+    ///       Must be a valid index of the existing tags list.
+    func insertTags(_ tags: Tag..., at index: Int) -> Self
+
+    /// Inserts the given list of tags at a given index of the list.
+    /// - Parameters:
+    ///   - tags: The list of `Tag` objects to insert.
+    ///   - index: The index of the existing list to insert the new tags into.
+    ///       The tags are appended to the end of the list if the index is `nil`.
+    ///       Must be a valid index of the existing tags list.
+    func insertTags(contentsOf tags: [Tag], at index: Int) -> Self
+
+    /// Arbitrary string.
+    func content(_ content: String?) -> Self
+
+    /// Builds a ``NostrEvent`` of type ``EventType`` using the properties set on the builder and signs the event.
+    ///
+    /// If `createdAt` is not set, the current timestamp is used.
+    /// If `content` is not set, an empty string is used.
+    ///
+    /// - Parameter keypair: The ``Keypair`` to sign the event.
+    ///
+    /// Throws an error if the event could not be signed with the given keypair.
+    func build(signedBy keypair: Keypair) throws -> EventType
+
+    /// Builds a ``NostrEvent`` of type ``EventType`` using the properties set on the builder and does not sign the event,
+    /// also known as a rumor event.
+    ///
+    /// If `createdAt` is not set, the current timestamp is used.
+    /// If `content` is not set, an empty string is used.
+    ///
+    /// - Parameter pubkey: The ``PublicKey`` of the event creator.
+    func build(pubkey: PublicKey) -> EventType
+
+    /// Builds a ``NostrEvent`` of type ``EventType`` using the properties set on the builder and does not sign the event,
+    /// also known as a rumor event.
+    ///
+    /// If `createdAt` is not set, the current timestamp is used.
+    /// If `content` is not set, an empty string is used.
+    ///
+    /// - Parameter pubkey: The 32-byte, lowercase, hex-encoded public key of the event creator.
+    func build(pubkey: String) -> EventType
+}
+
+public extension NostrEvent {
+    /// Builder of a ``NostrEvent`` of type `T`.
+    class Builder<T: NostrEvent>: NostrEventBuilding {
+        public typealias EventType = T
+
+        /// The event kind.
+        public final let kind: EventKind
+
+        /// The unix timestamp in seconds of when the event is created.
+        public private(set) final var createdAt: Int64?
+
+        /// Arbitrary string.
+        public private(set) final var content: String?
+
+        /// List of ``Tag``s.
+        public private(set) final var tags: [Tag] = []
+
+        /// Creates a ``Builder`` from an ``EventKind``.
+        public init(kind: EventKind) {
+            self.kind = kind
+        }
+
+        /// Creates a ``Builder`` from a ``NostrEvent``
+        /// by copying the `kind`, `tags`, and `content` properties into the builder.
+        /// The `pubkey`, `createdAt`, and `signature` properties are not copied
+        /// because they are computed upon building the final event.
+        public init(nostrEvent: NostrEvent) {
+            self.kind = nostrEvent.kind
+            self.tags = nostrEvent.tags
+            self.content = nostrEvent.content
+        }
+
+        @discardableResult
+        public final func createdAt(_ createdAt: Int64?) -> Self {
+            self.createdAt = createdAt
+            return self
+        }
+
+        @discardableResult
+        public final func appendTags(_ tags: Tag...) -> Self {
+            appendTags(contentsOf: tags)
+            return self
+        }
+
+        @discardableResult
+        public final func appendTags(contentsOf tags: [Tag]) -> Self {
+            self.tags.append(contentsOf: tags)
+            return self
+        }
+
+        @discardableResult
+        public final func insertTags(_ tags: Tag..., at index: Int) -> Self {
+            insertTags(contentsOf: tags, at: index)
+            return self
+        }
+
+        @discardableResult
+        public final func insertTags(contentsOf tags: [Tag], at index: Int) -> Self {
+            self.tags.insert(contentsOf: tags, at: index)
+            return self
+        }
+
+        @discardableResult
+        public final func content(_ content: String?) -> Self {
+            self.content = content
+            return self
+        }
+
+        public final func build(signedBy keypair: Keypair) throws -> T {
+            try T(
+                kind: kind,
+                content: content ?? "",
+                tags: tags,
+                createdAt: createdAt ?? Int64(Date.now.timeIntervalSince1970),
+                signedBy: keypair
+            )
+        }
+
+        public final func build(pubkey: PublicKey) -> T {
+            build(pubkey: pubkey.hex)
+        }
+
+        public final func build(pubkey: String) -> T {
+            T(
+                kind: kind,
+                content: content ?? "",
+                tags: tags,
+                createdAt: createdAt ?? Int64(Date.now.timeIntervalSince1970),
+                pubkey: pubkey
+            )
+        }
     }
 }

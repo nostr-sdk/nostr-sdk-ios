@@ -11,11 +11,12 @@ import XCTest
 final class ReactionEventTests: XCTestCase, EventCreating, EventVerifying, FixtureLoading {
 
     func testCreateReactionEvent() throws {
-        let reactedEvent = try textNote(withContent: "Hello world!",
-                                signedBy: Keypair.test)
+        let reactedEvent = try TextNoteEvent.Builder()
+            .content("Hello world!")
+            .build(signedBy: Keypair.test)
         let event = try reaction(withContent: "🤙",
                                  reactedEvent: reactedEvent,
-                                 signedBy: Keypair.test)
+                                 signedBy: .test)
 
         XCTAssertEqual(event.kind, .reaction)
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
@@ -33,15 +34,15 @@ final class ReactionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateCustomEmojiReactionEvent() throws {
-        let reactedEvent = try textNote(withContent: "Hello world!",
-                                signedBy: Keypair.test)
+        let reactedEvent = try TextNoteEvent.Builder()
+            .build(signedBy: .test)
 
         let imageURLString = "https://nostrsdk.com/ostrich.png"
         let imageURL = try XCTUnwrap(URL(string: imageURLString))
         let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
         let event = try reaction(withCustomEmoji: customEmoji,
                                  reactedEvent: reactedEvent,
-                                 signedBy: Keypair.test)
+                                 signedBy: .test)
 
         XCTAssertEqual(event.kind, .reaction)
         XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)

@@ -15,16 +15,27 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
-    
+
     @available(*, unavailable, message: "This initializer is unavailable for this class.")
-    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    override init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
+        super.init(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: signature)
+    }
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), pubkey: String) {
+        super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, pubkey: pubkey)
+    }
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
+    @available(*, deprecated, message: "Deprecated in favor of TextNote.Builder.")
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .textNote, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
     /// Pubkeys mentioned in the note content.
     public var mentionedPubkeys: [String] {
         allValues(forTagName: .pubkey)
@@ -131,66 +142,103 @@ public extension EventCreating {
     ///
     /// See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
     /// See [NIP-10 - On "e" and "p" tags in Text Events (kind 1)](https://github.com/nostr-protocol/nips/blob/master/10.md)
+    @available(*, deprecated, message: "Deprecated in favor of TextNote.Builder.")
     func textNote(withContent content: String, replyingTo repliedEvent: TextNoteEvent? = nil, mentionedEventTags: [EventTag]? = nil, subject: String? = nil, customEmojis: [CustomEmoji]? = nil, signedBy keypair: Keypair) throws -> TextNoteEvent {
-        if let mentionedEventTags {
-            guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
-                throw EventCreatingError.invalidInput
-            }
-        }
 
-        var tags: [Tag] = []
+        let builder = TextNoteEvent.Builder()
+            .content(content)
+            .subject(subject)
 
         if let repliedEvent {
+            try builder.repliedEvent(repliedEvent)
+        }
+
+        if let customEmojis {
+            builder.customEmojis(customEmojis)
+        }
+
+        if let mentionedEventTags {
+            try builder.mentionedEventTags(mentionedEventTags)
+        }
+
+        return try builder.build(signedBy: keypair)
+    }
+}
+
+public extension TextNoteEvent {
+    /// Builder of a ``TextNoteEvent``.
+    final class Builder: NostrEvent.Builder<TextNoteEvent>, CustomEmojiBuilding {
+        public init() {
+            super.init(kind: .textNote)
+        }
+
+        /// Sets the ``TextNoteEvent`` that is being replied to from this text note that is being built.
+        @discardableResult
+        public final func repliedEvent(_ repliedEvent: TextNoteEvent, relayURL: URL? = nil) throws -> Self {
             if let rootEventTag = repliedEvent.rootEventTag {
                 // Maximize backwards compatibility with NIP-10 deprecated positional event tags
                 // by ensuring ordering of types of event tags.
 
-                // 1. Root tag comes first.
+                // Root tag comes first.
                 if rootEventTag.marker == .root {
-                    tags.append(rootEventTag.tag)
+                    insertTags(rootEventTag.tag, at: 0)
                 } else {
                     // Recreate the event tag with a root marker if the one being read does not have a marker.
-                    let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root)
-                    tags.append(rootEventTagWithMarker.tag)
+                    let rootEventTagWithMarker = try EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root, pubkey: rootEventTag.pubkey)
+                    insertTags(rootEventTagWithMarker.tag, at: 0)
                 }
 
-                // 2. Mentions go in between.
-                if let mentionedEventTags {
-                    tags += mentionedEventTags.map { $0.tag }
-                }
-
-                // 3. Reply tag comes last.
-                tags.append(try EventTag(eventId: repliedEvent.id, marker: .reply).tag)
-
-                // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
-                // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
-                tags += repliedEvent.tags.filter { $0.name == TagName.pubkey.rawValue }
-
-                // Add the author "p" tag if it was not already added.
-                if !tags.contains(where: { $0.name == TagName.pubkey.rawValue && $0.value == repliedEvent.pubkey }) {
-                    tags.append(Tag(name: .pubkey, value: repliedEvent.pubkey))
-                }
+                // Reply tag comes last.
+                appendTags(try EventTag(eventId: repliedEvent.id, relayURL: relayURL, marker: .reply, pubkey: repliedEvent.pubkey).tag)
             } else {
-                if let mentionedEventTags {
-                    tags += mentionedEventTags.map { $0.tag }
-                }
-
                 // If the event being replied to has no root marker event tag,
                 // the event being replied to is the root.
-                tags.append(try EventTag(eventId: repliedEvent.id, marker: .root).tag)
+                insertTags(try EventTag(eventId: repliedEvent.id, relayURL: relayURL, marker: .root, pubkey: repliedEvent.pubkey).tag, at: 0)
             }
-        } else if let mentionedEventTags {
-            tags += mentionedEventTags.map { $0.tag }
+
+            // When replying to a text event E, the reply event's "p" tags should contain all of E's "p" tags as well as the "pubkey" of the event being replied to.
+            // Example: Given a text event authored by a1 with "p" tags [p1, p2, p3] then the "p" tags of the reply should be [a1, p1, p2, p3] in no particular order.
+            appendTags(contentsOf: repliedEvent.tags.filter { $0.name == TagName.pubkey.rawValue })
+
+            // Add the author "p" tag if it was not already added.
+            if !tags.contains(where: { $0.name == TagName.pubkey.rawValue && $0.value == repliedEvent.pubkey }) {
+                appendTags(Tag(name: .pubkey, value: repliedEvent.pubkey))
+            }
+
+            return self
         }
 
-        if let customEmojis {
-            tags += customEmojis.map { $0.tag }
+        /// Sets the list of events, represented by ``EventTag``, that are mentioned from this text note that is being built.
+        @discardableResult
+        public final func mentionedEventTags(_ mentionedEventTags: [EventTag]) throws -> Builder {
+            guard !mentionedEventTags.isEmpty else {
+                return self
+            }
+
+            guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
+                throw EventCreatingError.invalidInput
+            }
+
+            let newTags = mentionedEventTags.map { $0.tag }
+            // Mentions go in between root markers and reply markers.
+            if let replyMarkerIndex = tags.firstIndex(where: { $0.otherParameters.count >= 2 &&  $0.otherParameters[1] == EventTagMarker.reply.rawValue }) {
+                insertTags(contentsOf: newTags, at: replyMarkerIndex)
+            } else {
+                appendTags(contentsOf: newTags)
+            }
+
+            return self
         }
 
-        if let subject {
-            tags.append(Tag(name: .subject, value: subject))
-        }
+        /// Sets the subject for this text note.
+        @discardableResult
+        public final func subject(_ subject: String?) -> Builder {
+            guard let subject else {
+                return self
+            }
 
-        return try TextNoteEvent(content: content, tags: tags, signedBy: keypair)
+            appendTags(Tag(name: .subject, value: subject))
+            return self
+        }
     }
 }

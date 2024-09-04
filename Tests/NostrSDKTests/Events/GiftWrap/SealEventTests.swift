@@ -26,7 +26,9 @@ final class SealEventTests: XCTestCase, EventCreating, EventVerifying, FixtureLo
     }
 
     func testCreateSealFailsWithSignedEvent() throws {
-        let signedEvent = try textNote(withContent: "Are you going to the party tonight?", signedBy: .test)
+        let signedEvent = try TextNoteEvent.Builder()
+            .content("Are you going to the party tonight?")
+            .build(signedBy: .test)
         XCTAssertThrowsError(try seal(withRumor: signedEvent, toRecipient: SealEventTests.recipient.publicKey, signedBy: .test))
     }
 

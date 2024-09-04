@@ -96,6 +96,16 @@ public struct EventTag: RelayProviding, RelayURLValidating, Equatable {
         return EventTagMarker(rawValue: tag.otherParameters[1])
     }
 
+    /// The pubkey of the author of the referenced event.
+    public var pubkey: String? {
+        guard tag.otherParameters.count >= 3 else {
+            return nil
+        }
+
+        // Validate that the pubkey is valid before returning it.
+        return PublicKey(hex: tag.otherParameters[2])?.hex
+    }
+
     /// Initializes an event tag from a ``Tag``.
     /// `nil` is returned if the tag is not an event tag.
     public init?(tag: Tag) {
@@ -111,7 +121,7 @@ public struct EventTag: RelayProviding, RelayURLValidating, Equatable {
     ///   - eventId: The id of the event being referenced.
     ///   - relayURL: The URL of a recommended relay associated with the reference.
     ///   - marker: The marker indicating the type of event tag.
-    public init(eventId: String, relayURL: URL? = nil, marker: EventTagMarker?) throws {
+    public init(eventId: String, relayURL: URL? = nil, marker: EventTagMarker? = nil, pubkey: String? = nil) throws {
         let validatedRelayURL: URL?
         if let relayURL {
             validatedRelayURL = try RelayURLValidator.shared.validateRelayURL(relayURL)
@@ -119,14 +129,24 @@ public struct EventTag: RelayProviding, RelayURLValidating, Equatable {
             validatedRelayURL = nil
         }
 
+        if let pubkey, PublicKey(hex: pubkey) == nil {
+            throw EventCreatingError.invalidInput
+        }
+
+        var tagOtherParameters = [validatedRelayURL?.absoluteString ?? ""]
+
         if let marker {
             guard marker == .root || marker == .reply || marker == .mention else {
                 throw EventTagError.invalidInput
             }
-            tag = Tag(name: .event, value: eventId, otherParameters: [validatedRelayURL?.absoluteString ?? "", marker.rawValue])
-        } else {
-            tag = Tag(name: .event, value: eventId, otherParameters: [validatedRelayURL?.absoluteString ?? ""])
+            tagOtherParameters.append(marker.rawValue)
         }
+
+        if let pubkey {
+            tagOtherParameters.append(pubkey)
+        }
+
+        tag = Tag(name: .event, value: eventId, otherParameters: tagOtherParameters)
     }
 }
 

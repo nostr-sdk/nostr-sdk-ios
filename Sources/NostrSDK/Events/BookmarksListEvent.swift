@@ -16,10 +16,20 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
     }
     
     @available(*, unavailable, message: "This initializer is unavailable for this class.")
-    override init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
-    
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    required init(kind: EventKind, content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), pubkey: String) {
+        super.init(kind: kind, content: content, tags: tags, createdAt: createdAt, pubkey: pubkey)
+    }
+
+    @available(*, unavailable, message: "This initializer is unavailable for this class.")
+    override init(id: String, pubkey: String, createdAt: Int64, kind: EventKind, tags: [Tag], content: String, signature: String?) {
+        super.init(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: signature)
+    }
+
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .bookmarksList, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
