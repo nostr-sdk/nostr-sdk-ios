@@ -14,6 +14,31 @@ final class ReactionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let reactedEvent = try TextNoteEvent.Builder()
             .content("Hello world!")
             .build(signedBy: Keypair.test)
+        let event = try ReactionEvent.Builder()
+            .reactedEvent(reactedEvent)
+            .content("🤙")
+            .build(signedBy: .test)
+
+        XCTAssertEqual(event.kind, .reaction)
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.reactedEventId, reactedEvent.id)
+        XCTAssertEqual(event.reactedEventPubkey, reactedEvent.pubkey)
+        XCTAssertEqual(event.content, "🤙")
+
+        let expectedTags: [Tag] = [
+            .event(reactedEvent.id),
+            .pubkey(reactedEvent.pubkey),
+            .kind(.textNote)
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+
+        try verifyEvent(event)
+    }
+
+    func testCreateReactionEventDeprecated() throws {
+        let reactedEvent = try TextNoteEvent.Builder()
+            .content("Hello world!")
+            .build(signedBy: Keypair.test)
         let event = try reaction(withContent: "🤙",
                                  reactedEvent: reactedEvent,
                                  signedBy: .test)
@@ -26,7 +51,8 @@ final class ReactionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let expectedTags: [Tag] = [
             .event(reactedEvent.id),
-            .pubkey(reactedEvent.pubkey)
+            .pubkey(reactedEvent.pubkey),
+            .kind(.textNote)
         ]
         XCTAssertEqual(event.tags, expectedTags)
 
@@ -34,6 +60,36 @@ final class ReactionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateCustomEmojiReactionEvent() throws {
+        let reactedEvent = try TextNoteEvent.Builder()
+            .build(signedBy: .test)
+
+        let imageURLString = "https://nostrsdk.com/ostrich.png"
+        let imageURL = try XCTUnwrap(URL(string: imageURLString))
+        let customEmoji = try XCTUnwrap(CustomEmoji(shortcode: "ostrich", imageURL: imageURL))
+        let event = try ReactionEvent.Builder()
+            .reactedEvent(reactedEvent)
+            .customEmoji(customEmoji)
+            .build(signedBy: .test)
+
+        XCTAssertEqual(event.kind, .reaction)
+        XCTAssertEqual(event.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(event.reactedEventId, reactedEvent.id)
+        XCTAssertEqual(event.reactedEventPubkey, reactedEvent.pubkey)
+        XCTAssertEqual(event.content, ":ostrich:")
+        XCTAssertEqual(event.customEmojis, [customEmoji])
+
+        let expectedTags: [Tag] = [
+            .event(reactedEvent.id),
+            .pubkey(reactedEvent.pubkey),
+            .kind(.textNote),
+            Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString])
+        ]
+        XCTAssertEqual(event.tags, expectedTags)
+
+        try verifyEvent(event)
+    }
+
+    func testCreateCustomEmojiReactionEventDeprecated() throws {
         let reactedEvent = try TextNoteEvent.Builder()
             .build(signedBy: .test)
 
@@ -54,6 +110,7 @@ final class ReactionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         let expectedTags: [Tag] = [
             .event(reactedEvent.id),
             .pubkey(reactedEvent.pubkey),
+            .kind(.textNote),
             Tag(name: .emoji, value: "ostrich", otherParameters: [imageURLString])
         ]
         XCTAssertEqual(event.tags, expectedTags)
