@@ -149,12 +149,12 @@ extension NIP44v2Encrypting {
 
         guard unpaddedLength > 0,
               unpadded.count == unpaddedLength,
-              padded.count == 2 + paddedLength
-              else {
+              padded.count == 2 + paddedLength,
+              let result = String(data: Data(unpadded), encoding: .utf8) else {
             throw NIP44v2EncryptingError.paddingInvalid
         }
 
-        return String(decoding: Data(unpadded), as: UTF8.self)
+        return result
     }
 
     func decodePayload(_ payload: String) throws -> DecodedPayload {

@@ -80,7 +80,9 @@ public extension EventCreating {
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#reposts).
     func repost(event: NostrEvent, signedBy keypair: Keypair) throws -> GenericRepostEvent {
         let jsonData = try JSONEncoder().encode(event)
-        let stringifiedJSON = String(decoding: jsonData, as: UTF8.self)
+        guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
+            throw EventCreatingError.invalidInput
+        }
         var tags: [Tag] = [
             .event(event.id),
             .pubkey(event.pubkey)

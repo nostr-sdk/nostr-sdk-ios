@@ -119,7 +119,9 @@ public extension EventCreating {
         signedBy keypair: Keypair
     ) throws -> GiftWrapEvent {
         let jsonData = try JSONEncoder().encode(seal)
-        let stringifiedJSON = String(decoding: jsonData, as: UTF8.self)
+        guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
+            throw GiftWrapError.utf8EncodingFailed
+        }
 
         guard let randomKeypair = Keypair() else {
             throw GiftWrapError.keypairGenerationFailed
