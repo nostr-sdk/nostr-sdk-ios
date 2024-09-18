@@ -27,7 +27,11 @@ extension FixtureLoading {
 
     func loadFixtureString(_ filename: String) throws -> String? {
         let data = try loadFixtureData(filename)
-        let originalString = String(decoding: data, as: UTF8.self)
+
+        guard let originalString = String(data: data, encoding: .utf8) else {
+            throw FixtureLoadingError.decodingError
+        }
+
         let trimmedString = originalString.filter { !"\n\t\r".contains($0) }
         return trimmedString
     }

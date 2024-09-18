@@ -29,9 +29,10 @@ enum RelayRequest {
             payload = [AnyEncodable("COUNT"), AnyEncodable(subscriptionId), AnyEncodable(filter)]
         }
         
-        guard let data = try? JSONEncoder().encode(payload) else {
+        guard let data = try? JSONEncoder().encode(payload),
+              let decoded = String(data: data, encoding: .utf8) else {
             return nil
         }
-        return String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        return decoded.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

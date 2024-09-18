@@ -31,14 +31,14 @@ public enum EventSerializer {
         
         let tagsString: String
         if let tagsData = try? encoder.encode(tags) {
-            tagsString = String(decoding: tagsData, as: UTF8.self)
+            tagsString = String(data: tagsData, encoding: .utf8) ?? "[]"
         } else {
             tagsString = "[]"
         }
         
         let contentString: String
         if let contentData = try? encoder.encode(content) {
-            contentString = String(decoding: contentData, as: UTF8.self)
+            contentString = String(data: contentData, encoding: .utf8) ?? "\"\""
         } else {
             contentString = "\"\""
         }
