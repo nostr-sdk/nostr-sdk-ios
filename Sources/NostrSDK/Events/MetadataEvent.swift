@@ -184,7 +184,10 @@ public extension MetadataEvent {
                 allUserMetadataAsData = try JSONSerialization.data(withJSONObject: userMetadataAsDictionary, options: .sortedKeys)
             }
 
-            let allUserMetadataAsString = String(decoding: allUserMetadataAsData, as: UTF8.self)
+            guard let allUserMetadataAsString = String(data: allUserMetadataAsData, encoding: .utf8) else {
+                throw EventCreatingError.invalidInput
+            }
+
             content(allUserMetadataAsString)
 
             return self

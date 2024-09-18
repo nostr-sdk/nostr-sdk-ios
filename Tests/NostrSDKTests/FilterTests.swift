@@ -19,7 +19,7 @@ final class FilterTests: XCTestCase, FixtureLoading, JSONTesting {
 
         let encoder = JSONEncoder()
         let result = try encoder.encode(filter)
-        let resultString = String(decoding: result, as: UTF8.self)
+        let resultString = try XCTUnwrap(String(data: result, encoding: .utf8))
 
         XCTAssertTrue(areEquivalentJSONObjectStrings(expected, resultString))
     }
@@ -39,7 +39,7 @@ final class FilterTests: XCTestCase, FixtureLoading, JSONTesting {
 
         let encoder = JSONEncoder()
         let result = try encoder.encode(filter)
-        let resultString = String(decoding: result, as: UTF8.self)
+        let resultString = try XCTUnwrap(String(data: result, encoding: .utf8))
 
         XCTAssertTrue(areEquivalentJSONObjectStrings(expected, resultString))
     }

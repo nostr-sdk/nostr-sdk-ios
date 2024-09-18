@@ -96,7 +96,10 @@ public extension EventCreating {
         }
 
         let jsonData = try JSONEncoder().encode(rumor)
-        let stringifiedJSON = String(decoding: jsonData, as: UTF8.self)
+        guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
+            throw SealEventError.utf8EncodingFailed
+        }
+
         let encryptedRumor = try encrypt(plaintext: stringifiedJSON, privateKeyA: keypair.privateKey, publicKeyB: recipient)
         return try SealEvent(content: encryptedRumor, createdAt: createdAt, signedBy: keypair)
     }
