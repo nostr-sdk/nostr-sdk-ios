@@ -69,6 +69,26 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// See [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md#nip-18).
     case genericRepost
 
+    /// Create a public chat channel.
+    /// See [NIP-28](https://github.com/nostr-protocol/nips/blob/master/28.md#kind-40-create-channel).
+    case channelCreation
+    
+    /// Update a channel's public metadata.
+    /// See [NIP-28](https://github.com/nostr-protocol/nips/blob/master/28.md#kind-41-set-channel-metadata).
+    case channelMetadata
+    
+    /// Send a text message to a channel.
+    /// See [NIP-28](https://github.com/nostr-protocol/nips/blob/master/28.md#kind-42-create-channel-message).
+    case channelMessage
+    
+    /// User no longer wants to see a certain message.
+    /// See [NIP-28](https://github.com/nostr-protocol/nips/blob/master/28.md#kind-43-hide-message).
+    case channelHideMessage
+    
+    /// User no longer wants to see messages from another user.
+    /// See [NIP-28](https://github.com/nostr-protocol/nips/blob/master/28.md#kind-44-mute-user).
+    case channelMuteUser
+    
     /// This kind of event wraps a `seal` event.
     /// The wrapped seal is always encrypted to a receiver's pubkey using a random, one-time-use private key.
     /// The gift wrap event tags should include any information needed to route the event to its intended recipient,
@@ -140,6 +160,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .reaction,
         .seal,
         .genericRepost,
+        .channelCreation,
+        .channelMetadata,
+        .channelMessage,
+        .channelHideMessage,
+        .channelMuteUser,
         .giftWrap,
         .report,
         .muteList,
@@ -173,6 +198,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .reaction:                     return 7
         case .seal:                         return 13
         case .genericRepost:                return 16
+        case .channelCreation:              return 40
+        case .channelMetadata:              return 41
+        case .channelMessage:               return 42
+        case .channelHideMessage:           return 43
+        case .channelMuteUser:              return 44
         case .giftWrap:                     return 1059
         case .report:                       return 1984
         case .muteList:                     return 10000
@@ -200,6 +230,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .reaction:                     return ReactionEvent.self
         case .seal:                         return SealEvent.self
         case .genericRepost:                return GenericRepostEvent.self
+        case .channelCreation:              return CreateChannelEvent.self
+        case .channelMetadata:              return SetChannelMetadataEvent.self
+        case .channelMessage:               return CreateChannelMessageEvent.self
+        case .channelHideMessage:           return HideChannelMessageEvent.self
+        case .channelMuteUser:              return MuteChannelUserEvent.self
         case .giftWrap:                     return GiftWrapEvent.self
         case .report:                       return ReportEvent.self
         case .muteList:                     return MuteListEvent.self
