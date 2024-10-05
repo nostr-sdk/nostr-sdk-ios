@@ -12,6 +12,20 @@ final class AuthenticationEventTests: XCTestCase, EventCreating, EventVerifying,
 
     func testCreateAuthenticationEvent() throws {
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.example.com/"))
+        let event = try AuthenticationEvent.Builder()
+            .relayURL(relayURL)
+            .challenge("some-challenge-string")
+            .build(signedBy: Keypair.test)
+
+        XCTAssertEqual(event.kind, .authentication)
+        XCTAssertEqual(event.relayURL, relayURL)
+        XCTAssertEqual(event.challenge, "some-challenge-string")
+
+        try verifyEvent(event)
+    }
+
+    func testCreateAuthenticationEventDeprecated() throws {
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.example.com/"))
         let event = try authenticate(relayURL: relayURL, challenge: "some-challenge-string", signedBy: Keypair.test)
 
         XCTAssertEqual(event.kind, .authentication)

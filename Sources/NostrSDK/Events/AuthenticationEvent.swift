@@ -52,14 +52,33 @@ public final class AuthenticationEvent: NostrEvent, RelayProviding {
 
 public extension EventCreating {
 
+    @available(*, deprecated, message: "Deprecated in favor of AuthenticationEvent.Builder.")
     func authenticate(relayURL: URL, challenge: String, signedBy keypair: Keypair) throws -> AuthenticationEvent {
-        let validatedRelayURL = try RelayURLValidator.shared.validateRelayURL(relayURL)
+        try AuthenticationEvent.Builder()
+            .relayURL(relayURL)
+            .challenge(challenge)
+            .build(signedBy: keypair)
+    }
+}
 
-        let tags: [Tag] = [
-            Tag(name: "relay", value: validatedRelayURL.absoluteString),
-            Tag(name: "challenge", value: challenge)
-        ]
+public extension AuthenticationEvent {
+    /// Builder of a ``AuthenticationEvent``.
+    final class Builder: NostrEvent.Builder<AuthenticationEvent> {
+        public init() {
+            super.init(kind: .authentication)
+        }
 
-        return try AuthenticationEvent(content: "", tags: tags, signedBy: keypair)
+        /// The relay URL this event authenticates to.
+        @discardableResult
+        public final func relayURL(_ relayURL: URL) throws -> Self {
+            let validatedRelayURL = try RelayURLValidator.shared.validateRelayURL(relayURL)
+            return appendTags(Tag(name: "relay", value: validatedRelayURL.absoluteString))
+        }
+
+        /// The challenge string as received from the relay.
+        @discardableResult
+        public final func challenge(_ challenge: String) throws -> Self {
+            appendTags(Tag(name: "challenge", value: challenge))
+        }
     }
 }
