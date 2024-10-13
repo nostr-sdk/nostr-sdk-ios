@@ -63,7 +63,7 @@ public extension EventCreating {
 
 public extension AuthenticationEvent {
     /// Builder of a ``AuthenticationEvent``.
-    final class Builder: NostrEvent.Builder<AuthenticationEvent> {
+    final class Builder: NostrEvent.Builder<AuthenticationEvent>, RelayURLValidating {
         public init() {
             super.init(kind: .authentication)
         }
@@ -71,7 +71,7 @@ public extension AuthenticationEvent {
         /// The relay URL this event authenticates to.
         @discardableResult
         public final func relayURL(_ relayURL: URL) throws -> Self {
-            let validatedRelayURL = try RelayURLValidator.shared.validateRelayURL(relayURL)
+            let validatedRelayURL = try validateRelayURL(relayURL)
             return appendTags(Tag(name: "relay", value: validatedRelayURL.absoluteString))
         }
 

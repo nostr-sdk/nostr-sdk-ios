@@ -96,3 +96,51 @@ public extension EventCreating {
         return try ReportEvent(content: additionalInformation, tags: tags, signedBy: keypair)
     }
 }
+
+public extension ReportEvent {
+    /// Builder of a ``ReportEvent``.
+    final class Builder: NostrEvent.Builder<ReportEvent> {
+        public init() {
+            super.init(kind: .textNote)
+        }
+
+        /// Sets the ``ReportEvent`` that is being replied to from this text note that is being built.
+        @discardableResult
+        public final func reportUser(_ pubkey: PublicKey) throws -> Self {
+            appendTags(.pubkey(pubkey.hex, otherParameters: [reportType.rawValue]))
+        }
+
+        /// Sets the list of events, represented by ``EventTag``, that are mentioned from this text note that is being built.
+        @discardableResult
+        public final func mentionedEventTags(_ mentionedEventTags: [EventTag]) throws -> Builder {
+            guard !mentionedEventTags.isEmpty else {
+                return self
+            }
+
+            guard mentionedEventTags.allSatisfy({ $0.marker == .mention }) else {
+                throw EventCreatingError.invalidInput
+            }
+
+            let newTags = mentionedEventTags.map { $0.tag }
+            // Mentions go in between root markers and reply markers.
+            if let replyMarkerIndex = tags.firstIndex(where: { $0.otherParameters.count >= 2 &&  $0.otherParameters[1] == EventTagMarker.reply.rawValue }) {
+                insertTags(contentsOf: newTags, at: replyMarkerIndex)
+            } else {
+                appendTags(contentsOf: newTags)
+            }
+
+            return self
+        }
+
+        /// Sets the subject for this text note.
+        @discardableResult
+        public final func subject(_ subject: String?) -> Builder {
+            guard let subject else {
+                return self
+            }
+
+            appendTags(Tag(name: .subject, value: subject))
+            return self
+        }
+    }
+}
