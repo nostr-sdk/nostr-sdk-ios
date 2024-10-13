@@ -206,17 +206,22 @@ public protocol NostrEventBuilding {
     /// The type of ``NostrEvent`` that this builder constructs.
     associatedtype EventType: NostrEvent
 
+    /// List of ``Tag``s.
+    var tags: [Tag] { get }
+
     /// Sets the unix timestamp in seconds of when the event is created.
     func createdAt(_ createdAt: Int64?) -> Self
 
     /// Appends the given list of tags to the end of the existing tags list.
     /// - Parameters:
     ///   - tags: The list of ``Tag`` objects.
+    @discardableResult
     func appendTags(_ tags: Tag...) -> Self
 
     /// Appends the given list of tags to the end of the existing tags list.
     /// - Parameters:
     ///   - tags: The list of ``Tag`` objects.
+    @discardableResult
     func appendTags(contentsOf tags: [Tag]) -> Self
 
     /// Inserts the given list of tags at a given index of the list.
@@ -225,6 +230,7 @@ public protocol NostrEventBuilding {
     ///   - index: The index of the existing list to insert the new tags into.
     ///       The tags are appended to the end of the list if the index is `nil`.
     ///       Must be a valid index of the existing tags list.
+    @discardableResult
     func insertTags(_ tags: Tag..., at index: Int) -> Self
 
     /// Inserts the given list of tags at a given index of the list.
@@ -233,6 +239,7 @@ public protocol NostrEventBuilding {
     ///   - index: The index of the existing list to insert the new tags into.
     ///       The tags are appended to the end of the list if the index is `nil`.
     ///       Must be a valid index of the existing tags list.
+    @discardableResult
     func insertTags(contentsOf tags: [Tag], at index: Int) -> Self
 
     /// Arbitrary string.
@@ -308,7 +315,6 @@ public extension NostrEvent {
         @discardableResult
         public final func appendTags(_ tags: Tag...) -> Self {
             appendTags(contentsOf: tags)
-            return self
         }
 
         @discardableResult
@@ -320,7 +326,6 @@ public extension NostrEvent {
         @discardableResult
         public final func insertTags(_ tags: Tag..., at index: Int) -> Self {
             insertTags(contentsOf: tags, at: index)
-            return self
         }
 
         @discardableResult
