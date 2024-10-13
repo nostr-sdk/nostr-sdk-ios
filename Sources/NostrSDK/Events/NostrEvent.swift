@@ -355,7 +355,7 @@ public extension NostrEvent {
             return self
         }
 
-        public final func build(signedBy keypair: Keypair) throws -> T {
+        public func build(signedBy keypair: Keypair) throws -> T {
             try T(
                 kind: kind,
                 content: content ?? "",

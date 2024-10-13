@@ -92,7 +92,7 @@ public extension EventCreating {
     ///   - recipientAlias: optional ``PublicKey`` of the receiver's alias used to receive gift wraps without exposing the receiver's identity. It is not used to encrypt the rumor. If it is provided, this pubkey will automatically be added as a tag to the ``GiftWrapEvent``.
     ///   - tags: the list of tags to add to the ``GiftWrapEvent`` in addition to the pubkey tag from `toRecipient`. This list should include any information needed to route the event to its intended recipient, such as [NIP-13 Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md).
     ///   - createdAt: the creation timestamp of the seal. Note that this timestamp SHOULD be tweaked to thwart time-analysis attacks. Note that some relays don't serve events dated in the future, so all timestamps SHOULD be in the past. By default, if `createdAt` is not provided, a random timestamp within 2 days in the past will be chosen.
-    ///   - keypair: The real ``Keypair`` to sign the seal with. Note that a different random one-time use key is used to sign the gift wrap.
+    ///   - keypair: The real ``Keypair`` to encrypt the rumor and sign the seal with. Note that a different random one-time use key is used to sign the gift wrap.
     func giftWrap(
         withRumor rumor: NostrEvent,
         toRecipient recipient: PublicKey,

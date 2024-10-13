@@ -63,6 +63,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// See [NIP-59 - Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md).
     case seal
 
+    /// This kind of event is a chat message meant for direct messaging with a chat room consisting of one or multiple pubkeys.
+    ///
+    /// See [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md).
+    case directMessage
+
     /// This kind of note is used to signal to followers that another event is worth reading.
     ///
     /// > Note: The reposted event can be any kind of event other than a kind 1 text note.
@@ -139,6 +144,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .repost,
         .reaction,
         .seal,
+        .directMessage,
         .genericRepost,
         .giftWrap,
         .report,
@@ -172,6 +178,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .repost:                       return 6
         case .reaction:                     return 7
         case .seal:                         return 13
+        case .directMessage:                return 14
         case .genericRepost:                return 16
         case .giftWrap:                     return 1059
         case .report:                       return 1984
@@ -199,6 +206,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .repost:                       return TextNoteRepostEvent.self
         case .reaction:                     return ReactionEvent.self
         case .seal:                         return SealEvent.self
+        case .directMessage:                return DirectMessageEvent.self
         case .genericRepost:                return GenericRepostEvent.self
         case .giftWrap:                     return GiftWrapEvent.self
         case .report:                       return ReportEvent.self
