@@ -154,7 +154,15 @@ public class NostrEvent: Codable, Equatable, Hashable, AlternativeSummaryTagInte
     public func allTags(withTagName tagName: TagName) -> [Tag] {
         tags.filter { $0.name == tagName.rawValue }
     }
-    
+
+    public func firstTagForTagName(_ tag: TagName) -> Tag? {
+        firstTagForRawTagName(tag.rawValue)
+    }
+
+    public func firstTagForRawTagName(_ tagName: String) -> Tag? {
+        tags.first(where: { $0.name == tagName })
+    }
+
     /// The first String value for the provided ``TagName``, if it exists.
     public func firstValueForTagName(_ tag: TagName) -> String? {
         firstValueForRawTagName(tag.rawValue)
@@ -162,7 +170,7 @@ public class NostrEvent: Codable, Equatable, Hashable, AlternativeSummaryTagInte
     
     /// The first String value for the provided raw tag name, if it exists.
     public func firstValueForRawTagName(_ tagName: String) -> String? {
-        tags.first(where: { $0.name == tagName })?.value
+        firstTagForRawTagName(tagName)?.value
     }
     
     /// All values for tags with the provided name.

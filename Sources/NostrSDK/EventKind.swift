@@ -92,6 +92,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// See [NIP-32 Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md).
     case label
 
+    case zapRequest
+
+    case zapReceipt
+
     /// This kind of event contains a list of things the user does not want to see, such as pubkeys, hashtags, words, and event ids (threads).
     ///
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
@@ -154,6 +158,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .giftWrap,
         .report,
         .label,
+        .zapRequest,
+        .zapReceipt,
         .muteList,
         .relayListMetadata,
         .bookmarksList,
@@ -189,6 +195,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .giftWrap:                     return 1059
         case .report:                       return 1984
         case .label:                        return 1985
+        case .zapRequest:                   return 9734
+        case .zapReceipt:                   return 9735
         case .muteList:                     return 10000
         case .relayListMetadata:            return 10002
         case .bookmarksList:                return 10003
@@ -218,6 +226,8 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .giftWrap:                     return GiftWrapEvent.self
         case .report:                       return ReportEvent.self
         case .label:                        return LabelEvent.self
+        case .zapRequest:                   return ZapRequestEvent.self
+        case .zapReceipt:                   return ZapReceiptEvent.self
         case .muteList:                     return MuteListEvent.self
         case .relayListMetadata:            return RelayListMetadataEvent.self
         case .bookmarksList:                return BookmarksListEvent.self
