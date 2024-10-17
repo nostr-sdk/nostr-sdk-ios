@@ -40,13 +40,23 @@ public class CreateChannelMessageEvent: NostrEvent {
 }
 
 public extension EventCreating {
-    func createChannelMessageEvent(withContent content: String, eventId: String, relayUrl: String, signedBy keypair: Keypair) throws -> CreateChannelMessageEvent {
+    func createChannelMessageEvent(
+        withContent content: String,
+        eventId: String,
+        relayUrl: String,
+        hashtag: String? = nil,
+        signedBy keypair: Keypair
+    ) throws -> CreateChannelMessageEvent {
         
         var tags: [Tag] = [
             Tag.pubkey(keypair.publicKey.hex),
             Tag.event(eventId, otherParameters: [relayUrl, "root"]),
         ]
         
+        if let hashtag = hashtag {
+            tags.append(Tag.hashtag(hashtag))
+        }
+
         return try CreateChannelMessageEvent(content: content, tags: tags, signedBy: keypair)
     }
 }
