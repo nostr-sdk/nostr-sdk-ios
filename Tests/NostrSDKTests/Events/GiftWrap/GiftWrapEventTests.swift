@@ -17,8 +17,38 @@ final class GiftWrapEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     func testCreateGiftWrapSucceeds() throws {
         let rumor: NostrEvent = try decodeFixture(filename: "rumor")
 
-        let giftWrapEvent = try giftWrap(withRumor: rumor, toRecipient: GiftWrapEventTests.recipient.publicKey, signedBy: .test)
+        let tags = [
+            Tag(name: "randomTag1", value: "value"),
+            Tag(name: "randomTag2", value: "value")
+        ]
+
+        let giftWrapEvent = try giftWrap(withRumor: rumor, toRecipient: GiftWrapEventTests.recipient.publicKey, tags: tags, signedBy: .test)
         try verifyEvent(giftWrapEvent)
+
+        XCTAssertNotEqual(giftWrapEvent.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(giftWrapEvent.firstValueForTagName(.pubkey), GiftWrapEventTests.recipient.publicKey.hex)
+        XCTAssertEqual(giftWrapEvent.tags, [Tag.pubkey(GiftWrapEventTests.recipient.publicKey.hex)] + tags)
+
+        let unsealedRumor = try giftWrapEvent.unsealedRumor(using: GiftWrapEventTests.recipient.privateKey)
+
+        XCTAssertEqual(rumor, unsealedRumor)
+    }
+
+    func testCreateGiftWrapWithRecipientAliasSucceeds() throws {
+        let rumor: NostrEvent = try decodeFixture(filename: "rumor")
+        let recipientAlias = try XCTUnwrap(Keypair()?.publicKey)
+
+        let tags = [
+            Tag(name: "randomTag1", value: "value"),
+            Tag(name: "randomTag2", value: "value")
+        ]
+
+        let giftWrapEvent = try giftWrap(withRumor: rumor, toRecipient: GiftWrapEventTests.recipient.publicKey, recipientAlias: recipientAlias, tags: tags, signedBy: .test)
+        try verifyEvent(giftWrapEvent)
+
+        XCTAssertNotEqual(giftWrapEvent.pubkey, Keypair.test.publicKey.hex)
+        XCTAssertEqual(giftWrapEvent.firstValueForTagName(.pubkey), recipientAlias.hex)
+        XCTAssertEqual(giftWrapEvent.tags, [Tag.pubkey(recipientAlias.hex)] + tags)
 
         let unsealedRumor = try giftWrapEvent.unsealedRumor(using: GiftWrapEventTests.recipient.privateKey)
 
