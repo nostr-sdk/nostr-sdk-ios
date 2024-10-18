@@ -106,7 +106,7 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let expectedTags: [Tag] = [
             rootEventTag.tag,
-            .pubkey(Keypair.test.publicKey.hex),
+            .pubkey(Keypair.test.publicKey.hex, otherParameters: ["wss://relay.damus.io"]),
             mentionedEventTag1.tag,
             mentionedEventTag2.tag
         ]
