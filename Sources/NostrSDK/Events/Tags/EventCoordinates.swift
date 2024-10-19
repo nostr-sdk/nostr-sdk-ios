@@ -123,11 +123,12 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
     }
 }
 
+@available(*, deprecated, message: "Deprecated in favor of referencedEventCoordinates in NostrEvent.")
 public protocol EventCoordinatesTagInterpreting: NostrEvent {}
 public extension EventCoordinatesTagInterpreting {
     /// The referenced replaceable event tags of the event.
+    @available(*, deprecated, message: "Deprecated in favor of referencedEventCoordinates.")
     var eventCoordinates: [EventCoordinates] {
-        tags.filter { $0.name == TagName.eventCoordinates.rawValue }
-            .compactMap { EventCoordinates(eventCoordinatesTag: $0) }
+        referencedEventCoordinates
     }
 }

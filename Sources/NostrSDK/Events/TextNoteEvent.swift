@@ -42,20 +42,10 @@ public final class TextNoteEvent: NostrEvent, CustomEmojiInterpreting, ThreadedE
         referencedPubkeys
     }
 
-    /// Pubkeys referenced in the note content.
-    public var referencedPubkeys: [String] {
-        allValues(forTagName: .pubkey)
-    }
-
     /// Events referenced in the note content.
     @available(*, deprecated, message: "Deprecated in favor of referencedEventIds. Mention is an overloaded term from NIP-10.")
     public var mentionedEventIds: [String] {
         referencedEventIds
-    }
-
-    /// Events referenced in the note content.
-    public var referencedEventIds: [String] {
-        allValues(forTagName: .event)
     }
 
     /// a short subject for a text note, similar to subjects in emails.
