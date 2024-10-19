@@ -31,6 +31,7 @@ public final class AuthenticationEvent: NostrEvent, RelayProviding {
         super.init(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: signature)
     }
 
+    @available(*, deprecated, message: "Deprecated in favor of AuthenticationEvent.Builder.")
     init(content: String, tags: [Tag] = [], createdAt: Int64 = Int64(Date.now.timeIntervalSince1970), signedBy keypair: Keypair) throws {
         try super.init(kind: .authentication, content: content, tags: tags, createdAt: createdAt, signedBy: keypair)
     }
