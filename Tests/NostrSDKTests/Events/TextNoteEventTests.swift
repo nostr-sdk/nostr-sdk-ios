@@ -167,7 +167,7 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateTextNoteThreadedReply() throws {
-        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note_reply")
 
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
         let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
@@ -187,15 +187,13 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
         let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
-        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: noteToReply.pubkey))
         let expectedTags: [Tag] = [
             expectedRootEventTag.tag,
             mentionedEventTag1.tag,
             mentionedEventTag2.tag,
             replyEventTag.tag,
-            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
-            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
-
+            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6")
         ]
         XCTAssertEqual(note.tags, expectedTags)
 
@@ -203,7 +201,7 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateTextNoteThreadedReplyDeprecated() throws {
-        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note_reply")
 
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
         let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
@@ -216,15 +214,13 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
         let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
-        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: noteToReply.pubkey))
         let expectedTags: [Tag] = [
             expectedRootEventTag.tag,
             mentionedEventTag1.tag,
             mentionedEventTag2.tag,
             replyEventTag.tag,
-            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
-            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
-
+            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6")
         ]
         XCTAssertEqual(note.tags, expectedTags)
 
@@ -266,7 +262,7 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             .event("a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", otherParameters: ["", "root"]),
             .event("85f247a5d137652a720ca2a0a1f0c9933cf1be1e461432da765cf479de3d5950", otherParameters: ["", "mention"]),
             .event("c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda", otherParameters: ["", "reply"]),
-            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6", otherParameters: ["", "mention"])
+            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6")
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.content, "Reply 2 with fix with mention nostr:nevent1qqsgtuj85hgnwef2wgx29g9p7ryex083hc0yv9pjmfm9earemc74j5qpp4mhxue69uhkummn9ekx7mqzyz50xus6387m0xn703h8hqf5cus2gz9kcf9lgf3yr884fvtqc5n6vqcyqqqqqqg5vcwpa")
