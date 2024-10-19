@@ -36,7 +36,7 @@ public final class CalendarEventRSVP: NostrEvent, ParameterizedReplaceableEvent 
 
     /// Event coordinates to the calendar event this RSVP responds to.
     public var calendarEventCoordinates: EventCoordinates? {
-        tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
+        referencedEventCoordinates
             .first { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
     }
 

@@ -38,7 +38,7 @@ public final class CalendarListEvent: NostrEvent, ParameterizedReplaceableEvent,
 
     /// The event coordinates of the calendar events that belong to this calendar.
     public var calendarEventCoordinateList: [EventCoordinates] {
-        tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
+        referencedEventCoordinates
             .filter { $0.kind == .dateBasedCalendarEvent || $0.kind == .timeBasedCalendarEvent }
     }
 }

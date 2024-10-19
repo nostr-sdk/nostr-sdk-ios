@@ -46,7 +46,7 @@ public final class BookmarksListEvent: NostrEvent, HashtagInterpreting, PrivateT
     
     /// Coordinates of bookmarked articles.
     public var articlesCoordinates: [EventCoordinates] {
-        eventCoordinates
+        referencedEventCoordinates
     }
     
     /// Bookmarked links (web URLs).

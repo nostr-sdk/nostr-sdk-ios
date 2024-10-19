@@ -135,6 +135,21 @@ public class NostrEvent: Codable, Equatable, Hashable {
         NostrEvent(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: nil)
     }
 
+    /// Pubkeys referenced in this event.
+    public var referencedPubkeys: [String] {
+        allValues(forTagName: .pubkey)
+    }
+
+    /// Events referenced in this event.
+    public var referencedEventIds: [String] {
+        allValues(forTagName: .event)
+    }
+
+    /// Event coordinates referenced in this event.
+    public var referencedEventCoordinates: [EventCoordinates] {
+        tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
+    }
+
     /// All tags with the provided name.
     public func allTags(withTagName tagName: TagName) -> [Tag] {
         tags.filter { $0.name == tagName.rawValue }
