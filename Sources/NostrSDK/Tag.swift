@@ -19,6 +19,10 @@ public enum TagName: String {
     /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is parameterized)
     case eventCoordinates = "a"
 
+    /// Specifies a unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
+    /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
+    case expiration
+
     /// a hashtag to categorize events for easy searching
     case hashtag = "t"
     

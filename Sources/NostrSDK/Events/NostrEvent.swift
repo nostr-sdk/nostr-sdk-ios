@@ -150,6 +150,26 @@ public class NostrEvent: Codable, Equatable, Hashable {
         tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
     }
 
+    /// Unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
+    /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
+    public var expiration: Int64? {
+        if let expiration = firstValueForTagName(.expiration) {
+            return Int64(expiration)
+        } else {
+            return nil
+        }
+    }
+
+    /// Whether the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
+    /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
+    public var isExpired: Bool {
+        if let expiration {
+            return Int64(Date.now.timeIntervalSince1970) >= expiration
+        } else {
+            return false
+        }
+    }
+
     /// All tags with the provided name.
     public func allTags(withTagName tagName: TagName) -> [Tag] {
         tags.filter { $0.name == tagName.rawValue }
@@ -352,6 +372,14 @@ public extension NostrEvent {
         @discardableResult
         public final func content(_ content: String?) -> Self {
             self.content = content
+            return self
+        }
+
+        /// Specifies a unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
+        /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
+        @discardableResult
+        public final func expiration(_ expiration: Int64) -> Self {
+            tags.append(Tag(name: .expiration, value: String(expiration)))
             return self
         }
 
