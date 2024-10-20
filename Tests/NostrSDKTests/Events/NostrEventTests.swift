@@ -68,6 +68,17 @@ final class NostrEventTests: XCTestCase, FixtureLoading, MetadataCoding {
         XCTAssertEqual(metadata.relays?[1], relay2)
     }
 
+    func testAlternativeSummary() throws {
+        let alternativeSummary = "Alternative summary to display for clients that do not support this event kind."
+        let customEvent = try NostrEvent.Builder(kind: EventKind(rawValue: 23456))
+            .alternativeSummary(alternativeSummary)
+            .build(signedBy: .test)
+        XCTAssertEqual(customEvent.alternativeSummary, alternativeSummary)
+
+        let decodedCustomEventWithAltTag: NostrEvent = try decodeFixture(filename: "custom_event_alt_tag")
+        XCTAssertEqual(decodedCustomEventWithAltTag.alternativeSummary, alternativeSummary)
+    }
+
     func testExpiration() throws {
         let futureExpiration = Int64(Date.now.timeIntervalSince1970 + 10000)
         let futureExpirationEvent = try NostrEvent.Builder(kind: .textNote)

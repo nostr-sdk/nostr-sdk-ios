@@ -150,6 +150,13 @@ public class NostrEvent: Codable, Equatable, Hashable {
         tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
     }
 
+    /// A short human-readable plaintext summary of what the event is about
+    /// when the event kind is part of a custom protocol and isn't meant to be read as text (like kind:1).
+    /// See [NIP-31 - Dealing with unknown event kinds](https://github.com/nostr-protocol/nips/blob/master/31.md).
+    public var alternativeSummary: String? {
+        firstValueForTagName(.alternativeSummary)
+    }
+
     /// Unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
     /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
     public var expiration: Int64? {
@@ -372,6 +379,15 @@ public extension NostrEvent {
         @discardableResult
         public final func content(_ content: String?) -> Self {
             self.content = content
+            return self
+        }
+
+        /// Specifies a short human-readable plaintext summary of what the event is about
+        /// when the event kind is part of a custom protocol and isn't meant to be read as text (like kind:1).
+        /// See [NIP-31 - Dealing with unknown event kinds](https://github.com/nostr-protocol/nips/blob/master/31.md).
+        @discardableResult
+        public final func alternativeSummary(_ alternativeSummary: String) -> Self {
+            tags.append(Tag(name: .alternativeSummary, value: alternativeSummary))
             return self
         }
 
