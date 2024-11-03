@@ -41,7 +41,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-29: Relay-based Groups](https://github.com/nostr-protocol/nips/blob/master/29.md)
 - [x] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
 - [x] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
-- [ ] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
+- [x] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
 - [ ] [NIP-34: `git` stuff](https://github.com/nostr-protocol/nips/blob/master/34.md)
 - [ ] [NIP-35: Torrents](https://github.com/nostr-protocol/nips/blob/master/35.md)
 - [ ] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
