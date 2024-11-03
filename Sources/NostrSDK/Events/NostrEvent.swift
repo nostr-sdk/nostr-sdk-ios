@@ -10,7 +10,7 @@ import Foundation
 /// A structure that describes a Nostr event.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
-public class NostrEvent: Codable, Equatable, Hashable, ContentWarningTagInterpreting, LabelTagInterpreting {
+public class NostrEvent: Codable, Equatable, Hashable, AlternativeSummaryTagInterpreting, ContentWarningTagInterpreting, ExpirationTagInterpreting, LabelTagInterpreting {
     public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
         lhs.id == rhs.id &&
         lhs.pubkey == rhs.pubkey &&
@@ -148,33 +148,6 @@ public class NostrEvent: Codable, Equatable, Hashable, ContentWarningTagInterpre
     /// Event coordinates referenced in this event.
     public var referencedEventCoordinates: [EventCoordinates] {
         tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
-    }
-
-    /// A short human-readable plaintext summary of what the event is about
-    /// when the event kind is part of a custom protocol and isn't meant to be read as text (like kind:1).
-    /// See [NIP-31 - Dealing with unknown event kinds](https://github.com/nostr-protocol/nips/blob/master/31.md).
-    public var alternativeSummary: String? {
-        firstValueForTagName(.alternativeSummary)
-    }
-
-    /// Unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
-    /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
-    public var expiration: Int64? {
-        if let expiration = firstValueForTagName(.expiration) {
-            return Int64(expiration)
-        } else {
-            return nil
-        }
-    }
-
-    /// Whether the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
-    /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
-    public var isExpired: Bool {
-        if let expiration {
-            return Int64(Date.now.timeIntervalSince1970) >= expiration
-        } else {
-            return false
-        }
     }
 
     /// All tags with the provided name.
@@ -318,7 +291,7 @@ public protocol NostrEventBuilding {
 
 public extension NostrEvent {
     /// Builder of a ``NostrEvent`` of type `T`.
-    class Builder<T: NostrEvent>: NostrEventBuilding, ContentWarningTagBuilding, LabelBuilding {
+    class Builder<T: NostrEvent>: NostrEventBuilding, AlternativeSummaryTagBuilding, ContentWarningTagBuilding, ExpirationTagBuilding, LabelTagBuilding {
         public typealias EventType = T
 
         /// The event kind.
@@ -379,23 +352,6 @@ public extension NostrEvent {
         @discardableResult
         public final func content(_ content: String?) -> Self {
             self.content = content
-            return self
-        }
-
-        /// Specifies a short human-readable plaintext summary of what the event is about
-        /// when the event kind is part of a custom protocol and isn't meant to be read as text (like kind:1).
-        /// See [NIP-31 - Dealing with unknown event kinds](https://github.com/nostr-protocol/nips/blob/master/31.md).
-        @discardableResult
-        public final func alternativeSummary(_ alternativeSummary: String) -> Self {
-            tags.append(Tag(name: .alternativeSummary, value: alternativeSummary))
-            return self
-        }
-
-        /// Specifies a unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
-        /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
-        @discardableResult
-        public final func expiration(_ expiration: Int64) -> Self {
-            tags.append(Tag(name: .expiration, value: String(expiration)))
             return self
         }
 

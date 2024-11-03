@@ -147,8 +147,8 @@ public extension LabelEvent {
 /// Otherwise, the label is attached to this event itself as the target.
 ///
 /// See [NIP-32 Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md).
-public protocol LabelBuilding: NostrEventBuilding {}
-public extension LabelBuilding {
+public protocol LabelTagBuilding: NostrEventBuilding {}
+public extension LabelTagBuilding {
     /// Labels an event in a given namespace.
     ///
     /// Namespaces can be any string but SHOULD be unambiguous by using a well-defined namespace (such as an ISO standard) or reverse domain name notation.
