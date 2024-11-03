@@ -8,7 +8,7 @@
 @testable import NostrSDK
 import XCTest
 
-final class NostrEventTests: XCTestCase, EventVerifying, FixtureLoading, MetadataCoding {
+final class NostrEventTests: XCTestCase, FixtureLoading, MetadataCoding {
 
     func testEquatable() throws {
         let textNoteEvent: TextNoteEvent = try decodeFixture(filename: "text_note")
@@ -66,65 +66,6 @@ final class NostrEventTests: XCTestCase, EventVerifying, FixtureLoading, Metadat
         XCTAssertEqual(metadata.relays?.count, 2)
         XCTAssertEqual(metadata.relays?[0], relay1)
         XCTAssertEqual(metadata.relays?[1], relay2)
-    }
-
-    func testAlternativeSummary() throws {
-        let alternativeSummary = "Alternative summary to display for clients that do not support this event kind."
-        let customEvent = try NostrEvent.Builder(kind: EventKind(rawValue: 23456))
-            .alternativeSummary(alternativeSummary)
-            .build(signedBy: .test)
-        XCTAssertEqual(customEvent.alternativeSummary, alternativeSummary)
-
-        let decodedCustomEventWithAltTag: NostrEvent = try decodeFixture(filename: "custom_event_alt_tag")
-        XCTAssertEqual(decodedCustomEventWithAltTag.alternativeSummary, alternativeSummary)
-    }
-
-    func testLabels() throws {
-        let event = try TextNoteEvent.Builder()
-            .appendLabels("IT-MI", "US-CA", namespace: "ISO-3166-2")
-            .appendLabels("en", namespace: "ISO-639-1")
-            .appendLabels("Milan", "San Francisco", mark: "cities")
-            .appendLabels("Italy", "United States of America")
-            .content("It's beautiful here in Milan and wonderful there in San Francisco!")
-            .build(signedBy: .test)
-
-        XCTAssertEqual(event.labels(for: "ISO-3166-2"), ["IT-MI", "US-CA"])
-        XCTAssertEqual(event.labels(for: "ISO-639-1"), ["en"])
-        XCTAssertEqual(event.labels(for: "cities"), ["Milan", "San Francisco"])
-        XCTAssertEqual(event.labels(for: nil), ["Italy", "United States of America"])
-        XCTAssertEqual(event.labels(for: "ugc"), ["Italy", "United States of America"])
-        XCTAssertEqual(event.labels(for: "doesnotexist"), [])
-
-        XCTAssertEqual(event.labelNamespaces, ["ISO-3166-2", "ISO-639-1"])
-
-        let labels = event.labels
-        XCTAssertEqual(labels["ISO-3166-2"], ["IT-MI", "US-CA"])
-        XCTAssertEqual(labels["ISO-639-1"], ["en"])
-        XCTAssertEqual(labels["cities"], ["Milan", "San Francisco"])
-        XCTAssertEqual(labels["ugc"], ["Italy", "United States of America"])
-        XCTAssertEqual(labels["doesnotexist"], nil)
-
-        try verifyEvent(event)
-    }
-
-    func testExpiration() throws {
-        let futureExpiration = Int64(Date.now.timeIntervalSince1970 + 10000)
-        let futureExpirationEvent = try NostrEvent.Builder(kind: .textNote)
-            .expiration(futureExpiration)
-            .build(signedBy: .test)
-        XCTAssertEqual(futureExpirationEvent.expiration, futureExpiration)
-        XCTAssertFalse(futureExpirationEvent.isExpired)
-
-        let pastExpiration = Int64(Date.now.timeIntervalSince1970 - 1)
-        let pastExpirationEvent = try NostrEvent.Builder(kind: .textNote)
-            .expiration(pastExpiration)
-            .build(signedBy: .test)
-        XCTAssertEqual(pastExpirationEvent.expiration, pastExpiration)
-        XCTAssertTrue(pastExpirationEvent.isExpired)
-
-        let decodedExpiredEvent: NostrEvent = try decodeFixture(filename: "test_event_expired")
-        XCTAssertEqual(decodedExpiredEvent.expiration, 1697090842)
-        XCTAssertTrue(decodedExpiredEvent.isExpired)
     }
 
 }

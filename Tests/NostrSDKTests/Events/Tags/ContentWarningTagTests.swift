@@ -10,7 +10,7 @@ import XCTest
 
 final class ContentWarningTagTests: XCTestCase, EventVerifying {
 
-    func testCreateContentWarningTaggedEvent() throws {
+    func testContentWarning() throws {
         let event = try NostrEvent.Builder(kind: .textNote)
             .contentWarning("Trigger warning.")
             .content("Pineapple goes great on pizza.")
