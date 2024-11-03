@@ -10,7 +10,7 @@ import Foundation
 /// A structure that describes a Nostr event.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
-public class NostrEvent: Codable, Equatable, Hashable, LabelTagInterpreting {
+public class NostrEvent: Codable, Equatable, Hashable, ContentWarningTagInterpreting, LabelTagInterpreting {
     public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
         lhs.id == rhs.id &&
         lhs.pubkey == rhs.pubkey &&
@@ -318,7 +318,7 @@ public protocol NostrEventBuilding {
 
 public extension NostrEvent {
     /// Builder of a ``NostrEvent`` of type `T`.
-    class Builder<T: NostrEvent>: NostrEventBuilding, LabelBuilding {
+    class Builder<T: NostrEvent>: NostrEventBuilding, ContentWarningTagBuilding, LabelBuilding {
         public typealias EventType = T
 
         /// The event kind.

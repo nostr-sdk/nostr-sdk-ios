@@ -44,7 +44,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [x] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
 - [ ] [NIP-34: `git` stuff](https://github.com/nostr-protocol/nips/blob/master/34.md)
 - [ ] [NIP-35: Torrents](https://github.com/nostr-protocol/nips/blob/master/35.md)
-- [ ] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
+- [x] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
 - [ ] [NIP-38: User Statuses](https://github.com/nostr-protocol/nips/blob/master/38.md)
 - [ ] [NIP-39: External Identities in Profiles](https://github.com/nostr-protocol/nips/blob/master/39.md)
 - [x] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
