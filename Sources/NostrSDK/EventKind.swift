@@ -135,6 +135,18 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// This kind of event represents a calendar event RSVP, which is a response to a calendar event to indicate a user's attendance intention.
     /// See [NIP-52 - Calendar Event RSVP](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-event-rsvp).
     case calendarEventRSVP
+    
+    /// GIVE SOME INFO HERE
+    /// See [NIP-47 - Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md).
+    case walletConnectInfo
+    
+    /// GIVE SOME INFO HERE
+    /// See [NIP-47 - Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md).
+    case walletConnectRequest
+    
+    /// GIVE SOME INFO HERE
+    /// See [NIP-47 - Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md).
+    case walletConnectResponse
 
     /// Any other event kind number that isn't supported by this enum yet will be represented by `unknown` so that `NostrEvent`s of those event kinds can still be encoded and decoded.
     case unknown(RawValue)
@@ -162,7 +174,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .dateBasedCalendarEvent,
         .timeBasedCalendarEvent,
         .calendar,
-        .calendarEventRSVP
+        .calendarEventRSVP,
+        .walletConnectInfo,
+        .walletConnectRequest,
+        .walletConnectResponse,
     ]
 
     public init(rawValue: Int) {
@@ -198,6 +213,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .timeBasedCalendarEvent:       return 31923
         case .calendar:                     return 31924
         case .calendarEventRSVP:            return 31925
+        case .walletConnectInfo:            return 13194
+        case .walletConnectRequest:         return 23194
+        case .walletConnectResponse:        return 23195
         case let .unknown(value):           return value
         }
     }
@@ -227,6 +245,9 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .timeBasedCalendarEvent:       return TimeBasedCalendarEvent.self
         case .calendar:                     return CalendarListEvent.self
         case .calendarEventRSVP:            return CalendarEventRSVP.self
+        case .walletConnectInfo:            return WalletConnectInfoEvent.self
+        case .walletConnectRequest:         return WalletConnectRequestEvent.self
+        case .walletConnectResponse:        return WalletConnectResponseEvent.self
         case .unknown:                      return NostrEvent.self
         }
     }
