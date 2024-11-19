@@ -7,6 +7,25 @@
 
 import Foundation
 
+enum WalletConnectError: String, Error {
+    /// The client is sending commands too fast. It should retry in a few seconds.
+    case rateLimited = "RATE_LIMITED"
+    /// The command is not known or is intentionally not implemented.
+    case notImplemented = "NOT_IMPLEMENTED"
+    /// The wallet does not have enough funds to cover a fee reserve or the payment amount.
+    case insufficentBallance = "INSUFFICIENT_BALANCE"
+    /// The wallet has exceeded its spending quota.
+    case quotaExceeded = "QUOTA_EXCEEDED"
+    /// This public key is not allowed to do this operation.
+    case restricted = "RESTRICTED"
+    /// This public key has no wallet connected.
+    case unauthorizes = "UNAUTHORIZED"
+    /// An internal error.
+    case `internal` = "INTERNAL"
+    /// Other error.
+    case other = "OTHER"
+}
+
 /// A special event with kind 3, meaning "follow list" is defined as having a list of p tags, one for each of the followed/known profiles one is following.
 ///
 /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md)
