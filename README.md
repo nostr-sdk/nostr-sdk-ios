@@ -136,9 +136,14 @@ If you would like to contribute to this library, please see [CONTRIBUTING.md](CO
 
 These are the core maintainers of this library and their Nostr public keys.
 
+### Active Maintainers
+
+- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
+
+### Passive / Inactive Maintainers
+
 - [Bryan Montz](https://github.com/bryanmontz) ([npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc](https://njump.me/npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc))
 - [Joel Klabo](https://github.com/joelklabo) ([npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt](https://njump.me/npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt))
-- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
 
 ## Acknowledgements
 
