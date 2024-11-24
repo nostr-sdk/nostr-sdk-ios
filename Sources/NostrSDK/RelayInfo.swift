@@ -13,6 +13,8 @@ import Foundation
 public struct RelayInfo: Codable {
     public let name: String?
     public let description: String?
+    public let bannerURL: String?
+    public let iconURL: String?
     public let contactPubkey: String?
     public let alternativeContact: String?
     public let supportedNIPs: [Int]?
@@ -26,9 +28,11 @@ public struct RelayInfo: Codable {
     public let tags: [String]?
     public let postingPolicyURL: String?
     public let retentionPolicies: [EventRetentionPolicy]?
-    
+
     enum CodingKeys: String, CodingKey {
         case name, description
+        case bannerURL = "banner"
+        case iconURL = "icon"
         case contactPubkey = "pubkey"
         case alternativeContact = "contact"
         case supportedNIPs = "supported_nips"
@@ -49,25 +53,33 @@ public struct RelayInfo: Codable {
         public let maxFilters: Int?
         public let maxLimit: Int?
         public let maxSubscriptionIdLength: Int?
+        @available(*, deprecated, message: "min_prefix was removed from NIP-11.")
         public let minPrefix: Int?
         public let maxEventTags: Int?
         public let maxContentLength: Int?
         public let minProofOfWorkDifficulty: Int?
         public let isAuthenticationRequired: Bool?
         public let isPaymentRequired: Bool?
-        
+        public let isWriteRestricted: Bool?
+        public let createdAtLowerLimit: Int64?
+        public let createdAtUpperLimit: Int64?
+
         enum CodingKeys: String, CodingKey {
             case maxMessageLength = "max_message_length"
             case maxSubscriptions = "max_subscriptions"
             case maxFilters = "max_filters"
             case maxLimit = "max_limit"
             case maxSubscriptionIdLength = "max_subid_length"
+            @available(*, deprecated, message: "min_prefix was removed from NIP-11.")
             case minPrefix = "min_prefix"
             case maxEventTags = "max_event_tags"
             case maxContentLength = "max_content_length"
             case minProofOfWorkDifficulty = "min_pow_difficulty"
             case isAuthenticationRequired = "auth_required"
             case isPaymentRequired = "payment_required"
+            case isWriteRestricted = "restricted_writes"
+            case createdAtLowerLimit = "created_at_lower_limit"
+            case createdAtUpperLimit = "created_at_upper_limit"
         }
     }
     
