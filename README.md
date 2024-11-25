@@ -6,9 +6,9 @@ Nostr SDK for Apple Platforms is a native Swift library that enables developers 
 
 ## Minimum Requirements
 
-- Swift 5.8
+- Swift 5.7
 - iOS 15
-- macOS 13
+- macOS 12
 
 ## Spec Compliance
 
