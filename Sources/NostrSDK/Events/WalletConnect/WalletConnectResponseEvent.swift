@@ -62,7 +62,7 @@ public final class WalletConnectResponseEvent: NostrEvent {
     }
     
     /// The response content including result type, error if any, and result data
-    public var response: (resultType: String, error: [String: String]?, result: [String: Any]?)? {
+    public var response: (WalletConnectResponse)? {
         guard let data = content.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let resultType = json["result_type"] as? String else {
@@ -72,7 +72,13 @@ public final class WalletConnectResponseEvent: NostrEvent {
         let error = json["error"] as? [String: String]
         let result = json["result"] as? [String: Any]
         
-        return (resultType, error, result)
+        return WalletConnectResponse(resultType: resultType, error: error, result: result)
+    }
+    
+    public struct WalletConnectResponse {
+        let resultType: String
+        let error: [String : String]?
+        let result: [String : Any]?
     }
 }
 

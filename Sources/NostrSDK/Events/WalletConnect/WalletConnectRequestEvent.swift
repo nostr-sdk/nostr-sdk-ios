@@ -76,8 +76,6 @@ public final class WalletConnectRequestEvent: NostrEvent {
     }
 }
 
-
-
 public extension EventCreating {
     /// Creates a ``WalletConnectRequestEvent`` (kind 23194) for requesting wallet operations.
     /// - Parameters:

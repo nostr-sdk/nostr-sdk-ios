@@ -182,7 +182,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .walletConnectInfo,
         .walletConnectRequest,
         .walletConnectResponse,
-        .walletConnectNotification,
+        .walletConnectNotification
     ]
 
     public init(rawValue: Int) {
