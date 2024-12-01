@@ -94,55 +94,84 @@ public extension EventCreating {
     /// - Returns: The signed ``TimeBasedCalendarEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    @available(*, deprecated, message: "Deprecated in favor of TimeBasedCalendarEvent.Builder.")
     func timeBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", startTimestamp: Date, endTimestamp: Date? = nil, startTimeZone: TimeZone? = nil, endTimeZone: TimeZone? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> TimeBasedCalendarEvent {
-        
-        // If the end timestamp is omitted, the calendar event ends instantaneously.
-        if let endTimestamp {
-            // The start timestamp must occur before the end timestamp, if it exists.
-            guard startTimestamp < endTimestamp else {
-                throw EventCreatingError.invalidInput
-            }
-        }
-        
-        var tags: [Tag] = [
-            Tag(name: .identifier, value: identifier),
-            Tag(name: .title, value: title),
-            Tag(name: "start", value: String(Int64(startTimestamp.timeIntervalSince1970)))
-        ]
-        
-        if let endTimestamp {
-            tags.append(Tag(name: "end", value: String(Int64(endTimestamp.timeIntervalSince1970))))
-        }
-        
+
+        let builder = try TimeBasedCalendarEvent.Builder()
+            .identifier(identifier)
+            .title(title)
+            .description(description)
+            .timestamps(from: startTimestamp, to: endTimestamp)
+
         if let startTimeZone {
-            tags.append(Tag(name: "start_tzid", value: startTimeZone.identifier))
+            builder.startTimeZone(startTimeZone)
         }
-        
-        // If the end time zone is omitted and the start time zone is provided, the time zone of the end timestamp is the same as the start timestamp.
+
         if let endTimeZone {
-            tags.append(Tag(name: "end_tzid", value: endTimeZone.identifier))
+            builder.endTimeZone(endTimeZone)
         }
-        
-        if let locations, !locations.isEmpty {
-            tags += locations.map { Tag(name: "location", value: $0) }
+
+        if let locations {
+            builder.locations(locations)
         }
-        
+
         if let geohash {
-            tags.append(Tag(name: "g", value: geohash))
+            builder.geohash(geohash)
         }
-        
+
         if let participants {
-            tags += participants.map { $0.tag }
+            builder.participants(participants)
         }
-        
+
         if let hashtags {
-            tags += hashtags.map { .hashtag($0) }
+            builder.hashtags(hashtags)
         }
-        
+
         if let references {
-            tags += references.map { Tag(name: .webURL, value: $0.absoluteString) }
+            builder.references(references)
         }
-        
-        return try TimeBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
+
+        return try builder.build(signedBy: keypair)
+    }
+}
+
+public extension TimeBasedCalendarEvent {
+    /// Builder of a ``TimeBasedCalendarEvent``.
+    final class Builder: NostrEvent.Builder<TimeBasedCalendarEvent>, CalendarEventBuilding {
+        public init() {
+            super.init(kind: .timeBasedCalendarEvent)
+        }
+
+        /// Sets the inclusive start (and optionally, exclusive end) timestamps of the event.
+        /// If the end timestamp is omitted, the calendar event ends instantaneously.
+        @discardableResult
+        public final func timestamps(from startTimestamp: Date, to endTimestamp: Date? = nil) throws -> Builder {
+            // If the end timestamp is omitted, the calendar event ends instantaneously.
+            if let endTimestamp {
+                // The start timestamp must occur before the end timestamp, if it exists.
+                guard startTimestamp < endTimestamp else {
+                    throw EventCreatingError.invalidInput
+                }
+            }
+            appendTags(Tag(name: "start", value: String(Int64(startTimestamp.timeIntervalSince1970))))
+
+            if let endTimestamp {
+                appendTags(Tag(name: "end", value: String(Int64(endTimestamp.timeIntervalSince1970))))
+            }
+
+            return self
+        }
+
+        /// Sets the time zone of the start timestamp.
+        @discardableResult
+        public final func startTimeZone(_ startTimeZone: TimeZone) -> Builder {
+            appendTags(Tag(name: "start_tzid", value: startTimeZone.identifier))
+        }
+
+        /// Sets the time zone of the end timestamp. If omitted and `startTimeZone` is provided, the time zone of the end timestamp is the same as the start timestamp.
+        @discardableResult
+        public final func endTimeZone(_ endTimeZone: TimeZone) -> Builder {
+            appendTags(Tag(name: "end_tzid", value: endTimeZone.identifier))
+        }
     }
 }

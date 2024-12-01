@@ -15,6 +15,66 @@ final class TimeBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let title = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
         let description = "Flight to Nostrica"
 
+        let startTimeZone = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
+        let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
+
+        let endTimeZone = try XCTUnwrap(TimeZone(identifier: "America/Costa_Rica"))
+        let endComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: endTimeZone, year: 2023, month: 3, day: 17, hour: 11, minute: 42)
+
+        let startTimestamp = try XCTUnwrap(startComponents.date)
+        let endTimestamp = try XCTUnwrap(endComponents.date)
+
+        let location = "John F. Kennedy International Airport, Queens, NY 11430, USA"
+        let geohash = "dr5x1p57bg9e"
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
+        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "organizer"))
+        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "attendee"))
+        let participants = [participant1, participant2]
+
+        let hashtags = ["flights", "costarica"]
+        let reference1 = try XCTUnwrap(URL(string: "https://nostrica.com/"))
+        let reference2 = try XCTUnwrap(URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit"))
+        let references = [reference1, reference2]
+
+        let timeBasedCalendarEvent = try TimeBasedCalendarEvent.Builder()
+            .identifier(identifier)
+            .title(title)
+            .description(description)
+            .timestamps(from: startTimestamp, to: endTimestamp)
+            .startTimeZone(startTimeZone)
+            .endTimeZone(endTimeZone)
+            .locations([location])
+            .geohash(geohash)
+            .participants(participants)
+            .hashtags(hashtags)
+            .references(references)
+            .build(signedBy: .test)
+
+        XCTAssertEqual(timeBasedCalendarEvent.identifier, identifier)
+        XCTAssertEqual(timeBasedCalendarEvent.title, title)
+        XCTAssertEqual(timeBasedCalendarEvent.content, description)
+        XCTAssertEqual(timeBasedCalendarEvent.startTimestamp, startTimestamp)
+        XCTAssertEqual(timeBasedCalendarEvent.endTimestamp, endTimestamp)
+        XCTAssertEqual(timeBasedCalendarEvent.startTimeZone, startTimeZone)
+        XCTAssertEqual(timeBasedCalendarEvent.endTimeZone, endTimeZone)
+        XCTAssertEqual(timeBasedCalendarEvent.locations, [location])
+        XCTAssertEqual(timeBasedCalendarEvent.geohash, geohash)
+        XCTAssertEqual(timeBasedCalendarEvent.participants, participants)
+        XCTAssertEqual(timeBasedCalendarEvent.hashtags, hashtags)
+        XCTAssertEqual(timeBasedCalendarEvent.references, references)
+
+        let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .timeBasedCalendarEvent, pubkey: Keypair.test.publicKey, identifier: identifier))
+        XCTAssertEqual(timeBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
+
+        try verifyEvent(timeBasedCalendarEvent)
+    }
+
+    func testCreateTimeBasedCalendarEventDeprecated() throws {
+        let identifier = "flight-from-new-york-jfk-to-san-jose-costa-rica-sjo-12345"
+        let title = "Flight from New York (JFK) to San José, Costa Rica (SJO)"
+        let description = "Flight to Nostrica"
+
         let startTimeZone = TimeZone(identifier: "America/New_York")
         let startComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: startTimeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
 
@@ -80,7 +140,7 @@ final class TimeBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let dateComponents = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2023, month: 3, day: 17, hour: 8, minute: 15)
         let timestamp = try XCTUnwrap(dateComponents.date)
 
-        XCTAssertThrowsError(try timeBasedCalendarEvent(title: title, description: description, startTimestamp: timestamp, endTimestamp: timestamp, signedBy: Keypair.test))
+        XCTAssertThrowsError(try TimeBasedCalendarEvent.Builder().timestamps(from: timestamp, to: timestamp))
     }
 
     func testCreateTimeBasedCalendarEventWithEndTimestampBeforeStartTimestampShouldFail() throws {
@@ -94,7 +154,7 @@ final class TimeBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let startTimestamp = try XCTUnwrap(startComponents.date)
         let endTimestamp = try XCTUnwrap(endComponents.date)
 
-        XCTAssertThrowsError(try timeBasedCalendarEvent(title: title, description: description, startTimestamp: startTimestamp, endTimestamp: endTimestamp, signedBy: Keypair.test))
+        XCTAssertThrowsError(try TimeBasedCalendarEvent.Builder().timestamps(from: startTimestamp, to: endTimestamp))
     }
 
     func testDecodeTimeBasedCalendarEvent() throws {

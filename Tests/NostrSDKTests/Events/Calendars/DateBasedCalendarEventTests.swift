@@ -31,6 +31,56 @@ final class DateBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let reference2 = try XCTUnwrap(URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit"))
         let references = [reference1, reference2]
 
+        let dateBasedCalendarEvent = try DateBasedCalendarEvent.Builder()
+            .identifier(identifier)
+            .title(title)
+            .description(description)
+            .dates(from: startDate, to: endDate)
+            .locations(locations)
+            .geohash(geohash)
+            .participants(participants)
+            .hashtags(hashtags)
+            .references(references)
+            .build(signedBy: .test)
+
+        XCTAssertEqual(dateBasedCalendarEvent.identifier, identifier)
+        XCTAssertEqual(dateBasedCalendarEvent.title, title)
+        XCTAssertEqual(dateBasedCalendarEvent.content, description)
+        XCTAssertEqual(dateBasedCalendarEvent.startDate, startDate)
+        XCTAssertEqual(dateBasedCalendarEvent.endDate, endDate)
+        XCTAssertEqual(dateBasedCalendarEvent.locations, locations)
+        XCTAssertEqual(dateBasedCalendarEvent.geohash, geohash)
+        XCTAssertEqual(dateBasedCalendarEvent.participants, participants)
+        XCTAssertEqual(dateBasedCalendarEvent.hashtags, hashtags)
+        XCTAssertEqual(dateBasedCalendarEvent.references, references)
+
+        let expectedReplaceableEventCoordinates = try XCTUnwrap(EventCoordinates(kind: .dateBasedCalendarEvent, pubkey: Keypair.test.publicKey, identifier: identifier))
+        XCTAssertEqual(dateBasedCalendarEvent.replaceableEventCoordinates(relayURL: nil), expectedReplaceableEventCoordinates)
+
+        try verifyEvent(dateBasedCalendarEvent)
+    }
+
+    func testCreateDateBasedCalendarEventDeprecated() throws {
+        let identifier = "nostrica-12345"
+        let title = "Nostrica"
+        let description = "First Nostr unconference"
+
+        let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
+        let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 21))
+
+        let locations = ["Awake, C. Garcias, Provincia de Puntarenas, Uvita, 60504, Costa Rica", "YouTube"]
+        let geohash = "d1sknt77t3xn"
+
+        let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostrsdk.com"))
+        let participant1 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "organizer"))
+        let participant2 = try XCTUnwrap(CalendarEventParticipant(pubkey: Keypair.test.publicKey, relayURL: relayURL, role: "attendee"))
+        let participants = [participant1, participant2]
+
+        let hashtags = ["nostr", "unconference", "nostrica"]
+        let reference1 = try XCTUnwrap(URL(string: "https://nostrica.com/"))
+        let reference2 = try XCTUnwrap(URL(string: "https://docs.google.com/document/d/1Gsv09gfuwhqhQerIkxeYQ7iOTjOHUC5oTnL2KKyHpR8/edit"))
+        let references = [reference1, reference2]
+
         let dateBasedCalendarEvent = try dateBasedCalendarEvent(
             withIdentifier: identifier,
             title: title,
@@ -67,7 +117,7 @@ final class DateBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let description = "First Nostr unconference"
         let timeOmittedDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
 
-        XCTAssertThrowsError(try dateBasedCalendarEvent(title: title, description: description, startDate: timeOmittedDate, endDate: timeOmittedDate, signedBy: Keypair.test))
+        XCTAssertThrowsError(try DateBasedCalendarEvent.Builder().dates(from: timeOmittedDate, to: timeOmittedDate))
     }
 
     func testCreateDateBasedCalendarEventWithEndDateBeforeStartDateShouldFail() throws {
@@ -76,7 +126,7 @@ final class DateBasedCalendarEventTests: XCTestCase, EventCreating, EventVerifyi
         let startDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 19))
         let endDate = try XCTUnwrap(TimeOmittedDate(year: 2023, month: 3, day: 18))
 
-        XCTAssertThrowsError(try dateBasedCalendarEvent(title: title, description: description, startDate: startDate, endDate: endDate, signedBy: Keypair.test))
+        XCTAssertThrowsError(try DateBasedCalendarEvent.Builder().dates(from: startDate, to: endDate))
     }
 
     func testDecodeDateBasedCalendarEvent() throws {

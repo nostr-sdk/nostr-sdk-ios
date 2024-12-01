@@ -76,48 +76,63 @@ public extension EventCreating {
     /// - Returns: The signed ``DateBasedCalendarEvent``.
     ///
     /// See [NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md).
+    @available(*, deprecated, message: "Deprecated in favor of DateBasedCalendarEvent.Builder.")
     func dateBasedCalendarEvent(withIdentifier identifier: String = UUID().uuidString, title: String, description: String = "", startDate: TimeOmittedDate, endDate: TimeOmittedDate? = nil, locations: [String]? = nil, geohash: String? = nil, participants: [CalendarEventParticipant]? = nil, hashtags: [String]? = nil, references: [URL]? = nil, signedBy keypair: Keypair) throws -> DateBasedCalendarEvent {
-        
-        var tags: [Tag] = []
-        
-        // If the end date is omitted, the calendar event ends on the same date as the start date.
-        if let endDate {
-            // The start date must occur before the end date, if it exists.
-            guard startDate < endDate else {
-                throw EventCreatingError.invalidInput
-            }
-            
-            tags.append(Tag(name: "end", value: endDate.dateString))
+
+        let builder = try DateBasedCalendarEvent.Builder()
+            .identifier(identifier)
+            .title(title)
+            .description(description)
+            .dates(from: startDate, to: endDate)
+
+        if let locations {
+            builder.locations(locations)
         }
-        
-        // Re-arrange tags so that it's easier to read with the identifier and name appearing first in the list of tags,
-        // and the end date being placed next to the start date.
-        tags = [
-            Tag(name: .identifier, value: identifier),
-            Tag(name: .title, value: title),
-            Tag(name: "start", value: startDate.dateString)
-        ] + tags
-        
-        if let locations, !locations.isEmpty {
-            tags += locations.map { Tag(name: "location", value: $0) }
-        }
-        
+
         if let geohash {
-            tags.append(Tag(name: "g", value: geohash))
+            builder.geohash(geohash)
         }
-        
-        if let participants, !participants.isEmpty {
-            tags += participants.map { $0.tag }
+
+        if let participants {
+            builder.participants(participants)
         }
-        
-        if let hashtags, !hashtags.isEmpty {
-            tags += hashtags.map { .hashtag($0) }
+
+        if let hashtags {
+            builder.hashtags(hashtags)
         }
-        
-        if let references, !references.isEmpty {
-            tags += references.map { Tag(name: .webURL, value: $0.absoluteString) }
+
+        if let references {
+            builder.references(references)
         }
-        
-        return try DateBasedCalendarEvent(content: description, tags: tags, signedBy: keypair)
+
+        return try builder.build(signedBy: keypair)
+    }
+}
+
+public extension DateBasedCalendarEvent {
+    /// Builder of a ``DateBasedCalendarEvent``.
+    final class Builder: NostrEvent.Builder<DateBasedCalendarEvent>, CalendarEventBuilding {
+        public init() {
+            super.init(kind: .dateBasedCalendarEvent)
+        }
+
+        @discardableResult
+        public final func dates(from startDate: TimeOmittedDate, to endDate: TimeOmittedDate? = nil) throws -> Builder {
+            // If the end date is omitted, the calendar event ends on the same date as the start date.
+            if let endDate {
+                // The start date must occur before the end date, if it exists.
+                guard startDate < endDate else {
+                    throw EventCreatingError.invalidInput
+                }
+            }
+
+            appendTags(Tag(name: "start", value: startDate.dateString))
+
+            if let endDate {
+                appendTags(Tag(name: "end", value: endDate.dateString))
+            }
+
+            return self
+        }
     }
 }
