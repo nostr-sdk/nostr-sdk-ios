@@ -6,7 +6,7 @@ Nostr SDK for Apple Platforms is a native Swift library that enables developers 
 
 ## Minimum Requirements
 
-- Swift 5.8
+- Swift 5.7
 - iOS 15
 - macOS 12
 
@@ -32,6 +32,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [x] [NIP-18: Reposts](https://github.com/nostr-protocol/nips/blob/master/18.md)
 - [x] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
 - [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
+- [ ] [NIP-22: Comment](https://github.com/nostr-protocol/nips/blob/master/22.md)
 - [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
 - [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
@@ -65,8 +66,11 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-58: Badges](https://github.com/nostr-protocol/nips/blob/master/58.md)
 - [x] [NIP-59: Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md)
+- [ ] [NIP-60: Cashu Wallet](https://github.com/nostr-protocol/nips/blob/master/60.md)
+- [ ] [NIP-61: Nutzaps](https://github.com/nostr-protocol/nips/blob/master/61.md)
 - [ ] [NIP-64: Chess (PGN)](https://github.com/nostr-protocol/nips/blob/master/64.md)
 - [x] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
+- [ ] [NIP-69: Peer-to-peer Order events](https://github.com/nostr-protocol/nips/blob/master/69.md)
 - [ ] [NIP-70: Protected Events](https://github.com/nostr-protocol/nips/blob/master/70.md)
 - [ ] [NIP-71: Video Events](https://github.com/nostr-protocol/nips/blob/master/71.md)
 - [ ] [NIP-72: Moderated Communities](https://github.com/nostr-protocol/nips/blob/master/72.md)
@@ -132,9 +136,14 @@ If you would like to contribute to this library, please see [CONTRIBUTING.md](CO
 
 These are the core maintainers of this library and their Nostr public keys.
 
+### Active Maintainers
+
+- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
+
+### Passive / Inactive Maintainers
+
 - [Bryan Montz](https://github.com/bryanmontz) ([npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc](https://njump.me/npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc))
 - [Joel Klabo](https://github.com/joelklabo) ([npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt](https://njump.me/npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt))
-- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
 
 ## Acknowledgements
 

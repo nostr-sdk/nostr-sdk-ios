@@ -1,6 +1,8 @@
 {
     "name": "nostr.test",
     "description": "Nostr Test",
+    "banner": "https://nostrsdk.com/banner.png",
+    "icon": "https://nostrsdk.com/icon.png",
     "pubkey": "test-pubkey",
     "contact": "mailto:somebody@nostr.test",
     "supported_nips": [
@@ -25,7 +27,10 @@
         "max_content_length": 65536,
         "min_pow_difficulty": 0,
         "auth_required": false,
-        "payment_required": true
+        "payment_required": true,
+        "restricted_writes": true,
+        "created_at_lower_limit": 31536000,
+        "created_at_upper_limit": 3
     },
     "retention": [
         { "kinds": [0, 1, [5, 7], [40, 49]], "time": 3600 },

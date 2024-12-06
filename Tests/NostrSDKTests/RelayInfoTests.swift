@@ -15,6 +15,8 @@ final class RelayInfoTests: XCTestCase, FixtureLoading {
         
         XCTAssertEqual(info.name, "nostr.test")
         XCTAssertEqual(info.description, "Nostr Test")
+        XCTAssertEqual(info.bannerURL, "https://nostrsdk.com/banner.png")
+        XCTAssertEqual(info.iconURL, "https://nostrsdk.com/icon.png")
         XCTAssertEqual(info.contactPubkey, "test-pubkey")
         XCTAssertEqual(info.alternativeContact, "mailto:somebody@nostr.test")
         XCTAssertEqual(info.supportedNIPs, [1, 2, 4, 9])
@@ -37,7 +39,10 @@ final class RelayInfoTests: XCTestCase, FixtureLoading {
         XCTAssertEqual(info.limitations?.minProofOfWorkDifficulty, 0)
         XCTAssertEqual(info.limitations?.isAuthenticationRequired, false)
         XCTAssertEqual(info.limitations?.isPaymentRequired, true)
-        
+        XCTAssertEqual(info.limitations?.isWriteRestricted, true)
+        XCTAssertEqual(info.limitations?.createdAtLowerLimit, 31536000)
+        XCTAssertEqual(info.limitations?.createdAtUpperLimit, 3)
+
         let admissionFee = try XCTUnwrap(info.fees?.admission?.first)
         XCTAssertEqual(admissionFee.amount, 1000000)
         XCTAssertEqual(admissionFee.unit, "msats")
