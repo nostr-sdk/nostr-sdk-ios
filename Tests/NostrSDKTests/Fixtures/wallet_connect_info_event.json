@@ -1,0 +1,11 @@
+{
+    "id": "a87228880982599ed0f83411e8ea4f6714f35961f32b2274994897c218ad171d",
+    "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+    "created_at": 1702832309,
+    "kind": 13194,
+    "tags": [
+        ["notifications", "payment_received payment_sent"]
+    ],
+    "content": "pay_invoice get_balance notifications",
+    "sig": "b1f04510811195f69552dc1aff5033f306b4fdf9e6e7c1ac265438b457932266414bdf1ed9ec0c2c2f22d56bef7e519af5c3bfb974c933fd20037918b95dc65a"
+}
