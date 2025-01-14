@@ -26,6 +26,14 @@ struct ContentView: View {
                                     AnyView(LegacyDirectMessageDemoView()),
                                    imageName: "list.bullet",
                                    labelText: "NIP-04 Direct Message")
+                    ListOptionView(destinationView:
+                                    AnyView(EncryptMessageDemoView()),
+                                   imageName: "list.bullet",
+                                   labelText: "NIP-44 Encrypt")
+                    ListOptionView(destinationView:
+                                    AnyView(DecryptMessageDemoView()),
+                                   imageName: "list.bullet",
+                                   labelText: "NIP-44 Decrypt")
                     ListOptionView(destinationView: AnyView(GenerateKeyDemoView()),
                                    imageName: "key",
                                    labelText: "Key Generation")
