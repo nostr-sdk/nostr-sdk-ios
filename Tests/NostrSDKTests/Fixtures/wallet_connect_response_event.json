@@ -1,0 +1,12 @@
+{
+    "id": "c87228880982599ed0f83411e8ea4f6714f35961f32b2274994897c218ad171f",
+    "pubkey": "9947f9659dd80c3682402b612f5447e28249997fb3709500c32a585eb0977340",
+    "created_at": 1702832311,
+    "kind": 23195,
+    "tags": [
+        ["p", "8e7e9c42a91bfef19fa929e5fda1b72e0ebc1a4c1141673e2794234d86addf4f"],
+        ["e", "b87228880982599ed0f83411e8ea4f6714f35961f32b2274994897c218ad171e"]
+    ],
+    "content": "{\"result_type\":\"pay_invoice\",\"error\":null,\"result\":{\"preimage\":\"0123456789abcdef\",\"fees_paid\":5}}",
+    "sig": "d1f04510811195f69552dc1aff5033f306b4fdf9e6e7c1ac265438b457932266414bdf1ed9ec0c2c2f22d56bef7e519af5c3bfb974c933fd20037918b95dc65c"
+}

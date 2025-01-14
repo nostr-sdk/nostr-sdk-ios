@@ -53,7 +53,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [x] [NIP-44: Versioned Encryption](https://github.com/nostr-protocol/nips/blob/master/44.md)
 - [ ] [NIP-45: Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
 - [ ] [NIP-46: Nostr Connect](https://github.com/nostr-protocol/nips/blob/master/46.md)
-- [ ] [NIP-47: Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md)
+- [x] [NIP-47: Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md)
 - [ ] [NIP-48: Proxy Tags](https://github.com/nostr-protocol/nips/blob/master/48.md)
 - [ ] [NIP-49: Private Key Encryption](https://github.com/nostr-protocol/nips/blob/master/49.md)
 - [ ] [NIP-50: Search Capability](https://github.com/nostr-protocol/nips/blob/master/50.md)
