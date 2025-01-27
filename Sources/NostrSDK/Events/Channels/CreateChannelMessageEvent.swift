@@ -43,15 +43,20 @@ public extension EventCreating {
     func createChannelMessageEvent(
         withContent content: String,
         eventId: String,
-        relayUrl: String,
         hashtag: String? = nil,
-        signedBy keypair: Keypair
+        signedBy keypair: Keypair,
+        otherParameters: [String]? = nil
     ) throws -> CreateChannelMessageEvent {
         
         var tags: [Tag] = [
             Tag.pubkey(keypair.publicKey.hex),
-            Tag.event(eventId, otherParameters: [relayUrl, "root"]),
         ]
+        
+        if let otherParameters = otherParameters {
+            tags.append(Tag.event(eventId, otherParameters: otherParameters))
+        } else {
+            tags.append(Tag.event(eventId))
+        }
         
         if let hashtag = hashtag {
             tags.append(Tag.hashtag(hashtag))
