@@ -63,6 +63,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// See [NIP-59 - Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md).
     case seal
 
+    /// This kind of event is a chat message meant for direct messaging with a chat room consisting of one or multiple pubkeys.
+    ///
+    /// See [NIP-17 - Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md).
+    case directMessage
+
     /// This kind of note is used to signal to followers that another event is worth reading.
     ///
     /// > Note: The reposted event can be any kind of event other than a kind 1 text note.
@@ -101,7 +106,12 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     ///
     /// See [NIP-56](https://github.com/nostr-protocol/nips/blob/b4cdc1a73d415c79c35655fa02f5e55cd1f2a60c/56.md#nip-56).
     case report
-    
+
+    /// This kind of event attaches labels to label targets. This allow sof rlabeling of events, people, relays, or topics.
+    ///
+    /// See [NIP-32 Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md).
+    case label
+
     /// This kind of event contains a list of things the user does not want to see, such as pubkeys, hashtags, words, and event ids (threads).
     ///
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
@@ -159,6 +169,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .repost,
         .reaction,
         .seal,
+        .directMessage,
         .genericRepost,
         .channelCreation,
         .channelMetadata,
@@ -167,6 +178,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .channelMuteUser,
         .giftWrap,
         .report,
+        .label,
         .muteList,
         .relayListMetadata,
         .bookmarksList,
@@ -197,6 +209,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .repost:                       return 6
         case .reaction:                     return 7
         case .seal:                         return 13
+        case .directMessage:                return 14
         case .genericRepost:                return 16
         case .channelCreation:              return 40
         case .channelMetadata:              return 41
@@ -205,6 +218,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .channelMuteUser:              return 44
         case .giftWrap:                     return 1059
         case .report:                       return 1984
+        case .label:                        return 1985
         case .muteList:                     return 10000
         case .relayListMetadata:            return 10002
         case .bookmarksList:                return 10003
@@ -229,6 +243,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .repost:                       return TextNoteRepostEvent.self
         case .reaction:                     return ReactionEvent.self
         case .seal:                         return SealEvent.self
+        case .directMessage:                return DirectMessageEvent.self
         case .genericRepost:                return GenericRepostEvent.self
         case .channelCreation:              return CreateChannelEvent.self
         case .channelMetadata:              return SetChannelMetadataEvent.self
@@ -237,6 +252,7 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .channelMuteUser:              return MuteChannelUserEvent.self
         case .giftWrap:                     return GiftWrapEvent.self
         case .report:                       return ReportEvent.self
+        case .label:                        return LabelEvent.self
         case .muteList:                     return MuteListEvent.self
         case .relayListMetadata:            return RelayListMetadataEvent.self
         case .bookmarksList:                return BookmarksListEvent.self

@@ -6,7 +6,7 @@ Nostr SDK for Apple Platforms is a native Swift library that enables developers 
 
 ## Minimum Requirements
 
-- Swift 5.8
+- Swift 5.7
 - iOS 15
 - macOS 12
 
@@ -22,16 +22,17 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-06: Basic key derivation from mnemonic seed phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)
 - [ ] [NIP-07: `window.nostr` capability for web browsers](https://github.com/nostr-protocol/nips/blob/master/07.md)
 - [ ] [NIP-08: Handling Mentions](https://github.com/nostr-protocol/nips/blob/master/08.md) --- **unrecommended**: deprecated in favor of [NIP-27](https://github.com/nostr-protocol/nips/blob/master/27.md)
-- [x] [NIP-09: Event Deletion](https://github.com/nostr-protocol/nips/blob/master/09.md)
+- [x] [NIP-09: Event Deletion Request](https://github.com/nostr-protocol/nips/blob/master/09.md)
 - [x] [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](https://github.com/nostr-protocol/nips/blob/master/10.md)
 - [x] [NIP-11: Relay Information Document](https://github.com/nostr-protocol/nips/blob/master/11.md)
 - [ ] [NIP-13: Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md)
-- [ ] [NIP-14: Subject tag in text events](https://github.com/nostr-protocol/nips/blob/master/14.md)
+- [x] [NIP-14: Subject tag in text events](https://github.com/nostr-protocol/nips/blob/master/14.md)
 - [ ] [NIP-15: Nostr Marketplace (for resilient marketplaces)](https://github.com/nostr-protocol/nips/blob/master/15.md)
-- [ ] [NIP-17: Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
+- [x] [NIP-17: Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
 - [x] [NIP-18: Reposts](https://github.com/nostr-protocol/nips/blob/master/18.md)
 - [x] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
 - [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
+- [ ] [NIP-22: Comment](https://github.com/nostr-protocol/nips/blob/master/22.md)
 - [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
 - [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
@@ -40,13 +41,14 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
 - [ ] [NIP-29: Relay-based Groups](https://github.com/nostr-protocol/nips/blob/master/29.md)
 - [x] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
-- [ ] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
-- [ ] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
+- [x] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
+- [x] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
 - [ ] [NIP-34: `git` stuff](https://github.com/nostr-protocol/nips/blob/master/34.md)
-- [ ] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
+- [ ] [NIP-35: Torrents](https://github.com/nostr-protocol/nips/blob/master/35.md)
+- [x] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
 - [ ] [NIP-38: User Statuses](https://github.com/nostr-protocol/nips/blob/master/38.md)
 - [ ] [NIP-39: External Identities in Profiles](https://github.com/nostr-protocol/nips/blob/master/39.md)
-- [ ] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
+- [x] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [ ] [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
 - [x] [NIP-44: Versioned Encryption](https://github.com/nostr-protocol/nips/blob/master/44.md)
 - [ ] [NIP-45: Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
@@ -59,12 +61,20 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [x] [NIP-52: Calendar Events](https://github.com/nostr-protocol/nips/blob/master/52.md)
 - [ ] [NIP-53: Live Activities](https://github.com/nostr-protocol/nips/blob/master/53.md)
 - [ ] [NIP-54: Wiki](https://github.com/nostr-protocol/nips/blob/master/54.md)
+- [ ] [NIP-55: Android Signer Application](https://github.com/nostr-protocol/nips/blob/master/55.md)
 - [x] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-58: Badges](https://github.com/nostr-protocol/nips/blob/master/58.md)
 - [x] [NIP-59: Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md)
+- [ ] [NIP-60: Cashu Wallet](https://github.com/nostr-protocol/nips/blob/master/60.md)
+- [ ] [NIP-61: Nutzaps](https://github.com/nostr-protocol/nips/blob/master/61.md)
+- [ ] [NIP-64: Chess (PGN)](https://github.com/nostr-protocol/nips/blob/master/64.md)
 - [x] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
+- [ ] [NIP-69: Peer-to-peer Order events](https://github.com/nostr-protocol/nips/blob/master/69.md)
+- [ ] [NIP-70: Protected Events](https://github.com/nostr-protocol/nips/blob/master/70.md)
+- [ ] [NIP-71: Video Events](https://github.com/nostr-protocol/nips/blob/master/71.md)
 - [ ] [NIP-72: Moderated Communities](https://github.com/nostr-protocol/nips/blob/master/72.md)
+- [ ] [NIP-73: External Content IDs](https://github.com/nostr-protocol/nips/blob/master/73.md)
 - [ ] [NIP-75: Zap Goals](https://github.com/nostr-protocol/nips/blob/master/75.md)
 - [ ] [NIP-78: Application-specific data](https://github.com/nostr-protocol/nips/blob/master/78.md)
 - [ ] [NIP-84: Highlights](https://github.com/nostr-protocol/nips/blob/master/84.md)
@@ -103,7 +113,7 @@ let package = Package(
 	// ...
     dependencies: [
         // ...
-        .package(url: "https://github.com/nostr-sdk/nostr-sdk-ios.git", .upToNextMajor(from: "0.1.0"))
+        .package(url: "https://github.com/nostr-sdk/nostr-sdk-ios.git", .upToNextMajor(from: "0.2.0"))
     ],
     targets: [
         .target(
@@ -126,9 +136,14 @@ If you would like to contribute to this library, please see [CONTRIBUTING.md](CO
 
 These are the core maintainers of this library and their Nostr public keys.
 
+### Active Maintainers
+
+- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
+
+### Passive / Inactive Maintainers
+
 - [Bryan Montz](https://github.com/bryanmontz) ([npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc](https://njump.me/npub1qlk0nqupxmlyxravg0aqscxmcc4q4tq898z6x003rykwwh3npj0syvyayc))
 - [Joel Klabo](https://github.com/joelklabo) ([npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt](https://njump.me/npub19a86gzxctwtz68l8zld2u9y2fjvyyj4juyx8m5geylssrmfj27eqs22ckt))
-- [Terry Yiu](https://github.com/tyiu) ([npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf](https://njump.me/npub1yaul8k059377u9lsu67de7y637w4jtgeuwcmh5n7788l6xnlnrgs3tvjmf))
 
 ## Acknowledgements
 

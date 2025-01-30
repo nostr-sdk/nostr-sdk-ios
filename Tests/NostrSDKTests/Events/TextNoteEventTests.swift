@@ -32,7 +32,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertNil(note.rootEventTag)
         XCTAssertNil(note.replyEventTag)
         XCTAssertEqual(note.mentionedEventTags, [])
+        XCTAssertEqual(note.referencedEventIds, [])
         XCTAssertEqual(note.mentionedEventIds, [])
+        XCTAssertEqual(note.referencedPubkeys, [])
         XCTAssertEqual(note.mentionedPubkeys, [])
 
         try verifyEvent(note)
@@ -57,7 +59,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertNil(note.rootEventTag)
         XCTAssertNil(note.replyEventTag)
         XCTAssertEqual(note.mentionedEventTags, [])
+        XCTAssertEqual(note.referencedEventIds, [])
         XCTAssertEqual(note.mentionedEventIds, [])
+        XCTAssertEqual(note.referencedPubkeys, [])
         XCTAssertEqual(note.mentionedPubkeys, [])
 
         try verifyEvent(note)
@@ -101,12 +105,14 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(note.mentionedEventTags[0], mentionedEventTag1)
         XCTAssertEqual(note.mentionedEventTags[1], mentionedEventTag2)
 
+        XCTAssertEqual(note.referencedEventIds, [rootEvent.id, "mentionednote1", "mentionednote2"])
         XCTAssertEqual(note.mentionedEventIds, [rootEvent.id, "mentionednote1", "mentionednote2"])
+        XCTAssertEqual(note.referencedPubkeys, [Keypair.test.publicKey.hex])
         XCTAssertEqual(note.mentionedPubkeys, [Keypair.test.publicKey.hex])
 
         let expectedTags: [Tag] = [
             rootEventTag.tag,
-            .pubkey(Keypair.test.publicKey.hex),
+            .pubkey(Keypair.test.publicKey.hex, otherParameters: ["wss://relay.damus.io"]),
             mentionedEventTag1.tag,
             mentionedEventTag2.tag
         ]
@@ -144,7 +150,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(note.mentionedEventTags[0], mentionedEventTag1)
         XCTAssertEqual(note.mentionedEventTags[1], mentionedEventTag2)
 
+        XCTAssertEqual(note.referencedEventIds, [rootEvent.id, "mentionednote1", "mentionednote2"])
         XCTAssertEqual(note.mentionedEventIds, [rootEvent.id, "mentionednote1", "mentionednote2"])
+        XCTAssertEqual(note.referencedPubkeys, [Keypair.test.publicKey.hex])
         XCTAssertEqual(note.mentionedPubkeys, [Keypair.test.publicKey.hex])
 
         let expectedTags: [Tag] = [
@@ -159,7 +167,7 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateTextNoteThreadedReply() throws {
-        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note_reply")
 
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
         let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
@@ -179,15 +187,13 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
         let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
-        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: noteToReply.pubkey))
         let expectedTags: [Tag] = [
             expectedRootEventTag.tag,
             mentionedEventTag1.tag,
             mentionedEventTag2.tag,
             replyEventTag.tag,
-            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
-            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
-
+            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6")
         ]
         XCTAssertEqual(note.tags, expectedTags)
 
@@ -195,7 +201,7 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
     }
 
     func testCreateTextNoteThreadedReplyDeprecated() throws {
-        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note")
+        let noteToReply: TextNoteEvent = try decodeFixture(filename: "text_note_reply")
 
         let relayURL = try XCTUnwrap(URL(string: "wss://relay.nostr.com"))
         let mentionedEventTag1 = try XCTUnwrap(EventTag(eventId: "mentionednote1", relayURL: relayURL, marker: .mention))
@@ -208,15 +214,13 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
 
         let rootEventTag = try XCTUnwrap(noteToReply.rootEventTag)
         let expectedRootEventTag = try XCTUnwrap(EventTag(eventId: rootEventTag.eventId, relayURL: rootEventTag.relayURL, marker: .root))
-        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"))
+        let replyEventTag = try XCTUnwrap(EventTag(eventId: noteToReply.id, marker: .reply, pubkey: noteToReply.pubkey))
         let expectedTags: [Tag] = [
             expectedRootEventTag.tag,
             mentionedEventTag1.tag,
             mentionedEventTag2.tag,
             replyEventTag.tag,
-            .pubkey("f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"),
-            .pubkey("82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2")
-
+            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6")
         ]
         XCTAssertEqual(note.tags, expectedTags)
 
@@ -240,7 +244,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.content, "I think it stays persistent on your profile, but interface setting doesn’t persist. Bug.  ")
         XCTAssertEqual(event.signature, "96e6667348b2b1fc5f6e73e68fb1605f571ad044077dda62a35c15eb8290f2c4559935db461f8466df3dcf39bc2e11984c5344f65aabee4520dd6653d74cdc09")
 
+        XCTAssertEqual(event.referencedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
         XCTAssertEqual(event.mentionedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
+        XCTAssertEqual(event.referencedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
         XCTAssertEqual(event.mentionedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
     }
 
@@ -256,13 +262,15 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
             .event("a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", otherParameters: ["", "root"]),
             .event("85f247a5d137652a720ca2a0a1f0c9933cf1be1e461432da765cf479de3d5950", otherParameters: ["", "mention"]),
             .event("c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda", otherParameters: ["", "reply"]),
-            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6", otherParameters: ["", "mention"])
+            .pubkey("a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6")
         ]
         XCTAssertEqual(event.tags, expectedTags)
         XCTAssertEqual(event.content, "Reply 2 with fix with mention nostr:nevent1qqsgtuj85hgnwef2wgx29g9p7ryex083hc0yv9pjmfm9earemc74j5qpp4mhxue69uhkummn9ekx7mqzyz50xus6387m0xn703h8hqf5cus2gz9kcf9lgf3yr884fvtqc5n6vqcyqqqqqqg5vcwpa")
         XCTAssertEqual(event.signature, "e7d578bcd8d712a43f5c42cbeb76e6e4b09d6e0ab0a4bf0aacb7d7a7368d32e2ef0632d11e707b6d7e86b00460e7d5a6b5733c7b182a3d78b0e482c99a75b892")
 
+        XCTAssertEqual(event.referencedPubkeys, ["a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6"])
         XCTAssertEqual(event.mentionedPubkeys, ["a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6"])
+        XCTAssertEqual(event.referencedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", "85f247a5d137652a720ca2a0a1f0c9933cf1be1e461432da765cf479de3d5950", "c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda"])
         XCTAssertEqual(event.mentionedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", "85f247a5d137652a720ca2a0a1f0c9933cf1be1e461432da765cf479de3d5950", "c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda"])
 
         XCTAssertEqual(event.rootEventTag, try EventTag(eventId: "a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", marker: .root))
@@ -287,7 +295,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.content, "Direct reply with mention nostr:nevent1qqs920tu9k0ghtky5zghxykntvfrjxeylnhkg9a3thegss3wtp8qjrgpp4mhxue69uhkummn9ekx7mqzyz50xus6387m0xn703h8hqf5cus2gz9kcf9lgf3yr884fvtqc5n6vqcyqqqqqqgwjgqyy")
         XCTAssertEqual(event.signature, "b2a33fbf571dc3056346bf4f28b620076a8152d6b419ae7b4c474350c7811325a5996d63e3520130d89f97ee73e92f94122a0bb478b9517eae5d8c22ffd77b7f")
 
+        XCTAssertEqual(event.referencedPubkeys, ["a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6"])
         XCTAssertEqual(event.mentionedPubkeys, ["a8f3721a89fdb79a7e7c6e7b8134c720a408b6c24bf4262419cf54b160c527a6"])
+        XCTAssertEqual(event.referencedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", "553d7c2d9e8baec4a0917312d35b12391b24fcef6417b15df288422e584e090d"])
         XCTAssertEqual(event.mentionedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", "553d7c2d9e8baec4a0917312d35b12391b24fcef6417b15df288422e584e090d"])
 
         XCTAssertEqual(event.rootEventTag, try EventTag(eventId: "a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", marker: .root))
@@ -310,7 +320,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.content, "Reply 2 with deprecated positional tags and mention\nnostr:note1257hctv73whvfgy3wvfdxkcj8ydjfl80vstmzh0j3ppzukzwpyxsc0hy03")
         XCTAssertEqual(event.signature, "a40b016c85d62a771793300c73494157dcb813eb25aa101b13e26beb987f521d80d1b1d2f026539107ecf861d60c98410063358adaaf5e45d1ce71a4e54e4774")
 
+        XCTAssertEqual(event.referencedPubkeys, [])
         XCTAssertEqual(event.mentionedPubkeys, [])
+        XCTAssertEqual(event.referencedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", "c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda"])
         XCTAssertEqual(event.mentionedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03", "c464c099740755440d0cac82b54c4dcd12faffa327ea4409ace221ae3e00deda"])
 
         let rootEventTag = try XCTUnwrap(event.rootEventTag)
@@ -339,7 +351,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.content, "Text note reply to root with deprecated positional tags.\nnostr:note1257hctv73whvfgy3wvfdxkcj8ydjfl80vstmzh0j3ppzukzwpyxsc0hy03")
         XCTAssertEqual(event.signature, "7583a884c7f5061e8693a3e09ef6f427f4fda0c4b58666b654e2db344b3ffbd8bfdb5ba11292990e3d3845f67d3afac500b18f9c98d62b11bd46d90ef95d115e")
 
+        XCTAssertEqual(event.referencedPubkeys, [])
         XCTAssertEqual(event.mentionedPubkeys, [])
+        XCTAssertEqual(event.referencedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03"])
         XCTAssertEqual(event.mentionedEventIds, ["a7823beaa8c9d4063bb554972fa5ba90112764231aed3d4d691199da3e5c6a03"])
 
         let rootEventTag = try XCTUnwrap(event.rootEventTag)
@@ -371,7 +385,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.subject, "test-subject")
         XCTAssertEqual(event.signature, "96e6667348b2b1fc5f6e73e68fb1605f571ad044077dda62a35c15eb8290f2c4559935db461f8466df3dcf39bc2e11984c5344f65aabee4520dd6653d74cdc09")
 
+        XCTAssertEqual(event.referencedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
         XCTAssertEqual(event.mentionedPubkeys, ["f8e6c64342f1e052480630e27e1016dce35fc3a614e60434fef4aa2503328ca9"])
+        XCTAssertEqual(event.referencedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
         XCTAssertEqual(event.mentionedEventIds, ["93930d65435d49db723499335473920795e7f13c45600dcfad922135cf44bd63"])
     }
 
@@ -392,7 +408,9 @@ final class TextNoteEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertEqual(event.subject, "test-subject")
         XCTAssertEqual(event.signature, "7a110a5ad3a248985d11dbb90da3f254fa99fbae80bf6e270f36d1c697a6fbf3f6508a5a027f00e2fc9ca81aafdd67c52b09e80c49fa5f7ab3bc8d5836a08601")
 
+        XCTAssertEqual(event.referencedPubkeys, [])
         XCTAssertEqual(event.mentionedPubkeys, [])
+        XCTAssertEqual(event.referencedEventIds, [])
         XCTAssertEqual(event.mentionedEventIds, [])
     }
 

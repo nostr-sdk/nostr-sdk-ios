@@ -9,7 +9,12 @@ import Foundation
 
 /// A constant that describes the type of a ``Tag``.
 public enum TagName: String {
-    
+
+    /// A short human-readable plaintext summary of what the event is about
+    /// when the event kind is part of a custom protocol and isn't meant to be read as text (like kind:1).
+    /// See [NIP-31 - Dealing with unknown event kinds](https://github.com/nostr-protocol/nips/blob/master/31.md).
+    case alternativeSummary = "alt"
+
     /// a custom emoji that defines the shortcode name and image URL of the image file
     case emoji
     
@@ -18,6 +23,10 @@ public enum TagName: String {
 
     /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is parameterized)
     case eventCoordinates = "a"
+
+    /// Specifies a unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.
+    /// See [NIP-40 - Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md).
+    case expiration
 
     /// a hashtag to categorize events for easy searching
     case hashtag = "t"

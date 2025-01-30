@@ -10,7 +10,7 @@ import Foundation
 /// A structure that describes a Nostr event.
 ///
 /// > Note: [NIP-01 Specification](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)
-public class NostrEvent: Codable, Equatable, Hashable {
+public class NostrEvent: Codable, Equatable, Hashable, AlternativeSummaryTagInterpreting, ContentWarningTagInterpreting, ExpirationTagInterpreting, LabelTagInterpreting {
     public static func == (lhs: NostrEvent, rhs: NostrEvent) -> Bool {
         lhs.id == rhs.id &&
         lhs.pubkey == rhs.pubkey &&
@@ -135,6 +135,21 @@ public class NostrEvent: Codable, Equatable, Hashable {
         NostrEvent(id: id, pubkey: pubkey, createdAt: createdAt, kind: kind, tags: tags, content: content, signature: nil)
     }
 
+    /// Pubkeys referenced in this event.
+    public var referencedPubkeys: [String] {
+        allValues(forTagName: .pubkey)
+    }
+
+    /// Events referenced in this event.
+    public var referencedEventIds: [String] {
+        allValues(forTagName: .event)
+    }
+
+    /// Event coordinates referenced in this event.
+    public var referencedEventCoordinates: [EventCoordinates] {
+        tags.compactMap { EventCoordinates(eventCoordinatesTag: $0) }
+    }
+
     /// All tags with the provided name.
     public func allTags(withTagName tagName: TagName) -> [Tag] {
         tags.filter { $0.name == tagName.rawValue }
@@ -206,17 +221,22 @@ public protocol NostrEventBuilding {
     /// The type of ``NostrEvent`` that this builder constructs.
     associatedtype EventType: NostrEvent
 
+    /// List of ``Tag``s.
+    var tags: [Tag] { get }
+
     /// Sets the unix timestamp in seconds of when the event is created.
     func createdAt(_ createdAt: Int64?) -> Self
 
     /// Appends the given list of tags to the end of the existing tags list.
     /// - Parameters:
     ///   - tags: The list of ``Tag`` objects.
+    @discardableResult
     func appendTags(_ tags: Tag...) -> Self
 
     /// Appends the given list of tags to the end of the existing tags list.
     /// - Parameters:
     ///   - tags: The list of ``Tag`` objects.
+    @discardableResult
     func appendTags(contentsOf tags: [Tag]) -> Self
 
     /// Inserts the given list of tags at a given index of the list.
@@ -225,6 +245,7 @@ public protocol NostrEventBuilding {
     ///   - index: The index of the existing list to insert the new tags into.
     ///       The tags are appended to the end of the list if the index is `nil`.
     ///       Must be a valid index of the existing tags list.
+    @discardableResult
     func insertTags(_ tags: Tag..., at index: Int) -> Self
 
     /// Inserts the given list of tags at a given index of the list.
@@ -233,6 +254,7 @@ public protocol NostrEventBuilding {
     ///   - index: The index of the existing list to insert the new tags into.
     ///       The tags are appended to the end of the list if the index is `nil`.
     ///       Must be a valid index of the existing tags list.
+    @discardableResult
     func insertTags(contentsOf tags: [Tag], at index: Int) -> Self
 
     /// Arbitrary string.
@@ -269,7 +291,7 @@ public protocol NostrEventBuilding {
 
 public extension NostrEvent {
     /// Builder of a ``NostrEvent`` of type `T`.
-    class Builder<T: NostrEvent>: NostrEventBuilding {
+    class Builder<T: NostrEvent>: NostrEventBuilding, AlternativeSummaryTagBuilding, ContentWarningTagBuilding, ExpirationTagBuilding, LabelTagBuilding {
         public typealias EventType = T
 
         /// The event kind.
@@ -308,7 +330,6 @@ public extension NostrEvent {
         @discardableResult
         public final func appendTags(_ tags: Tag...) -> Self {
             appendTags(contentsOf: tags)
-            return self
         }
 
         @discardableResult
@@ -320,7 +341,6 @@ public extension NostrEvent {
         @discardableResult
         public final func insertTags(_ tags: Tag..., at index: Int) -> Self {
             insertTags(contentsOf: tags, at: index)
-            return self
         }
 
         @discardableResult
@@ -335,7 +355,7 @@ public extension NostrEvent {
             return self
         }
 
-        public final func build(signedBy keypair: Keypair) throws -> T {
+        public func build(signedBy keypair: Keypair) throws -> T {
             try T(
                 kind: kind,
                 content: content ?? "",

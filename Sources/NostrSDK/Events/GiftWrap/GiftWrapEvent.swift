@@ -87,36 +87,38 @@ public extension EventCreating {
     /// Creates a ``GiftWrapEvent`` that takes a rumor, an unsigned ``NostrEvent``, and seals it in a signed ``SealEvent``, and then wraps that seal encrypted in the content of the gift wrap.
     ///
     /// - Parameters:
-    ///   - withRumor: a ``NostrEvent`` that is not signed.
-    ///   - toRecipient: the ``PublicKey`` of the receiver of the event. This pubkey will automatically be added as a tag to the ``GiftWrapEvent``.
+    ///   - rumor: a ``NostrEvent`` that is not signed.
+    ///   - recipient: the ``PublicKey`` of the receiver of the event. This pubkey will be used to encrypt the rumor. If `recipientAlias` is not provided, this pubkey will automatically be added as a tag to the ``GiftWrapEvent``.
+    ///   - recipientAlias: optional ``PublicKey`` of the receiver's alias used to receive gift wraps without exposing the receiver's identity. It is not used to encrypt the rumor. If it is provided, this pubkey will automatically be added as a tag to the ``GiftWrapEvent``.
     ///   - tags: the list of tags to add to the ``GiftWrapEvent`` in addition to the pubkey tag from `toRecipient`. This list should include any information needed to route the event to its intended recipient, such as [NIP-13 Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md).
     ///   - createdAt: the creation timestamp of the seal. Note that this timestamp SHOULD be tweaked to thwart time-analysis attacks. Note that some relays don't serve events dated in the future, so all timestamps SHOULD be in the past. By default, if `createdAt` is not provided, a random timestamp within 2 days in the past will be chosen.
-    ///   - keypair: The real ``Keypair`` to sign the seal with. Note that a different random one-time use key is used to sign the gift wrap.
+    ///   - keypair: The real ``Keypair`` to encrypt the rumor and sign the seal with. Note that a different random one-time use key is used to sign the gift wrap.
     func giftWrap(
         withRumor rumor: NostrEvent,
         toRecipient recipient: PublicKey,
+        recipientAlias: PublicKey? = nil,
         tags: [Tag] = [],
         createdAt: Int64 = Int64(Date.now.timeIntervalSince1970 - TimeInterval.random(in: 0...172800)),
         signedBy keypair: Keypair
     ) throws -> GiftWrapEvent {
         let seal = try seal(withRumor: rumor, toRecipient: recipient, signedBy: keypair)
-        return try giftWrap(withSeal: seal, toRecipient: recipient, tags: tags, createdAt: createdAt, signedBy: keypair)
+        return try giftWrap(withSeal: seal, toRecipient: recipient, recipientAlias: recipientAlias, tags: tags, createdAt: createdAt)
     }
 
     /// Creates a ``GiftWrapEvent`` that takes a signed ``SealEvent``, and then wraps that seal encrypted in the content of the gift wrap.
     ///
     /// - Parameters:
-    ///   - withSeal: a signed ``SealEvent``.
-    ///   - toRecipient: the ``PublicKey`` of the receiver of the event.
+    ///   - seal: a signed ``SealEvent``.
+    ///   - recipient: the ``PublicKey`` of the receiver of the event. This pubkey will be used to encrypt the rumor. If `recipientAlias` is not provided, this pubkey will automatically be added as a tag to the ``GiftWrapEvent``.
+    ///   - recipientAlias: optional ``PublicKey`` of the receiver's alias used to receive gift wraps without exposing the receiver's identity. It is not used to encrypt the rumor. If it is provided, this pubkey will automatically be added as a tag to the ``GiftWrapEvent``.
     ///   - tags: the list of tags.
     ///   - createdAt: the creation timestamp of the seal. Note that this timestamp SHOULD be tweaked to thwart time-analysis attacks. Note that some relays don't serve events dated in the future, so all timestamps SHOULD be in the past. By default, if `createdAt` is not provided, a random timestamp within 2 days in the past will be chosen.
-    ///   - keypair: The real ``Keypair`` to sign the seal with. Note that a different random one-time use key is used to sign the gift wrap.
     func giftWrap(
         withSeal seal: SealEvent,
         toRecipient recipient: PublicKey,
+        recipientAlias: PublicKey? = nil,
         tags: [Tag] = [],
-        createdAt: Int64 = Int64(Date.now.timeIntervalSince1970 - TimeInterval.random(in: 0...172800)),
-        signedBy keypair: Keypair
+        createdAt: Int64 = Int64(Date.now.timeIntervalSince1970 - TimeInterval.random(in: 0...172800))
     ) throws -> GiftWrapEvent {
         let jsonData = try JSONEncoder().encode(seal)
         guard let stringifiedJSON = String(data: jsonData, encoding: .utf8) else {
@@ -127,7 +129,7 @@ public extension EventCreating {
             throw GiftWrapError.keypairGenerationFailed
         }
 
-        let combinedTags = [Tag(name: .pubkey, value: recipient.hex)] + tags
+        let combinedTags = [Tag(name: .pubkey, value: (recipientAlias ?? recipient).hex)] + tags
 
         let encryptedSeal = try encrypt(plaintext: stringifiedJSON, privateKeyA: randomKeypair.privateKey, publicKeyB: recipient)
         return try GiftWrapEvent(content: encryptedSeal, tags: combinedTags, createdAt: createdAt, signedBy: randomKeypair)
