@@ -40,6 +40,9 @@ struct ContentView: View {
                     ListOptionView(destinationView: AnyView(NIP05VerficationDemoView()),
                                    imageName: "checkmark.seal",
                                    labelText: "NIP-05")
+                    ListOptionView(destinationView: AnyView(NativeSignerDemoView()),
+                                   imageName: "signature",
+                                   labelText: "Native Signer")
                 }
             }
             .navigationTitle("Nostr SDK Demo")
