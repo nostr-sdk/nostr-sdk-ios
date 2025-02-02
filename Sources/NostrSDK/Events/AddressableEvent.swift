@@ -34,3 +34,12 @@ public extension AddressableEvent {
 
 @available(*, deprecated, renamed: "AddressableEvent")
 public typealias ParameterizedReplaceableEvent = AddressableEvent
+
+public protocol AddressableEventBuilding: NostrEventBuilding {}
+public extension AddressableEventBuilding {
+    /// Sets the identifier of the addressable event.
+    @discardableResult
+    func identifier(_ identifier: String) -> Self {
+        appendTags(Tag(name: .identifier, value: identifier))
+    }
+}
