@@ -10,7 +10,7 @@ import Foundation
 /// An event that contains various things the user doesn't want to see in their feeds.
 /// 
 /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists).
-public final class MuteListEvent: NostrEvent, HashtagInterpreting, PrivateTagInterpreting, NonParameterizedReplaceableEvent {
+public final class MuteListEvent: NostrEvent, HashtagInterpreting, NormalReplaceableEvent, PrivateTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }

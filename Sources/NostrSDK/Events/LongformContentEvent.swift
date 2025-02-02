@@ -7,14 +7,14 @@
 
 import Foundation
 
-/// A long-form content event (kind 30023, a parameterized replaceable event) is for long-form text content, generally referred to as "articles" or "blog posts".
+/// A long-form content event (kind 30023, an addressable event) is for long-form text content, generally referred to as "articles" or "blog posts".
 ///
 /// > Important: The `content` of these events should be a string text in Markdown syntax. To maximize compatibility and readability between different clients and devices, any client that is creating long-form notes:
 ///              * MUST NOT hard line-break paragraphs of text, such as arbitrary line breaks at 80 column boundaries.
 ///              * MUST NOT support adding HTML to Markdown.
 ///
 /// > Note: [NIP-23 Specification](https://github.com/nostr-protocol/nips/blob/master/23.md)
-public final class LongformContentEvent: NostrEvent, HashtagInterpreting, ParameterizedReplaceableEvent, TitleTagInterpreting {
+public final class LongformContentEvent: NostrEvent, AddressableEvent, HashtagInterpreting, TitleTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }
@@ -63,7 +63,7 @@ public final class LongformContentEvent: NostrEvent, HashtagInterpreting, Parame
 
 public extension EventCreating {
 
-    /// Creates a ``LongformContentEvent`` (kind 30023, a parameterized replaceable event) for long-form text content, generally referred to as "articles" or "blog posts".
+    /// Creates a ``LongformContentEvent`` (kind 30023, an addressable event) for long-form text content, generally referred to as "articles" or "blog posts".
     /// - Parameters:
     ///   - identifier: A unique identifier for the content. Can be reused in the future for replacing the event. If an identifier is not provided, a ``UUID`` string is used.
     ///   - title: The article title.

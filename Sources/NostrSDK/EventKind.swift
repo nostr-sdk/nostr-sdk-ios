@@ -231,23 +231,43 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         }
     }
 
-    /// For kind `n` such that `10000 <= n < 20000 || n == 0 || n == 3`, events are replaceable,
+    /// For kind `n` such that `10000 <= n < 20000 || n == 0 || n == 3`, events are normal replaceable,
     /// which means that, for each combination of pubkey and kind,
     /// only the latest event MUST be stored by relays, older versions MAY be discarded.
     ///
     /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
-    public var isNonParameterizedReplaceable: Bool {
+    public var isNormalReplaceable: Bool {
         switch rawValue {
         case 10000..<20000, 0, 3: return true
         default: return false
         }
     }
 
-    /// For kind `n` such that `30000 <= n < 40000`, events are parameterized replaceable,
+    /// For kind `n` such that `10000 <= n < 20000 || n == 0 || n == 3`, events are normal replaceable,
+    /// which means that, for each combination of pubkey and kind,
+    /// only the latest event MUST be stored by relays, older versions MAY be discarded.
+    ///
+    /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+    @available(*, deprecated, renamed: "isNormalReplaceable")
+    public var isNonParameterizedReplaceable: Bool {
+        isNormalReplaceable
+    }
+
+    /// For kind `n` such that `30000 <= n < 40000`, events are addressable,
     /// which means that, for each combination of pubkey, kind and the d tag's first value,
     /// only the latest event MUST be stored by relays, older versions MAY be discarded.
     ///
     /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+    public var isAddressable: Bool {
+        (30000..<40000).contains(rawValue)
+    }
+
+    /// For kind `n` such that `30000 <= n < 40000`, events are addressable,
+    /// which means that, for each combination of pubkey, kind and the d tag's first value,
+    /// only the latest event MUST be stored by relays, older versions MAY be discarded.
+    ///
+    /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+    @available(*, deprecated, renamed: "isAddressable")
     public var isParameterizedReplaceable: Bool {
         (30000..<40000).contains(rawValue)
     }

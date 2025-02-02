@@ -36,7 +36,7 @@ public struct Metadata {
     /// A 32-byte hexadecimal event identifier.
     public var eventId: String?
     
-    /// An identifier (d-tag) associated with an event, for use with parameterized replaceable events.
+    /// An identifier (d-tag) associated with an event, for use with addressable events.
     public var identifier: String?
     
     /// The kind of the event, as an integer.
