@@ -16,6 +16,17 @@ final class EventKindTests: XCTestCase {
         }
     }
 
+    func testIsNormalReplaceable() throws {
+        XCTAssertTrue(EventKind.metadata.isNormalReplaceable)
+        XCTAssertTrue(EventKind.followList.isNormalReplaceable)
+        XCTAssertTrue(EventKind.muteList.isNormalReplaceable)
+        XCTAssertTrue(EventKind(rawValue: 19999).isNormalReplaceable)
+
+        XCTAssertFalse(EventKind.textNote.isNormalReplaceable)
+        XCTAssertFalse(EventKind(rawValue: 999).isNormalReplaceable)
+        XCTAssertFalse(EventKind(rawValue: 20000).isNormalReplaceable)
+    }
+
     func testIsNonParameterizedReplaceable() throws {
         XCTAssertTrue(EventKind.metadata.isNonParameterizedReplaceable)
         XCTAssertTrue(EventKind.followList.isNonParameterizedReplaceable)
@@ -25,6 +36,14 @@ final class EventKindTests: XCTestCase {
         XCTAssertFalse(EventKind.textNote.isNonParameterizedReplaceable)
         XCTAssertFalse(EventKind(rawValue: 999).isNonParameterizedReplaceable)
         XCTAssertFalse(EventKind(rawValue: 20000).isNonParameterizedReplaceable)
+    }
+
+    func testIsAddressable() throws {
+        XCTAssertTrue(EventKind(rawValue: 30000).isAddressable)
+        XCTAssertTrue(EventKind(rawValue: 39999).isAddressable)
+
+        XCTAssertFalse(EventKind(rawValue: 29999).isAddressable)
+        XCTAssertFalse(EventKind(rawValue: 40000).isAddressable)
     }
 
     func testIsParameterizedReplaceable() throws {

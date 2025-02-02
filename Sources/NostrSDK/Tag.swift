@@ -21,7 +21,7 @@ public enum TagName: String {
     /// points to the id of an event this event is quoting, replying to or referring to somehow
     case event = "e"
 
-    /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is parameterized)
+    /// coordinates to a replaceable event, which includes the kind number, pubkey that signed the event, and optionally the identifier (if the replaceable event is addressable)
     case eventCoordinates = "a"
 
     /// Specifies a unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.

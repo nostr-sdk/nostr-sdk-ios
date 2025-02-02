@@ -199,7 +199,7 @@ extension NostrEvent: MetadataCoding, RelayURLValidating {
     /// - Throws: `URLError.Code.badURL`, `RelayURLError.invalidScheme`, `TLVCodingError.failedToEncode`
     ///
     /// > Note: [NIP-19 bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
-    public func shareableEventIdentifier(relayURLStrings: [String]? = nil, excludeAuthor: Bool = false, excludeKind: Bool = false) throws -> String {
+    public func nevent(relayURLStrings: [String]? = nil, excludeAuthor: Bool = false, excludeKind: Bool = false) throws -> String {
         let validatedRelayURLStrings = try relayURLStrings?.map {
             try validateRelayURLString($0)
         }.map { $0.absoluteString }
@@ -213,6 +213,21 @@ extension NostrEvent: MetadataCoding, RelayURLValidating {
         }
 
         return try encodedIdentifier(with: metadata, identifierType: .event)
+    }
+
+    /// Gets a shareable human-interactable event identifier for this event.
+    /// The identifier is bech32-formatted with a prefix of `nevent` using a binary-encoded list of TLV (type-length-value).
+    /// The identifier has all the information needed for the event to be found, which includes the
+    /// event id, optionally the relays, optionally the author's public key, and optionally the event kind number.
+    /// - Parameters:
+    ///   - relayURLs: The String representations of relay URLs in which the event is more likely to be found, encoded as ASCII.
+    ///   - excludeAuthor: Whether the author public key should be excluded from the identifier.
+    ///   - excludeKind: Whether the event kind number should be excluded from the identifier.
+    /// - Throws: `URLError.Code.badURL`, `RelayURLError.invalidScheme`, `TLVCodingError.failedToEncode`
+    ///
+    /// > Note: [NIP-19 bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
+    public func shareableEventIdentifier(relayURLStrings: [String]? = nil, excludeAuthor: Bool = false, excludeKind: Bool = false) throws -> String {
+        try nevent(relayURLStrings: relayURLStrings, excludeAuthor: excludeAuthor, excludeKind: excludeKind)
     }
 }
 
