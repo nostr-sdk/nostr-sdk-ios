@@ -273,7 +273,7 @@ public protocol NostrEventBuilding {
     func insertTags(contentsOf tags: [Tag], at index: Int) -> Self
 
     /// Arbitrary string.
-    func content(_ content: String?) -> Self
+    func content(_ content: String) -> Self
 
     /// Builds a ``NostrEvent`` of type ``EventType`` using the properties set on the builder and signs the event.
     ///
@@ -316,7 +316,7 @@ public extension NostrEvent {
         public private(set) final var createdAt: Int64?
 
         /// Arbitrary string.
-        public private(set) final var content: String?
+        public private(set) final var content: String = ""
 
         /// List of ``Tag``s.
         public private(set) final var tags: [Tag] = []
@@ -365,7 +365,7 @@ public extension NostrEvent {
         }
 
         @discardableResult
-        public final func content(_ content: String?) -> Self {
+        public final func content(_ content: String) -> Self {
             self.content = content
             return self
         }
@@ -373,7 +373,7 @@ public extension NostrEvent {
         public func build(signedBy keypair: Keypair) throws -> T {
             try T(
                 kind: kind,
-                content: content ?? "",
+                content: content,
                 tags: tags,
                 createdAt: createdAt ?? Int64(Date.now.timeIntervalSince1970),
                 signedBy: keypair
@@ -387,7 +387,7 @@ public extension NostrEvent {
         public final func build(pubkey: String) -> T {
             T(
                 kind: kind,
-                content: content ?? "",
+                content: content,
                 tags: tags,
                 createdAt: createdAt ?? Int64(Date.now.timeIntervalSince1970),
                 pubkey: pubkey
