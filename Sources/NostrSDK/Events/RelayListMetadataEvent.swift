@@ -20,7 +20,7 @@ import OrderedCollections
 /// - Broadcast the event to all READ relays of each tagged user
 ///
 /// > Note: [NIP 65 - Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
-public final class RelayListMetadataEvent: NostrEvent, NonParameterizedReplaceableEvent {
+public final class RelayListMetadataEvent: NostrEvent, NormalReplaceableEvent {
 
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

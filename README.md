@@ -1,59 +1,60 @@
-[![Unit Tests](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml) [![SwiftLint](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml) [![Docs](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml)
+	[![Unit Tests](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/unit.yml) [![SwiftLint](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/swiftlint.yml) [![Docs](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml/badge.svg)](https://github.com/nostr-sdk/nostr-sdk-ios/actions/workflows/docs.yml)
 
-# Nostr SDK for Apple Platforms
+	# Nostr SDK for Apple Platforms
 
-Nostr SDK for Apple Platforms is a native Swift library that enables developers to quickly and easily build [Nostr](https://github.com/nostr-protocol/nostr)-based apps for Apple platforms.
+	Nostr SDK for Apple Platforms is a native Swift library that enables developers to quickly and easily build [Nostr](https://github.com/nostr-protocol/nostr)-based apps for Apple platforms.
 
-## Minimum Requirements
+	## Minimum Requirements
 
-- Swift 5.7
-- iOS 15
-- macOS 12
+	- Swift 5.7
+	- iOS 15
+	- macOS 12
 
-## Spec Compliance
+	## Spec Compliance
 
-The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
+	The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 
-- [x] [NIP-01: Basic protocol flow description](https://github.com/nostr-protocol/nips/blob/master/01.md)
-- [x] [NIP-02: Follow List](https://github.com/nostr-protocol/nips/blob/master/02.md)
-- [ ] [NIP-03: OpenTimestamps Attestations for Events](https://github.com/nostr-protocol/nips/blob/master/03.md)
-- [x] [NIP-04: Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md) --- **unrecommended**: deprecated in favor of [NIP-17](https://github.com/nostr-protocol/nips/blob/master/17.md)
-- [x] [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](https://github.com/nostr-protocol/nips/blob/master/05.md)
-- [ ] [NIP-06: Basic key derivation from mnemonic seed phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)
-- [ ] [NIP-07: `window.nostr` capability for web browsers](https://github.com/nostr-protocol/nips/blob/master/07.md)
-- [ ] [NIP-08: Handling Mentions](https://github.com/nostr-protocol/nips/blob/master/08.md) --- **unrecommended**: deprecated in favor of [NIP-27](https://github.com/nostr-protocol/nips/blob/master/27.md)
-- [x] [NIP-09: Event Deletion Request](https://github.com/nostr-protocol/nips/blob/master/09.md)
-- [x] [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](https://github.com/nostr-protocol/nips/blob/master/10.md)
-- [x] [NIP-11: Relay Information Document](https://github.com/nostr-protocol/nips/blob/master/11.md)
-- [ ] [NIP-13: Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md)
-- [x] [NIP-14: Subject tag in text events](https://github.com/nostr-protocol/nips/blob/master/14.md)
-- [ ] [NIP-15: Nostr Marketplace (for resilient marketplaces)](https://github.com/nostr-protocol/nips/blob/master/15.md)
-- [x] [NIP-17: Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
-- [x] [NIP-18: Reposts](https://github.com/nostr-protocol/nips/blob/master/18.md)
-- [x] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
-- [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
-- [ ] [NIP-22: Comment](https://github.com/nostr-protocol/nips/blob/master/22.md)
-- [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
-- [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
-- [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
-- [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
-- [ ] [NIP-27: Text Note References](https://github.com/nostr-protocol/nips/blob/master/27.md)
-- [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
-- [ ] [NIP-29: Relay-based Groups](https://github.com/nostr-protocol/nips/blob/master/29.md)
-- [x] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
-- [x] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
-- [x] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
-- [ ] [NIP-34: `git` stuff](https://github.com/nostr-protocol/nips/blob/master/34.md)
-- [ ] [NIP-35: Torrents](https://github.com/nostr-protocol/nips/blob/master/35.md)
-- [x] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
-- [ ] [NIP-38: User Statuses](https://github.com/nostr-protocol/nips/blob/master/38.md)
-- [ ] [NIP-39: External Identities in Profiles](https://github.com/nostr-protocol/nips/blob/master/39.md)
-- [x] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
-- [ ] [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
-- [x] [NIP-44: Versioned Encryption](https://github.com/nostr-protocol/nips/blob/master/44.md)
-- [ ] [NIP-45: Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
-- [ ] [NIP-46: Nostr Connect](https://github.com/nostr-protocol/nips/blob/master/46.md)
-- [x] [NIP-47: Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md)
+	- [x] [NIP-01: Basic protocol flow description](https://github.com/nostr-protocol/nips/blob/master/01.md)
+	- [x] [NIP-02: Follow List](https://github.com/nostr-protocol/nips/blob/master/02.md)
+	- [ ] [NIP-03: OpenTimestamps Attestations for Events](https://github.com/nostr-protocol/nips/blob/master/03.md)
+	- [x] [NIP-04: Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md) --- **unrecommended**: deprecated in favor of [NIP-17](https://github.com/nostr-protocol/nips/blob/master/17.md)
+	- [x] [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](https://github.com/nostr-protocol/nips/blob/master/05.md)
+	- [ ] [NIP-06: Basic key derivation from mnemonic seed phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)
+	- [ ] [NIP-07: `window.nostr` capability for web browsers](https://github.com/nostr-protocol/nips/blob/master/07.md)
+	- [ ] [NIP-08: Handling Mentions](https://github.com/nostr-protocol/nips/blob/master/08.md) --- **unrecommended**: deprecated in favor of [NIP-27](https://github.com/nostr-protocol/nips/blob/master/27.md)
+	- [x] [NIP-09: Event Deletion Request](https://github.com/nostr-protocol/nips/blob/master/09.md)
+	- [x] [NIP-10: Text Notes and Threads](https://github.com/nostr-protocol/nips/blob/master/10.md)
+	- [x] [NIP-11: Relay Information Document](https://github.com/nostr-protocol/nips/blob/master/11.md)
+	- [ ] [NIP-13: Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md)
+	- [x] [NIP-14: Subject tag in text events](https://github.com/nostr-protocol/nips/blob/master/14.md)
+	- [ ] [NIP-15: Nostr Marketplace (for resilient marketplaces)](https://github.com/nostr-protocol/nips/blob/master/15.md)
+	- [x] [NIP-17: Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
+	- [x] [NIP-18: Reposts](https://github.com/nostr-protocol/nips/blob/master/18.md)
+	- [x] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
+	- [ ] [NIP-21: `nostr:` URI scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
+	- [ ] [NIP-22: Comment](https://github.com/nostr-protocol/nips/blob/master/22.md)
+	- [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
+	- [x] [NIP-24: Extra metadata fields and tags](https://github.com/nostr-protocol/nips/blob/master/24.md)
+	- [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
+	- [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
+	- [ ] [NIP-27: Text Note References](https://github.com/nostr-protocol/nips/blob/master/27.md)
+	- [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
+	- [ ] [NIP-29: Relay-based Groups](https://github.com/nostr-protocol/nips/blob/master/29.md)
+	- [x] [NIP-30: Custom Emoji](https://github.com/nostr-protocol/nips/blob/master/30.md)
+	- [x] [NIP-31: Dealing with Unknown Events](https://github.com/nostr-protocol/nips/blob/master/31.md)
+	- [x] [NIP-32: Labeling](https://github.com/nostr-protocol/nips/blob/master/32.md)
+	- [ ] [NIP-34: `git` stuff](https://github.com/nostr-protocol/nips/blob/master/34.md)
+	- [ ] [NIP-35: Torrents](https://github.com/nostr-protocol/nips/blob/master/35.md)
+	- [x] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
+	- [x] [NIP-37: Draft Events](https://github.com/nostr-protocol/nips/blob/master/37.md)
+	- [ ] [NIP-38: User Statuses](https://github.com/nostr-protocol/nips/blob/master/38.md)
+	- [ ] [NIP-39: External Identities in Profiles](https://github.com/nostr-protocol/nips/blob/master/39.md)
+	- [x] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
+	- [ ] [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
+	- [x] [NIP-44: Encrypted Payloads (Versioned)](https://github.com/nostr-protocol/nips/blob/master/44.md)
+	- [ ] [NIP-45: Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
+	- [ ] [NIP-46: Nostr Remote Signing](https://github.com/nostr-protocol/nips/blob/master/46.md)
+	- [x] [NIP-47: Wallet Connect](https://github.com/nostr-protocol/nips/blob/master/47.md)
 - [ ] [NIP-48: Proxy Tags](https://github.com/nostr-protocol/nips/blob/master/48.md)
 - [ ] [NIP-49: Private Key Encryption](https://github.com/nostr-protocol/nips/blob/master/49.md)
 - [ ] [NIP-50: Search Capability](https://github.com/nostr-protocol/nips/blob/master/50.md)
@@ -70,6 +71,7 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-61: Nutzaps](https://github.com/nostr-protocol/nips/blob/master/61.md)
 - [ ] [NIP-64: Chess (PGN)](https://github.com/nostr-protocol/nips/blob/master/64.md)
 - [x] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
+- [ ] [NIP-68: Picture-first feeds](https://github.com/nostr-protocol/nips/blob/master/68.md)
 - [ ] [NIP-69: Peer-to-peer Order events](https://github.com/nostr-protocol/nips/blob/master/69.md)
 - [ ] [NIP-70: Protected Events](https://github.com/nostr-protocol/nips/blob/master/70.md)
 - [ ] [NIP-71: Video Events](https://github.com/nostr-protocol/nips/blob/master/71.md)
@@ -78,6 +80,8 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-75: Zap Goals](https://github.com/nostr-protocol/nips/blob/master/75.md)
 - [ ] [NIP-78: Application-specific data](https://github.com/nostr-protocol/nips/blob/master/78.md)
 - [ ] [NIP-84: Highlights](https://github.com/nostr-protocol/nips/blob/master/84.md)
+- [ ] [NIP-86: Relay Management API](https://github.com/nostr-protocol/nips/blob/master/86.md)
+- [ ] [NIP-88: Polls](https://github.com/nostr-protocol/nips/blob/master/88.md)
 - [ ] [NIP-89: Recommended Application Handlers](https://github.com/nostr-protocol/nips/blob/master/89.md)
 - [ ] [NIP-90: Data Vending Machines](https://github.com/nostr-protocol/nips/blob/master/90.md)
 - [ ] [NIP-92: Media Attachments](https://github.com/nostr-protocol/nips/blob/master/92.md)
@@ -85,6 +89,8 @@ The following [NIPs](https://github.com/nostr-protocol/nips) are implemented:
 - [ ] [NIP-96: HTTP File Storage Integration](https://github.com/nostr-protocol/nips/blob/master/96.md)
 - [ ] [NIP-98: HTTP Auth](https://github.com/nostr-protocol/nips/blob/master/98.md)
 - [ ] [NIP-99: Classified Listings](https://github.com/nostr-protocol/nips/blob/master/99.md)
+- [ ] [NIP-7D: Threads](https://github.com/nostr-protocol/nips/blob/master/7D.md)
+- [ ] [NIP-C7: Chats](https://github.com/nostr-protocol/nips/blob/master/C7.md)
 
 ## Installation
 
@@ -113,7 +119,7 @@ let package = Package(
 	// ...
     dependencies: [
         // ...
-        .package(url: "https://github.com/nostr-sdk/nostr-sdk-ios.git", .upToNextMajor(from: "0.2.0"))
+        .package(url: "https://github.com/nostr-sdk/nostr-sdk-ios.git", .upToNextMajor(from: "0.3.0"))
     ],
     targets: [
         .target(

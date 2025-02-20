@@ -11,7 +11,7 @@ enum EventCoordinatesError: Error {
     case invalidInput
 }
 
-/// Coordinates to a (maybe parameterized) replaceable event.
+/// Coordinates to an addressable or normal replaceable event.
 /// See [NIP-01 Tags](https://github.com/nostr-protocol/nips/blob/master/01.md#tags).
 public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidating, Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -46,7 +46,7 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
     }
 
     /// The identifier of the referenced replaceable event.
-    /// Returns `nil` if the returned event is not a parameterized replaceable event.
+    /// Returns `nil` if the returned event is not an addressable event.
     public var identifier: String? {
         guard 1 < tagComponents.count else {
             return nil
@@ -71,8 +71,8 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
     }
 
     /// Initializes coordinates to a replaceable event from a ``Tag``.
-    /// For a parameterized replaceable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:<d tag value>` is expected.
-    /// For a non-parameterized replaceable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:` is expected.
+    /// For an addressable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:<d tag value>` is expected.
+    /// For a normal replaceable event, a tag value of `<kind integer>:<32-bytes lowercase hex of a pubkey>:` is expected.
     ///
     /// Returns `nil` if the tag is not a replaceable event tag or if the tag value does not have at least two ":" colon separators.
     public init?(eventCoordinatesTag: Tag) {
@@ -94,10 +94,10 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
     /// - Parameters:
     ///   - kind: The ``EventKind`` of the referenced replaceable event.
     ///   - pubkey: The pubkey that signed the referenced replaceable event.
-    ///   - identifier: The identifier of the referenced replaceable event. Must be `nil` if `kind.isNonParameterizedReplaceable` is `true`. Must not be `nil` if `kind.isParameterizedReplaceable` is `true`.
+    ///   - identifier: The identifier of the referenced replaceable event. Must be `nil` if `kind.isNormalReplaceable` is `true`. Must not be `nil` if `kind.isAddressable` is `true`.
     ///   - relayURL: A relay in which the referenced replaceable event could be found.
     public init?(kind: EventKind, pubkey: PublicKey, identifier: String? = nil, relayURL: URL? = nil) throws {
-        guard (kind.isParameterizedReplaceable && identifier != nil) || (kind.isNonParameterizedReplaceable && identifier == nil) else {
+        guard (kind.isAddressable && identifier != nil) || (kind.isNormalReplaceable && identifier == nil) else {
             throw EventCoordinatesError.invalidInput
         }
 
@@ -127,7 +127,7 @@ public struct EventCoordinates: PubkeyProviding, RelayProviding, RelayURLValidat
 public protocol EventCoordinatesTagInterpreting: NostrEvent {}
 public extension EventCoordinatesTagInterpreting {
     /// The referenced replaceable event tags of the event.
-    @available(*, deprecated, message: "Deprecated in favor of referencedEventCoordinates.")
+    @available(*, deprecated, renamed: "referencedEventCoordinates")
     var eventCoordinates: [EventCoordinates] {
         referencedEventCoordinates
     }

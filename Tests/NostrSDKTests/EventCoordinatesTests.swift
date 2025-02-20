@@ -69,7 +69,7 @@ final class EventCoordinatesTests: XCTestCase {
         )
     }
 
-    func testInitFailsOnNonParameterizedReplaceableEventWithIdentifier() throws {
+    func testInitFailsOnNormalReplaceableEventWithIdentifier() throws {
         XCTAssertThrowsError(
             try EventCoordinates(
                 kind: .metadata,
@@ -79,7 +79,7 @@ final class EventCoordinatesTests: XCTestCase {
         )
     }
 
-    func testInitFailsOnParameterizedReplaceableEventWithoutIdentifier() throws {
+    func testInitFailsOnAddressableEventWithoutIdentifier() throws {
         XCTAssertThrowsError(
             try EventCoordinates(
                 kind: .longformContent,

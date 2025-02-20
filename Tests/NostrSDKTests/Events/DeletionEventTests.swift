@@ -34,7 +34,7 @@ final class DeletionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         XCTAssertThrowsError(try delete(events: [noteToDelete], reason: reason, signedBy: Keypair.test))
     }
 
-    func testCreateDeletionEventForParameterizedReplaceableEvent() throws {
+    func testCreateDeletionEventForAddressableEvent() throws {
         let longformNoteToDelete: LongformContentEvent = try decodeFixture(filename: "longform_deletable")
         let longformNoteEventCoordinates = try XCTUnwrap(longformNoteToDelete.replaceableEventCoordinates(relayURL: nil))
         let reason = "Didn't mean to post"
@@ -51,7 +51,7 @@ final class DeletionEventTests: XCTestCase, EventCreating, EventVerifying, Fixtu
         try verifyEvent(event)
     }
 
-    func testCreateDeletionEventForParameterizedReplaceableEventFailsWithMismatchedPubkey() throws {
+    func testCreateDeletionEventForAddressableEventFailsWithMismatchedPubkey() throws {
         let longformNoteToDelete: LongformContentEvent = try decodeFixture(filename: "longform")
         let reason = "Didn't mean to post"
 

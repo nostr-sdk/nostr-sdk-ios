@@ -1,5 +1,5 @@
 //
-//  ParameterizedReplaceableEventTests.swift
+//  AddressableEventTests.swift
 //
 //
 //  Created by Terry Yiu on 6/30/24.
@@ -8,7 +8,7 @@
 @testable import NostrSDK
 import XCTest
 
-final class ParameterizedReplaceableEventTests: XCTestCase, FixtureLoading, MetadataCoding {
+final class AddressableEventTests: XCTestCase, FixtureLoading, MetadataCoding {
 
     func testReplaceableEventCoordinates() throws {
         let event: LongformContentEvent = try decodeFixture(filename: "longform")
