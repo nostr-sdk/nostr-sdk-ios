@@ -12,7 +12,7 @@ import Foundation
 /// One may create a calendar to segment calendar events for specific purposes. e.g., personal, work, travel, meetups, and conferences.
 ///
 /// See [NIP-52 - Calendar](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar).
-public final class CalendarListEvent: NostrEvent, ParameterizedReplaceableEvent, TitleTagInterpreting {
+public final class CalendarListEvent: NostrEvent, AddressableEvent, TitleTagInterpreting {
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
     }

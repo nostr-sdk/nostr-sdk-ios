@@ -30,7 +30,7 @@ public struct RelayPermissions: Equatable {
 /// A special event with kind 3, meaning "follow list" is defined as having a list of p tags, one for each of the followed/known profiles one is following.
 ///
 /// > Note: [NIP-02 Specification](https://github.com/nostr-protocol/nips/blob/master/02.md)
-public final class FollowListEvent: NostrEvent, NonParameterizedReplaceableEvent {
+public final class FollowListEvent: NostrEvent, NormalReplaceableEvent {
     
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

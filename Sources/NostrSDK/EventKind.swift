@@ -127,6 +127,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     /// See [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md#standard-lists)
     case bookmarksList
 
+    /// This kind of event contains a user's preferred relays to store private events.
+    ///
+    /// See [NIP-37 - Draft Events].
+    case privateEventRelayList
+
     /// This kind of event provides a way for clients to authenticate to relays by signing an ephemeral event.
     /// This kind is not meant to be published or queried.
     ///
@@ -137,6 +142,11 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
     ///
     /// See [NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md).
     case longformContent
+
+    /// This kind of event is a private wrap for drafts of any other event kind.
+    ///
+    /// See [NIP-37 - Draft Events].
+    case draftPrivateWrap
     
     /// This kind of event represents an occurrence that spans between a start date and end date.
     /// See [NIP-52 - Date-Based Calendar Event](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-events-1).
@@ -182,8 +192,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         .muteList,
         .relayListMetadata,
         .bookmarksList,
+        .privateEventRelayList,
         .authentication,
         .longformContent,
+        .draftPrivateWrap,
         .dateBasedCalendarEvent,
         .timeBasedCalendarEvent,
         .calendar,
@@ -222,8 +234,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .muteList:                     return 10000
         case .relayListMetadata:            return 10002
         case .bookmarksList:                return 10003
+        case .privateEventRelayList:        return 10013
         case .authentication:               return 22242
         case .longformContent:              return 30023
+        case .draftPrivateWrap:                        return 31234
         case .dateBasedCalendarEvent:       return 31922
         case .timeBasedCalendarEvent:       return 31923
         case .calendar:                     return 31924
@@ -256,8 +270,10 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         case .muteList:                     return MuteListEvent.self
         case .relayListMetadata:            return RelayListMetadataEvent.self
         case .bookmarksList:                return BookmarksListEvent.self
+        case .privateEventRelayList:        return PrivateEventRelayListEvent.self
         case .authentication:               return AuthenticationEvent.self
         case .longformContent:              return LongformContentEvent.self
+        case .draftPrivateWrap:             return DraftPrivateWrapEvent.self
         case .dateBasedCalendarEvent:       return DateBasedCalendarEvent.self
         case .timeBasedCalendarEvent:       return TimeBasedCalendarEvent.self
         case .calendar:                     return CalendarListEvent.self
@@ -266,23 +282,43 @@ public enum EventKind: RawRepresentable, CaseIterable, Codable, Equatable, Hasha
         }
     }
 
-    /// For kind `n` such that `10000 <= n < 20000 || n == 0 || n == 3`, events are replaceable,
+    /// For kind `n` such that `10000 <= n < 20000 || n == 0 || n == 3`, events are normal replaceable,
     /// which means that, for each combination of pubkey and kind,
     /// only the latest event MUST be stored by relays, older versions MAY be discarded.
     ///
     /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
-    public var isNonParameterizedReplaceable: Bool {
+    public var isNormalReplaceable: Bool {
         switch rawValue {
         case 10000..<20000, 0, 3: return true
         default: return false
         }
     }
 
-    /// For kind `n` such that `30000 <= n < 40000`, events are parameterized replaceable,
+    /// For kind `n` such that `10000 <= n < 20000 || n == 0 || n == 3`, events are normal replaceable,
+    /// which means that, for each combination of pubkey and kind,
+    /// only the latest event MUST be stored by relays, older versions MAY be discarded.
+    ///
+    /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+    @available(*, deprecated, renamed: "isNormalReplaceable")
+    public var isNonParameterizedReplaceable: Bool {
+        isNormalReplaceable
+    }
+
+    /// For kind `n` such that `30000 <= n < 40000`, events are addressable,
     /// which means that, for each combination of pubkey, kind and the d tag's first value,
     /// only the latest event MUST be stored by relays, older versions MAY be discarded.
     ///
     /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+    public var isAddressable: Bool {
+        (30000..<40000).contains(rawValue)
+    }
+
+    /// For kind `n` such that `30000 <= n < 40000`, events are addressable,
+    /// which means that, for each combination of pubkey, kind and the d tag's first value,
+    /// only the latest event MUST be stored by relays, older versions MAY be discarded.
+    ///
+    /// See [NIP-01 - Kinds](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+    @available(*, deprecated, renamed: "isAddressable")
     public var isParameterizedReplaceable: Bool {
         (30000..<40000).contains(rawValue)
     }
