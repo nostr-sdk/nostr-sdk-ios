@@ -44,3 +44,37 @@ public extension EventCreating {
         return try SetChannelMetadataEvent(content: content, tags: [], signedBy: keypair)
     }
 }
+
+public extension SetChannelMetadataEvent {
+    /// Builder of ``SetChannelMetadataEvent``.
+    final class Builder: NostrEvent.Builder<SetChannelMetadataEvent> {
+        public init() {
+            super.init(kind: .channelMetadata)
+        }
+        
+        public final func channelMetadata(_ channelMetadata: ChannelMetadata, merging rawChannelMetadata: [String: Any] = [:]) throws -> Self {
+            let channelMetadataAsData = try JSONEncoder().encode(channelMetadata)
+
+            let allChannelMetadataAsData: Data
+            if rawChannelMetadata.isEmpty {
+                allChannelMetadataAsData = channelMetadataAsData
+            } else {
+                var channelMetadataAsDictionary = try JSONSerialization.jsonObject(with: channelMetadataAsData, options: []) as? [String: Any] ?? [:]
+                channelMetadataAsDictionary.merge(rawChannelMetadata) { (current, _) in current }
+                allChannelMetadataAsData = try JSONSerialization.data(withJSONObject: channelMetadataAsDictionary, options: .sortedKeys)
+            }
+
+            guard let allChannelMetadataAsString = String(data: allChannelMetadataAsData, encoding: .utf8) else {
+                throw EventCreatingError.invalidInput
+            }
+
+            content(allChannelMetadataAsString)
+
+            return self
+        }
+        
+        public final func appendChannelCreateEventTag(_ eventTag: EventTag) -> Self {
+            appendTags(contentsOf: [eventTag.tag])
+        }
+    }
+}
