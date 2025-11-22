@@ -32,7 +32,7 @@ jobs:
     runs-on: macos-14
     strategy:
       matrix:
-        swift: ['5.10', '6.0']
+        swift: ['5.10', '6.0', '6.1', '6.2']
 
     steps:
     - name: Checkout
