@@ -8,26 +8,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test-macos-13:
-    runs-on: macos-13
-    strategy:
-      matrix:
-        swift: ['5.7', '5.8', '5.9']
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Swift
-      uses: SwiftyLab/setup-swift@latest
-      with:
-        swift-version: ${{ matrix.swift }}
-
-    - name: Build and Test
-      run: |
-        swift build
-        swift test
-
   build-and-test-macos-14:
     runs-on: macos-14
     strategy:
